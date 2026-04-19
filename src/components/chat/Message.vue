@@ -67,7 +67,7 @@
         </div>
         <answering-mark v-if="message.state === messageState.PENDING" />
       </div>
-      <div v-if="isScript && message.role === ROLE_ASSISTANT && !isEditing" class="studio-audio-generator">
+      <div v-if="isScript && message.role === 'assistant' && !isEditing" class="studio-audio-generator">
         <div v-if="!audioUrl && !generatingAudio" class="style-selector">
           <div class="style-label">{{ $t('studio.audio.style') }}</div>
           <el-radio-group v-model="audioStyle" size="small" class="mb-2">
