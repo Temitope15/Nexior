@@ -184,6 +184,7 @@ import { defineComponent } from 'vue';
 import { ElInput, ElSelect, ElOption, ElButton, ElMessage } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { chatOperator, sunoOperator } from '@/operators';
+import { IChatModelName, ROLE_ASSISTANT } from '@/models';
 import { SUNO_DEFAULT_MODEL } from '@/constants';
 import { getCookie } from 'typescript-cookie';
 
@@ -286,7 +287,7 @@ Tone: ${this.config.tone}`;
                 role: 'user',
                 content: userPrompt
             }],
-            model: this.models.script,
+            model: this.models.script as IChatModelName,
             stream: false
         }, { token });
 
@@ -323,9 +324,9 @@ Tone: ${this.config.tone}`;
           lyric: scriptText,
           style: 'Narrative Voiceover, Background Background Music',
           instrumental: false
-        }, { token });
+        }, { token: token as string });
 
-        this.startPolling(res.data.task_id as string, token);
+        this.startPolling(res.data.task_id as string, token as string);
       } catch (err: any) {
         this.loading.audio = false;
         ElMessage.error('Audio generation failed');
