@@ -30,7 +30,6 @@ import wan from './wan';
 import site from './site';
 import profile from './profile';
 
-import { ROUTE_CHATGPT_CONVERSATION_NEW } from './constants';
 import { getCookie } from 'typescript-cookie';
 import { I18N_DEFAULT_LOCALE } from '@/constants/i18n';
 import { getLocale, setI18nLanguage } from '@/i18n';

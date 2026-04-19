@@ -184,8 +184,8 @@ import { defineComponent } from 'vue';
 import { ElInput, ElSelect, ElOption, ElButton, ElMessage } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { chatOperator, sunoOperator } from '@/operators';
-import { IChatMessage } from '@/models';
 import { SUNO_DEFAULT_MODEL } from '@/constants';
+import { getCookie } from 'typescript-cookie';
 
 interface StudioState {
   step: number;
@@ -275,21 +275,22 @@ Tone: ${this.config.tone}`;
       const userPrompt = `Topic: ${this.config.topic}`;
 
       try {
-        const token = this.$store.state.chat.credential?.token;
+        const token = getCookie('token');
         if (!token) throw new Error('Auth token missing. Please refresh.');
 
-        const res = await chatOperator.chat([{
-            role: 'system',
-            content: systemPrompt
-        }, {
-            role: 'user',
-            content: userPrompt
-        }], {
+        const res = await chatOperator.chatConversation({
+            messages: [{
+                role: 'system',
+                content: systemPrompt
+            }, {
+                role: 'user',
+                content: userPrompt
+            }],
             model: this.models.script,
             stream: false
         }, { token });
 
-        const content = res.data.choices[0].message.content;
+        const content = res.answer;
         this.outputs.script = this.parseScript(content);
       } catch (err: any) {
         ElMessage.error(err.message || 'Failed to generate script');
@@ -312,7 +313,7 @@ Tone: ${this.config.tone}`;
       this.loading.audio = true;
       
       const scriptText = `${this.outputs.script.hook} ${this.outputs.script.body} ${this.outputs.script.cta}`;
-      const token = this.$store.state.suno.credential?.token;
+      const token = getCookie('token');
       
       try {
         const res = await sunoOperator.audio({
@@ -324,7 +325,7 @@ Tone: ${this.config.tone}`;
           instrumental: false
         }, { token });
 
-        this.startPolling(res.data.task_id, token, 'audio');
+        this.startPolling(res.data.task_id as string, token);
       } catch (err: any) {
         this.loading.audio = false;
         ElMessage.error('Audio generation failed');
@@ -342,7 +343,7 @@ Tone: ${this.config.tone}`;
         ElMessage.success('Visuals generated (Demo Placeholder)');
       }, 3000);
     },
-    startPolling(taskId: string, token: string, type: 'audio' | 'visual') {
+    startPolling(taskId: string, token: string) {
       this.pollingJob = window.setInterval(async () => {
         try {
           const res = await sunoOperator.task(taskId, { token });
