@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <router-view class="main" />
-    <navigator class="navigator" :direction="mobile ? 'row' : 'column'" />
+    <navigator v-if="!$route.meta.hideNav" class="navigator" :direction="mobile ? 'row' : 'column'" />
     <application-status
       v-if="application"
       class="fixed right-2 top-2 z-[200]"

@@ -195,7 +195,13 @@ const ROUTE_SEO: Record<string, { title: string; description: string; keywords: 
 const routes = [
   {
     path: '/',
-    redirect: { name: ROUTE_CHATGPT_CONVERSATION_NEW }
+    redirect: { name: 'studio' }
+  },
+  {
+    path: '/studio',
+    name: 'studio',
+    component: () => import('@/pages/studio/Index.vue'),
+    meta: { hideNav: true, hideSide: true, appName: 'chatgpt' }
   },
   {
     path: '/chat/oauth/callback',

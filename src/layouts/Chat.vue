@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="side">
+    <div v-if="!$route.meta.hideSide" class="side">
       <slot name="side">
         <side-panel @change-conversation="onChangeConversation" />
       </slot>
