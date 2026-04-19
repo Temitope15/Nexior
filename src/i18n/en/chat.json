@@ -259,6 +259,15 @@
     "message": "Enter a topic to generate a video script...",
     "description": "Placeholder for AI Content Studio"
   },
+  "studio.audio.generate": "Generate Voice & Music",
+  "studio.audio.style": "Select Style",
+  "studio.audio.customStyle": "Custom Style...",
+  "studio.audio.generating": "Generating Voiceover...",
+  "studio.audio.generated": "Generated Voiceover",
+  "studio.audio.failed": "Generation failed. Please try again.",
+  "studio.audio.enable": "Enable Suno Service",
+  "studio.audio.notApplied": "Suno service is not enabled for your account.",
+  "studio.audio.applyGuidance": "Click the button below to apply for the Suno service and start generating music.",
   "message.noInput": {
     "message": "Question cannot be empty",
     "description": "Message on the webpage telling the user that the question cannot be empty"

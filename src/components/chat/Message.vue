@@ -67,6 +67,50 @@
         </div>
         <answering-mark v-if="message.state === messageState.PENDING" />
       </div>
+      <div v-if="isScript && message.role === ROLE_ASSISTANT && !isEditing" class="studio-audio-generator">
+        <div v-if="!audioUrl && !generatingAudio" class="style-selector">
+          <div class="style-label">{{ $t('studio.audio.style') }}</div>
+          <el-radio-group v-model="audioStyle" size="small" class="mb-2">
+            <el-radio-button value="Professional">Professional</el-radio-button>
+            <el-radio-button value="Energetic">Energetic</el-radio-button>
+            <el-radio-button value="Relaxed">Relaxed</el-radio-button>
+            <el-radio-button value="Cinematic">Cinematic</el-radio-button>
+            <el-radio-button value="Custom">Custom</el-radio-button>
+          </el-radio-group>
+          <el-input
+            v-if="audioStyle === 'Custom'"
+            v-model="customStyle"
+            size="small"
+            :placeholder="$t('studio.audio.customStyle')"
+            class="mb-2"
+          />
+          <div v-if="!sunoEnabled" class="service-notice">
+            <p>{{ $t('studio.audio.notApplied') }}</p>
+            <p>{{ $t('studio.audio.applyGuidance') }}</p>
+            <el-button type="primary" size="small" round @click="onEnableSuno">
+              {{ $t('studio.audio.enable') }}
+            </el-button>
+          </div>
+          <el-button v-else type="primary" size="small" round @click="onGenerateAudio">
+            <font-awesome-icon icon="fa-solid fa-music" class="mr-1" />
+            {{ $t('studio.audio.generate') }}
+          </el-button>
+        </div>
+
+        <div v-if="generatingAudio" class="generating-state">
+          <font-awesome-icon icon="fa-solid fa-spinner" spin class="mr-2" />
+          <span>{{ $t('studio.audio.generating') }}</span>
+        </div>
+
+        <div v-if="audioUrl" class="audio-result">
+          <div class="audio-label">{{ $t('studio.audio.generated') }}</div>
+          <audio controls :src="audioUrl" class="w-full mt-1"></audio>
+        </div>
+        
+        <div v-if="generateError" class="generate-error">
+          {{ generateError }}
+        </div>
+      </div>
       <div
         v-motion
         :initial="{ opacity: 0, y: 5 }"
@@ -142,8 +186,13 @@ import {
   ERROR_CODE_USED_UP,
   ERROR_CODE_CANCELED,
   ROLE_ASSISTANT,
-  ERROR_CODE_BUSY
+  ERROR_CODE_BUSY,
+  SUNO_DEFAULT_MODEL,
+  SUNO_SERVICE_ID
 } from '@/constants';
+import { sunoOperator, applicationOperator } from '@/operators';
+import { ElRadioGroup, ElRadioButton, ElMessage } from 'element-plus';
+import { ISunoAudioRequest } from '@/models';
 import { ROUTE_CONSOLE_APPLICATION_EXTRA } from '@/router';
 
 interface IData {
@@ -151,6 +200,12 @@ interface IData {
   isEditing: boolean;
   questionValue: string;
   messageState: typeof IChatMessageState;
+  generatingAudio: boolean;
+  audioUrl: string;
+  audioStyle: string;
+  customStyle: string;
+  generateError: string;
+  pollingJob: number;
 }
 
 export default defineComponent({
@@ -166,6 +221,8 @@ export default defineComponent({
     ElButton,
     ElImage,
     ElInput,
+    ElRadioGroup,
+    ElRadioButton,
     FontAwesomeIcon
   },
   props: {
@@ -189,10 +246,24 @@ export default defineComponent({
       copied: false,
       isEditing: false,
       questionValue: this.message.content as string,
-      messageState: IChatMessageState
+      messageState: IChatMessageState,
+      generatingAudio: false,
+      audioUrl: '',
+      audioStyle: 'Professional',
+      customStyle: '',
+      generateError: '',
+      pollingJob: 0
     };
   },
   computed: {
+    isScript() {
+      const content = this.message.content as string;
+      if (!content) return false;
+      return content.includes('HOOK:') && content.includes('BODY:') && content.includes('CTA:');
+    },
+    sunoEnabled() {
+      return !!this.$store.state.suno.application;
+    },
     modelGroup() {
       return this.$store.state.chat.modelGroup;
     },
@@ -232,6 +303,16 @@ export default defineComponent({
       return this.message.role === ROLE_ASSISTANT && this.message.error?.code === ERROR_CODE_USED_UP;
     }
   },
+  async mounted() {
+    if (this.isScript && this.message.role === ROLE_ASSISTANT) {
+      this.$store.dispatch('suno/getApplications');
+    }
+  },
+  beforeUnmount() {
+    if (this.pollingJob) {
+      window.clearInterval(this.pollingJob);
+    }
+  },
   watch: {},
   methods: {
     startEditing() {
@@ -268,6 +349,89 @@ export default defineComponent({
           id: this.application?.id
         }
       });
+    },
+    onEnableSuno() {
+      applicationOperator.create({
+        service_id: SUNO_SERVICE_ID
+      }).then(() => {
+        this.$store.dispatch('suno/getApplications');
+        ElMessage.success(this.$t('application.message.applySuccessfully'));
+      }).catch(err => {
+        ElMessage.error(err?.response?.data?.error?.message || 'Failed to enable service');
+      });
+    },
+    onGenerateAudio() {
+      const content = this.message.content as string;
+      const script = this.extractScript(content);
+      const style = this.audioStyle === 'Custom' ? this.customStyle : this.getStylePrompt(this.audioStyle);
+      
+      const token = this.$store.state.suno.credential?.token;
+      if (!token) {
+        this.generateError = 'Suno credential not found. Please refresh page.';
+        return;
+      }
+
+      const request: ISunoAudioRequest = {
+        prompt: script,
+        model: SUNO_DEFAULT_MODEL,
+        custom: true,
+        lyric: script,
+        style: style,
+        instrumental: false
+      };
+
+      this.generatingAudio = true;
+      this.generateError = '';
+
+      sunoOperator.audio(request, { token })
+        .then(res => {
+          const taskId = res.data.task_id;
+          this.startPolling(taskId, token);
+        })
+        .catch(err => {
+          this.generatingAudio = false;
+          this.generateError = err?.response?.data?.error?.message || this.$t('studio.audio.failed');
+        });
+    },
+    extractScript(content: string) {
+      // Basic extraction of HOOK, BODY, CTA
+      const hookMatch = content.match(/HOOK:([\s\S]*?)BODY:/i);
+      const bodyMatch = content.match(/BODY:([\s\S]*?)CTA:/i);
+      const ctaMatch = content.match(/CTA:([\s\S]*?)$/i);
+      
+      const hook = hookMatch ? hookMatch[1].trim() : '';
+      const body = bodyMatch ? bodyMatch[1].trim() : '';
+      const cta = ctaMatch ? ctaMatch[1].trim() : '';
+      
+      return `${hook}\n\n${body}\n\n${cta}`.trim();
+    },
+    getStylePrompt(preset: string) {
+      switch (preset) {
+        case 'Professional': return 'Narrative, Professional Voiceover, Soft Background Music';
+        case 'Energetic': return 'Fast-paced, Energetic Voiceover, Upbeat Tech Music';
+        case 'Relaxed': return 'Calm, Soothing Voiceover, Ambient Background Music';
+        case 'Cinematic': return 'Deep Voiceover, Epic Cinematic Music, Dramatic Orchestral';
+        default: return 'Narrative Voiceover';
+      }
+    },
+    startPolling(taskId: string, token: string) {
+      this.pollingJob = window.setInterval(() => {
+        sunoOperator.task(taskId, { token })
+          .then(res => {
+            const task = res.data;
+            // task.response may contain audios
+            const audios = (task.response as any)?.data;
+            if (audios && audios[0]?.audio_url) {
+              this.audioUrl = audios[0].audio_url;
+              this.generatingAudio = false;
+              window.clearInterval(this.pollingJob);
+              this.pollingJob = 0;
+            }
+          })
+          .catch(err => {
+            console.error('polling error', err);
+          });
+      }, 5000);
     }
   }
 });
@@ -431,6 +595,54 @@ export default defineComponent({
         visibility: visible;
       }
     }
+  }
+}
+
+.studio-audio-generator {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--el-bg-color-page);
+  border-radius: 12px;
+  border: 1px dashed var(--el-border-color);
+
+  .style-selector {
+    .style-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .service-notice {
+      margin-top: 8px;
+      padding: 8px;
+      background: var(--el-color-warning-light-9);
+      border-radius: 8px;
+      p {
+        margin: 0 0 5px 0;
+        font-size: 13px;
+        color: var(--el-text-color-regular);
+      }
+    }
+  }
+
+  .generating-state {
+    display: flex;
+    align-items: center;
+    color: var(--el-color-primary);
+    font-size: 14px;
+  }
+
+  .audio-result {
+    .audio-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+  }
+  
+  .generate-error {
+    margin-top: 8px;
+    color: var(--el-color-danger);
+    font-size: 12px;
   }
 }
 </style>
