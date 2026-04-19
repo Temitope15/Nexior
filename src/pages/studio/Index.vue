@@ -183,9 +183,9 @@
 import { defineComponent } from 'vue';
 import { ElInput, ElSelect, ElOption, ElButton, ElMessage } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { chatOperator, sunoOperator } from '@/operators';
+import { chatOperator, sunoOperator, nanobananaOperator, seedanceOperator } from '@/operators';
 import { IChatModelName } from '@/models';
-import { ROLE_ASSISTANT, SUNO_DEFAULT_MODEL } from '@/constants';
+import { SUNO_DEFAULT_MODEL } from '@/constants';
 import { getCookie } from 'typescript-cookie';
 
 interface StudioState {
@@ -332,31 +332,74 @@ Tone: ${this.config.tone}`;
       }
     },
     async generateVisual() {
+      if (!this.outputs.script) return;
       this.loading.visual = true;
-      this.outputs.visualType = this.models.visual === 'seedance' ? 'video' : 'image';
+      const type = this.models.visual === 'seedance' ? 'video' : 'image';
+      this.outputs.visualType = type;
       
-      // Simulating visual generation for now as we'd need specific operators for nano-banana/seedance
-      // In a real implementation, we'd call seedanceOperator or imageOperator.
-      setTimeout(() => {
-        this.outputs.visualUrl = 'https://cdn.acedata.cloud/l3ffw7.jpg'; // Placeholder
+      const token = getCookie('token') as string;
+      const prompt = `Visual for script: ${this.outputs.script.hook}. ${this.outputs.script.body}`;
+
+      try {
+        let res;
+        if (type === 'image') {
+          res = await nanobananaOperator.generate({
+            prompt,
+            model: 'nano-banana-v1' as any
+          }, { token });
+        } else {
+          res = await seedanceOperator.generate({
+            prompt,
+            model: 'seedance-v1' as any
+          }, { token });
+        }
+
+        const taskId = res.data.task_id;
+        this.startPolling(taskId, token, type === 'image' ? 'visual-image' : 'visual-video');
+      } catch (err: any) {
         this.loading.visual = false;
-        ElMessage.success('Visuals generated (Demo Placeholder)');
-      }, 3000);
+        ElMessage.error(`Visual generation failed: ${err.message || 'Unknown error'}`);
+      }
     },
-    startPolling(taskId: string, token: string) {
+    startPolling(taskId: string, token: string, category: 'audio' | 'visual-image' | 'visual-video') {
+      if (this.pollingJob) window.clearInterval(this.pollingJob);
+      
       this.pollingJob = window.setInterval(async () => {
         try {
-          const res = await sunoOperator.task(taskId, { token });
-          const audios = (res.data.response as any)?.data;
-          if (audios && audios[0]?.audio_url) {
-            this.outputs.audioUrl = audios[0].audio_url;
-            this.loading.audio = false;
-            window.clearInterval(this.pollingJob);
+          let res;
+          if (category === 'audio') {
+            res = await sunoOperator.task(taskId, { token });
+            const data = (res.data.response as any)?.data;
+            if (data && data[0]?.audio_url) {
+              this.outputs.audioUrl = data[0].audio_url;
+              this.finalizeStep(category);
+            }
+          } else if (category === 'visual-image') {
+            res = await nanobananaOperator.task(taskId, { token });
+            const data = (res.data.response as any)?.data;
+            if (data && data[0]?.image_url) {
+              this.outputs.visualUrl = data[0].image_url;
+              this.finalizeStep(category);
+            }
+          } else if (category === 'visual-video') {
+            res = await seedanceOperator.task(taskId, { token });
+            const data = (res.data.response as any)?.data;
+            if (data && data[0]?.video_url) {
+              this.outputs.visualUrl = data[0].video_url;
+              this.finalizeStep(category);
+            }
           }
         } catch (e) {
-          console.error(e);
+          console.error('Polling error:', e);
         }
       }, 5000);
+    },
+    finalizeStep(category: string) {
+      window.clearInterval(this.pollingJob);
+      this.pollingJob = 0;
+      if (category === 'audio') this.loading.audio = false;
+      else this.loading.visual = false;
+      ElMessage.success(`${category.split('-')[0]} generated successfully!`);
     },
     goToVoice() { this.step = 2; },
     resetStudio() {
