@@ -1,6 +1,6 @@
 <template>
   <div class="composer">
-    <div class="tools">
+    <div v-if="false" class="tools">
       <el-upload
         v-model:file-list="fileList"
         :class="{
@@ -71,7 +71,7 @@
       v-model="questionValue"
       :disabled="answering"
       class="input"
-      :placeholder="$t('chat.message.newMessagePlaceholder')"
+      :placeholder="$t('chat.message.contentStudioPlaceholder')"
       :style="{ height: inputHeight }"
       @keydown.enter.exact.prevent="onSubmit"
       @input="adjustTextareaHeight"

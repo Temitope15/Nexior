@@ -255,6 +255,10 @@
     "message": "Please enter your question...",
     "description": "Placeholder on the webpage telling the user to enter a question"
   },
+  "message.contentStudioPlaceholder": {
+    "message": "Enter a topic to generate a video script...",
+    "description": "Placeholder for AI Content Studio"
+  },
   "message.noInput": {
     "message": "Question cannot be empty",
     "description": "Message on the webpage telling the user that the question cannot be empty"

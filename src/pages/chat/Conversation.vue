@@ -2,8 +2,9 @@
   <layout @change-conversation="onChangeConversation($event)">
     <template #chat>
       <div class="toolbar">
+        <div class="brand">AI Content Studio</div>
         <model-selector class="selector" @model-group-changed="onChangeConversation(undefined)" />
-        <div class="toolbar-actions">
+        <div v-if="false" class="toolbar-actions">
           <el-tooltip v-if="false" :content="$t('chat.agent.tooltip')" placement="bottom">
             <el-button class="toolbar-btn" text @click="agentManagerVisible = true">
               <font-awesome-icon icon="fa-solid fa-desktop" />
@@ -88,7 +89,7 @@
 import axios from 'axios';
 import { defineComponent } from 'vue';
 import Message from '@/components/chat/Message.vue';
-import { CHAT_MODEL_GROUPS, CHAT_MODELS, ROLE_ASSISTANT, ROLE_USER } from '@/constants';
+import { CHAT_MODEL_GROUPS, CHAT_MODELS, ROLE_ASSISTANT, ROLE_USER, ROLE_SYSTEM } from '@/constants';
 import { IChatMessageState, IChatConversationResponse, IChatConversation, IChatMessage, BaseError } from '@/models';
 import Composer from '@/components/chat/Composer.vue';
 import ModelSelector from '@/components/chat/ModelSelector.vue';
@@ -144,6 +145,26 @@ export default defineComponent({
     ElButton,
     ElBadge,
     FontAwesomeIcon
+  },
+  setup() {
+    const SYSTEM_PROMPT = `You are a short-form video content creator.
+Given a topic, generate a script for a 30–60 second video.
+Structure:
+- Hook
+- Main content
+- Call to action
+Make it engaging, simple, and suitable for TikTok, Instagram Reels, or YouTube Shorts.
+
+Please format your response strictly as follows:
+HOOK:
+[attention-grabbing opening line]
+
+BODY:
+[2–3 key points, concise and engaging]
+
+CTA:
+[a strong call to action]`;
+    return { SYSTEM_PROMPT };
   },
   data(): IData {
     return {
@@ -558,6 +579,13 @@ export default defineComponent({
         return;
       }
       let conversationId = this.conversationId;
+      // Prepend system prompt for new conversations or if not present
+      if (!this.messages.find((m) => m.role === ROLE_SYSTEM)) {
+        this.messages.unshift({
+          role: ROLE_SYSTEM,
+          content: this.SYSTEM_PROMPT
+        });
+      }
       this.messages.push({
         content: '',
         role: ROLE_ASSISTANT,
@@ -738,8 +766,21 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
+  padding: 0 40px 0 12px;
   z-index: 100;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  background-color: var(--el-bg-color);
+
+  .brand {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--el-color-primary);
+    background: var(--el-color-primary-light-9);
+    padding: 2px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-right: 12px;
+  }
 }
 
 .selector {
