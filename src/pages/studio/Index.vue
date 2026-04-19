@@ -184,8 +184,8 @@ import { defineComponent } from 'vue';
 import { ElInput, ElSelect, ElOption, ElButton, ElMessage } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { chatOperator, sunoOperator } from '@/operators';
-import { IChatModelName, ROLE_ASSISTANT } from '@/models';
-import { SUNO_DEFAULT_MODEL } from '@/constants';
+import { IChatModelName } from '@/models';
+import { ROLE_ASSISTANT, SUNO_DEFAULT_MODEL } from '@/constants';
 import { getCookie } from 'typescript-cookie';
 
 interface StudioState {
@@ -287,8 +287,7 @@ Tone: ${this.config.tone}`;
                 role: 'user',
                 content: userPrompt
             }],
-            model: this.models.script as IChatModelName,
-            stream: false
+            model: this.models.script as IChatModelName
         }, { token });
 
         const content = res.answer;
