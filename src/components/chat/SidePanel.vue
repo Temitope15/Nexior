@@ -1,7 +1,7 @@
 <template>
   <div class="panel">
     <el-skeleton v-if="loading && conversationGroups === undefined" />
-    <div v-else class="conversations">
+    <div class="conversations">
       <div class="conversation" @click="onNewConversation">
         <div class="icons">
           <font-awesome-icon icon="fa-solid fa-plus" class="icon" />
@@ -75,6 +75,17 @@
         </el-button>
       </template>
     </el-dialog>
+    <div class="footer">
+      <div class="footer-item" @click="onHelp">
+        <font-awesome-icon icon="fa-solid fa-circle-question" class="icon" />
+        <span class="label">Help</span>
+      </div>
+      <div v-if="!authenticated" class="footer-item login-btn" @click="onLogin">
+        <font-awesome-icon icon="fa-solid fa-arrow-right-to-bracket" class="icon" />
+        <span class="label">Log in</span>
+      </div>
+      <user-center v-else :data-username="currentUser?.email || currentUser?.username || ''" />
+    </div>
   </div>
 </template>
 
@@ -92,8 +103,15 @@ import {
 } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { chatOperator } from '@/operators';
-import { IChatConversation } from '@/models';
-import { Status } from '@/models';
+import {
+  IChatConversation,
+  IChatModelGroup,
+  IChatMessageContentItem,
+  IApplication,
+  IUser,
+  Status
+} from '@/models';
+import UserCenter from '@/components/user/Center.vue';
 
 type ConversationCommand = 'rename' | 'delete';
 
@@ -107,29 +125,37 @@ export default defineComponent({
     ElDropdownItem,
     ElDropdownMenu,
     FontAwesomeIcon,
-    ElSkeleton
+    ElSkeleton,
+    UserCenter
   },
   props: {},
   emits: ['change-conversation'],
-  data() {
+  data(): {
+    renameDialogVisible: boolean;
+    deleteDialogVisible: boolean;
+    actingConversation: IChatConversation | undefined;
+    renameDraft: string;
+    renameSubmitting: boolean;
+    deleteSubmitting: boolean;
+  } {
     return {
       renameDialogVisible: false,
       deleteDialogVisible: false,
-      actingConversation: undefined as IChatConversation | undefined,
+      actingConversation: undefined,
       renameDraft: '',
       renameSubmitting: false,
       deleteSubmitting: false
     };
   },
   computed: {
-    modelGroup() {
+    modelGroup(): IChatModelGroup | undefined {
       return this.$store.state.chat.modelGroup;
     },
-    conversationId() {
+    conversationId(): string | undefined {
       console.debug('conversationId in side', this.$route.params?.id);
       return this.$route.params?.id?.toString();
     },
-    conversations() {
+    conversations(): IChatConversation[] | undefined {
       let conversations = this.$store.state.chat.conversations;
       console.debug('conversations', conversations);
       console.debug('modelGroup', this.modelGroup);
@@ -142,7 +168,7 @@ export default defineComponent({
       console.debug('filtered conversations', conversations);
       return conversations;
     },
-    conversationGroups() {
+    conversationGroups(): Record<string, IChatConversation[]> {
       // split our 4 groups according to the `updated_at` field, to 'today', 'yesterday', 'this week', 'earlier'.
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -182,14 +208,20 @@ export default defineComponent({
           : {})
       };
     },
-    application() {
+    application(): IApplication | undefined {
       return this.$store.state.chat.application;
     },
-    loading() {
+    loading(): boolean {
       return this.$store.state.chat.status.getConversations === Status.Request;
     },
-    token() {
+    token(): string | undefined {
       return this.$store.state.chat?.credential?.token;
+    },
+    authenticated(): boolean {
+       return !!this.$store.state.token.access;
+    },
+    currentUser(): IUser {
+       return this.$store.getters.user || {};
     }
   },
   watch: {
@@ -294,6 +326,12 @@ export default defineComponent({
       } finally {
         this.deleteSubmitting = false;
       }
+    },
+    onHelp() {
+      window.open('https://docs.acedata.cloud', '_blank');
+    },
+    onLogin() {
+       this.$store.dispatch('login');
     }
   }
 });
@@ -311,9 +349,26 @@ export default defineComponent({
 
   .conversations {
     width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    /* Subtle scrollbar */
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--el-fill-color);
+      border-radius: 4px;
+    }
+
     .group {
       width: 100%;
       display: flex;
@@ -406,6 +461,83 @@ export default defineComponent({
       color: var(--el-text-color-regular);
       font-size: 14px;
       line-height: 22px;
+    }
+  }
+
+  .footer {
+    width: 100%;
+    padding: 10px 4px;
+    border-top: 1px solid var(--el-border-color-lighter);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .footer-item {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 10px;
+      color: var(--el-text-color-regular);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: var(--el-bg-color-page);
+        color: var(--el-text-color-primary);
+      }
+
+      &.login-btn {
+        background: var(--el-color-primary);
+        color: white;
+        margin-top: 4px;
+        &:hover {
+          background: var(--el-color-primary-light-3);
+        }
+      }
+
+      .icon {
+        width: 16px;
+        margin-right: 12px;
+        font-size: 16px;
+      }
+
+      .label {
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+
+    :deep(.center) {
+      width: 100%;
+      .el-dropdown {
+        width: 100%;
+      }
+      .cursor-pointer {
+        width: 100%;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 10px;
+        gap: 12px;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+          background-color: var(--el-bg-color-page);
+        }
+
+        &::after {
+          content: attr(data-username);
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--el-text-color-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
 }

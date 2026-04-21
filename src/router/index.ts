@@ -200,7 +200,7 @@ const routes = [
     path: '/studio',
     name: 'studio',
     component: () => import('@/pages/studio/Index.vue'),
-    meta: { hideNav: true, hideSide: true, appName: 'chatgpt' }
+    meta: { hideNav: false, hideSide: false, appName: 'chat' }
   },
   {
     path: '/chat/oauth/callback',
