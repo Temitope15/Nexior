@@ -1,7 +1,2 @@
-branch="$(git rev-parse --abbrev-ref HEAD)"
 
-if [ "$branch" = "dev" ]; then
-  echo "You can't commit directly to dev branch, please checkout a new branch to commit"
-  exit 1
-fi
 
