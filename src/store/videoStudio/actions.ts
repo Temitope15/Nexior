@@ -1,11 +1,7 @@
 import { ActionContext } from 'vuex';
 import { IVideoStudioState } from './models';
 import { IRootState } from '../common/models';
-import {
-  ISunoAudioResponse,
-  IProducerAudioResponse,
-  IProducerVideoResponse
-} from '@/models';
+import { ISunoAudioResponse, IProducerAudioResponse, IProducerVideoResponse } from '@/models';
 import { sunoOperator, producerOperator } from '@/operators';
 import { scriptGeneratorOperator } from '@/operators/scriptGenerator';
 import {
@@ -39,8 +35,7 @@ async function pollUntil<T>(
 async function generateScript({ commit, state }: Context): Promise<void> {
   commit('setStepStatus', { id: 'script', status: 'running' });
   try {
-    const res = await scriptGeneratorOperator.generate(state.config.idea, { token: state.apiKey });
-    const content = res.data.choices?.[0]?.message?.content ?? '';
+    const content = await scriptGeneratorOperator.generate(state.config.idea, { token: state.apiKey });
     const output = scriptGeneratorOperator.parseScriptOutput(content);
     commit('setScriptOutput', output);
     commit('setStepOutput', { id: 'script', output: output as unknown as Record<string, unknown> });

@@ -1,36 +1,33 @@
-import axios, { AxiosResponse } from 'axios';
-import { IGeminiCompletionResponse, IScriptOutput } from '@/models';
-import { BASE_URL_API } from '@/constants';
-import { VIDEO_STUDIO_SCRIPT_MODEL, VIDEO_STUDIO_SYSTEM_PROMPT } from '@/constants/videoStudio';
+import { IScriptOutput } from '@/models';
+import { CHAT_MODEL_NAME_GEMINI_2_5_FLASH } from '@/constants';
+import { VIDEO_STUDIO_SYSTEM_PROMPT } from '@/constants/videoStudio';
+import { chatOperator } from './chat';
 
 class ScriptGeneratorOperator {
-  async generate(
-    idea: string,
-    options: { token: string }
-  ): Promise<AxiosResponse<IGeminiCompletionResponse>> {
-    return await axios.post(
-      '/gemini/chat/completions',
-      {
-        model: VIDEO_STUDIO_SCRIPT_MODEL,
-        messages: [
-          { role: 'system', content: VIDEO_STUDIO_SYSTEM_PROMPT },
-          { role: 'user', content: idea }
-        ]
-      },
-      {
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: `Bearer ${options.token}`
-        },
-        baseURL: BASE_URL_API
-      }
+  async generate(idea: string, options: { token: string }): Promise<string> {
+    const question = `${VIDEO_STUDIO_SYSTEM_PROMPT}\n\nIdea: ${idea}`;
+    const response = await chatOperator.chatConversation(
+      { question, model: CHAT_MODEL_NAME_GEMINI_2_5_FLASH },
+      { token: options.token }
     );
+    return response.answer;
   }
 
   parseScriptOutput(content: string): IScriptOutput {
-    const cleaned = content.replace(/^```json\s*/i, '').replace(/\s*```$/, '').trim();
-    const parsed = JSON.parse(cleaned);
+    // Strip markdown code fences if present
+    const fenceMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+    const cleaned = fenceMatch ? fenceMatch[1].trim() : content.trim();
+
+    let parsed: Record<string, unknown>;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      // Fall back: find first JSON object in the text
+      const objMatch = cleaned.match(/\{[\s\S]*\}/);
+      if (!objMatch) throw new Error('No JSON found in script generation response. Please try again.');
+      parsed = JSON.parse(objMatch[0]);
+    }
+
     return {
       hook: String(parsed.hook || ''),
       body: String(parsed.body || ''),

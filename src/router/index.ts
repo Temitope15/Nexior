@@ -197,6 +197,12 @@ const ROUTE_SEO: Record<string, { title: string; description: string; keywords: 
     description: 'Convert any idea into a ready-to-post short-form video with AI-generated script, music, voiceover, and video.',
     keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno', 'Voirax'],
     category: 'AI Video Generation'
+  },
+  studio: {
+    title: 'Video Studio | Voirax',
+    description: 'Convert any idea into a ready-to-post short-form video with AI-generated script, music, voiceover, and video.',
+    keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno', 'Voirax'],
+    category: 'AI Video Generation'
   }
 };
 
@@ -208,9 +214,15 @@ const routes = [
   },
   {
     path: '/studio',
-    name: ROUTE_STUDIO,
-    component: () => import('@/pages/studio/Index.vue'),
-    meta: { hideNav: false, hideSide: false, appName: 'chat' }
+    component: () => import('@/layouts/Main.vue'),
+    meta: { auth: true, appName: 'videoStudio' },
+    children: [
+      {
+        path: '',
+        name: ROUTE_STUDIO,
+        component: () => import('@/pages/studio/Index.vue')
+      }
+    ]
   },
   {
     path: '/chat/oauth/callback',

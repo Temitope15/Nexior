@@ -38,23 +38,3 @@ export interface IVideoStudioState {
   scriptOutput?: IScriptOutput;
 }
 
-export interface IGeminiMessage {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-}
-
-export interface IGeminiCompletionResponse {
-  id: string;
-  model: string;
-  object: string;
-  choices: Array<{
-    message: IGeminiMessage;
-    finish_reason: string;
-    index: number;
-  }>;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}

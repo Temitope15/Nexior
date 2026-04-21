@@ -1,939 +1,625 @@
 <template>
-  <layout @change-conversation="onChangeConversation($event)">
-    <template #chat>
-      <div class="agent-studio">
-        <!-- Background Decor -->
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+  <div class="video-studio">
+    <div class="studio-header">
+      <div class="studio-title">
+        <span class="studio-icon">⬛</span>
+        <span>Video Studio</span>
+      </div>
+      <div class="studio-subtitle">Convert any idea into a ready-to-post short-form video</div>
+    </div>
 
-        <div v-motion-fade class="studio-content">
-          <header class="studio-header">
-            <div class="agent-badge">
-              <font-awesome-icon icon="fa-solid fa-robot" class="mr-2" />
-              AI CONTENT AGENT v2.5
+    <div class="studio-body">
+      <!-- Left column: config -->
+      <div class="studio-left">
+        <div class="config-card">
+          <div class="card-section">
+            <label class="field-label">Your Idea</label>
+            <textarea
+              v-model="idea"
+              class="idea-textarea"
+              placeholder="e.g. The one habit that separates top 1% founders from everyone else"
+              rows="4"
+            />
+          </div>
+
+          <div class="card-section config-row">
+            <div class="config-col">
+              <label class="field-label">Music Style</label>
+              <input v-model="musicStyle" class="text-input" placeholder="upbeat lo-fi, motivational" />
             </div>
-            <h1>Voirax <span class="gradient-text">Studio</span></h1>
-            <p>Turning thoughts into cinematic short-form content</p>
-          </header>
-
-          <!-- Main Agent Interface -->
-          <div class="agent-card glass">
-            <!-- Step 0: Input Configuration -->
-            <div v-if="workflowState === 'IDLE'" v-motion-slide-up class="workflow-step">
-              <div class="input-section">
-                <h2 class="section-title">What's the concept?</h2>
-                <el-input
-                  v-model="config.topic"
-                  type="textarea"
-                  :rows="4"
-                  placeholder="E.g. Create a 60-second viral TikTok script about why consistency is better than talent in business, with a high-energy tone and a clear call to action."
-                  class="premium-input"
-                />
-
-                <div class="config-grid mt-8">
-                  <div class="config-item">
-                    <label>Platform Optimization</label>
-                    <el-select v-model="config.platform" class="w-full premium-select">
-                      <el-option label="TikTok (9:16)" value="TikTok" />
-                      <el-option label="Instagram Reels" value="Instagram" />
-                      <el-option label="YouTube Shorts" value="YouTube" />
-                    </el-select>
-                  </div>
-                  <div class="config-item">
-                    <label>Narrative Tone</label>
-                    <el-select v-model="config.tone" class="w-full premium-select">
-                      <el-option label="Educational / Informative" value="Educational" />
-                      <el-option label="Sales / Persuasive" value="Sales" />
-                      <el-option label="Entertaining / Dynamic" value="Entertaining" />
-                      <el-option label="Inspirational / Deep" value="Inspirational" />
-                    </el-select>
-                  </div>
-                </div>
-
-                <!-- API Key input for standalone / direct usage -->
-                <div class="api-key-row mt-8">
-                  <div class="api-key-label">
-                    <font-awesome-icon icon="fa-solid fa-key" class="mr-2 opacity-50" />
-                    Ace Data Cloud API Key
-                  </div>
-                  <el-input
-                    v-model="localApiKey"
-                    type="password"
-                    show-password
-                    placeholder="Paste your AceData API key to generate"
-                    class="premium-input api-key-input"
-                    clearable
-                  />
-                  <div v-if="!localApiKey && !credential" class="api-key-hint">
-                    <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="hint-link">
-                      Get a free API key &rarr;
-                    </a>
-                  </div>
-                </div>
-
-                <div class="actions center mt-8">
-                  <el-button
-                    type="primary"
-                    size="large"
-                    class="generate-btn"
-                    :disabled="!config.topic || !ready"
-                    @click="generateScript"
-                  >
-                    Initiate Generation Agent
-                    <font-awesome-icon icon="fa-solid fa-wand-magic-sparkles" class="ml-2" />
-                  </el-button>
-                </div>
-              </div>
+            <div class="config-col">
+              <label class="field-label">Voice Gender</label>
+              <select v-model="voiceGender" class="select-input">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
             </div>
+          </div>
 
-            <!-- Step 1: Script Generation / Loading -->
-            <div v-if="workflowState === 'GENERATING_SCRIPT'" v-motion-fade class="workflow-step text-center py-24">
-              <div class="agent-animation">
-                <div class="pulse-ring"></div>
-                <div class="pulse-ring-slow"></div>
-                <font-awesome-icon icon="fa-solid fa-brain" class="agent-icon" />
-              </div>
-              <h3 class="mt-10 text-2xl font-black letter-spacing-tight">Drafting Scripting Agent...</h3>
-              <p class="text-secondary mt-2">Economizing tokens via Gemini 2.5 Flash architecture.</p>
+          <div class="card-section">
+            <label class="toggle-label">
+              <span class="toggle-text">Instrumental music</span>
+              <input type="checkbox" v-model="instrumental" class="toggle-check" />
+              <span class="toggle-slider" :class="{ 'toggle-slider--on': instrumental }" />
+            </label>
+          </div>
+        </div>
 
-              <div class="agent-logs mt-10 glass-dark">
-                <div v-for="(log, i) in activeLogs" :key="i" v-motion-slide-left class="log-entry">
-                  <font-awesome-icon icon="fa-solid fa-terminal" class="mr-2 text-xs opacity-50" />
-                  {{ log }}
-                </div>
-              </div>
-            </div>
+        <api-key-panel v-model="apiKey" @wallet-address="onWalletAddress" />
 
-            <!-- Step 2: Script Review & Approval -->
-            <div v-if="workflowState === 'REVIEW_SCRIPT'" v-motion-slide-up class="workflow-step">
-              <div class="flex justify-between items-center mb-6">
-                <h2 class="section-title mb-0">Agent Proposal: Script</h2>
-                <div class="token-saver-badge">TOKEN OPTIMIZED</div>
-              </div>
+        <div class="action-row">
+          <button
+            class="btn-primary"
+            :disabled="!canGenerate || isRunning"
+            @click="onGenerate"
+          >
+            <span v-if="isRunning" class="btn-spinner" />
+            <span>{{ isRunning ? 'Generating…' : 'Generate Video' }}</span>
+          </button>
+          <button
+            v-if="walletAddress"
+            class="btn-secondary"
+            :disabled="isRunning || isPaying"
+            @click="onPayWithSolana"
+          >
+            <span v-if="isPaying" class="btn-spinner" />
+            <span>{{ isPaying ? 'Paying…' : '⬛ Pay with Solana' }}</span>
+          </button>
+        </div>
 
-              <div class="script-editor glass-dark">
-                <div class="script-block">
-                  <div class="block-header">
-                    <font-awesome-icon icon="fa-solid fa-anchor" class="mr-2" />
-                    HOOK
-                  </div>
-                  <el-input v-model="outputs.script.hook" type="textarea" :rows="2" autosize />
-                </div>
-                <div class="script-block mt-6">
-                  <div class="block-header">
-                    <font-awesome-icon icon="fa-solid fa-align-left" class="mr-2" />
-                    BODY
-                  </div>
-                  <el-input v-model="outputs.script.body" type="textarea" :rows="5" autosize />
-                </div>
-                <div class="script-block mt-6">
-                  <div class="block-header">
-                    <font-awesome-icon icon="fa-solid fa-bullhorn" class="mr-2" />
-                    CTA
-                  </div>
-                  <el-input v-model="outputs.script.cta" type="textarea" :rows="2" autosize />
-                </div>
-              </div>
+        <div v-if="paymentTx" class="payment-success">
+          <span>✓ Payment confirmed</span>
+          <a
+            :href="`https://solscan.io/tx/${paymentTx}`"
+            target="_blank"
+            rel="noopener"
+            class="tx-link"
+          >{{ paymentTx.slice(0, 8) }}…</a>
+        </div>
 
-              <div class="actions space-between mt-10">
-                <el-button round class="glass-btn" @click="workflowState = 'IDLE'">
-                  <font-awesome-icon icon="fa-solid fa-chevron-left" class="mr-2" />
-                  Adjust Concept
-                </el-button>
-                <el-button type="success" size="large" class="approve-btn premium-shadow" @click="startMediaGeneration">
-                  Deploy Production Agent
-                  <font-awesome-icon icon="fa-solid fa-play" class="ml-2" />
-                </el-button>
-              </div>
-            </div>
+        <div v-if="pipelineError" class="pipeline-error">
+          {{ pipelineError }}
+        </div>
+      </div>
 
-            <!-- Step 3: Media Generation (Audio & Video) -->
-            <div v-if="workflowState === 'GENERATING_MEDIA'" v-motion-fade class="workflow-step">
-              <h2 class="section-title mb-8">Production Pipeline</h2>
+      <!-- Right column: pipeline + costs -->
+      <div class="studio-right">
+        <div class="panel-card">
+          <div class="panel-card-title">Pipeline</div>
+          <pipeline-tracker :steps="steps" />
+        </div>
 
-              <div class="generation-status py-6">
-                <div class="media-track glass-dark p-6 mb-6">
-                  <div class="track-info">
-                    <div class="flex items-center">
-                      <font-awesome-icon icon="fa-solid fa-microphone-lines" class="mr-3 text-primary" />
-                      <span>Vocal & Audio Synthesis</span>
-                    </div>
-                    <div class="status-indicator">
-                      <font-awesome-icon v-if="loading.audio" icon="fa-solid fa-spinner" spin />
-                      <font-awesome-icon v-else icon="fa-solid fa-circle-check" class="text-success" />
-                      <span class="ml-2 text-xs font-bold">{{ loading.audio ? 'SYNTHESIZING' : 'READY' }}</span>
-                    </div>
-                  </div>
-                  <el-progress
-                    :percentage="loading.audio ? 70 : 100"
-                    :status="loading.audio ? 'exception' : 'success'"
-                    :show-text="false"
-                    class="premium-progress"
-                  />
-                </div>
+        <cost-breakdown :steps="steps" :total-cost-usd="totalCostUsd" class="mt-3" />
+      </div>
+    </div>
 
-                <div class="media-track glass-dark p-6">
-                  <div class="track-info">
-                    <div class="flex items-center">
-                      <font-awesome-icon icon="fa-solid fa-film" class="mr-3 text-purple" />
-                      <span>Visual Orchestration & Packaging</span>
-                    </div>
-                    <div class="status-indicator">
-                      <font-awesome-icon v-if="loading.visual" icon="fa-solid fa-spinner" spin />
-                      <font-awesome-icon v-else icon="fa-solid fa-circle-check" class="text-success" />
-                      <span class="ml-2 text-xs font-bold">{{ loading.visual ? 'RENDERING' : 'READY' }}</span>
-                    </div>
-                  </div>
-                  <el-progress
-                    :percentage="loading.visual ? 35 : 100"
-                    :status="loading.visual ? 'exception' : 'success'"
-                    :show-text="false"
-                    class="premium-progress purple"
-                  />
-                </div>
+    <!-- Result section -->
+    <div v-if="finalVideoUrl || finalAudioUrl || scriptOutput" class="result-section">
+      <div class="result-title">Output</div>
 
-                <div class="pipeline-logs mt-10">
-                  <p class="text-center text-secondary text-sm italic">
-                    <font-awesome-icon icon="fa-solid fa-circle-notch" spin class="mr-2" />
-                    {{ pipelineStatus }}
-                  </p>
-                </div>
-              </div>
-            </div>
+      <div class="result-body">
+        <div v-if="finalVideoUrl" class="result-video-col">
+          <video :src="finalVideoUrl" controls class="result-video" playsinline />
+          <a :href="finalVideoUrl" download class="download-link">Download video &darr;</a>
+        </div>
 
-            <!-- Step 4: Final Preview & Download -->
-            <div v-if="workflowState === 'FINAL_RESULT'" v-motion-slide-up class="workflow-step">
-              <h2 class="section-title mb-6">Mastering Complete</h2>
+        <div class="result-content-col">
+          <div v-if="finalAudioUrl" class="audio-section">
+            <div class="result-label">Background Music</div>
+            <audio :src="finalAudioUrl" controls class="result-audio" />
+          </div>
 
-              <div class="preview-container glass-dark relative">
-                <video
-                  v-if="outputs.videoUrl"
-                  :src="outputs.videoUrl"
-                  controls
-                  class="main-video premium-shadow"
-                  autoplay
-                ></video>
-                <div class="video-overlay-badge">PREVIEW READY</div>
-              </div>
-
-              <div class="actions center mt-10">
-                <el-button size="large" round class="glass-btn" @click="resetWorkflow"> New Project </el-button>
-                <el-button
-                  type="primary"
-                  size="large"
-                  class="download-btn premium-shadow"
-                  :disabled="!outputs.videoUrl"
-                  @click="downloadVideo"
-                >
-                  Download Master File (.mp4)
-                  <font-awesome-icon icon="fa-solid fa-cloud-arrow-down" class="ml-2" />
-                </el-button>
-              </div>
-            </div>
+          <div v-if="scriptOutput" class="script-section">
+            <div class="result-label">Generated Script</div>
+            <div class="script-hook">{{ scriptOutput.hook }}</div>
+            <div class="script-body">{{ scriptOutput.body }}</div>
+            <div class="script-cta">{{ scriptOutput.cta }}</div>
           </div>
         </div>
       </div>
-    </template>
-  </layout>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { ElInput, ElSelect, ElOption, ElButton, ElMessage, ElProgress } from 'element-plus';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { chatOperator, sunoOperator, producerOperator } from '@/operators';
-import { IChatModelName } from '@/models';
-import { CHAT_MODEL_NAME_GEMINI_2_5_FLASH, SUNO_DEFAULT_MODEL } from '@/constants';
-import { Status } from '@/models/common';
-import Layout from '@/layouts/Chat.vue';
+import { useWallet } from 'solana-wallets-vue';
+import { Connection, Transaction } from '@solana/web3.js';
+import { executeSolanaPayment } from '@/utils/x402/solana';
+import { ElMessage } from 'element-plus';
+import PipelineTracker from '@/components/video-studio/PipelineTracker.vue';
+import CostBreakdown from '@/components/video-studio/CostBreakdown.vue';
+import ApiKeyPanel from '@/components/video-studio/ApiKeyPanel.vue';
+import { IVideoStudioConfig } from '@/models';
 
-type WorkflowState = 'IDLE' | 'GENERATING_SCRIPT' | 'REVIEW_SCRIPT' | 'GENERATING_MEDIA' | 'FINAL_RESULT';
-
-interface AgentState {
-  workflowState: WorkflowState;
-  localApiKey: string;
-  config: {
-    topic: string;
-    platform: string;
-    tone: string;
-  };
-  loading: {
-    script: boolean;
-    audio: boolean;
-    visual: boolean;
-  };
-  outputs: {
-    script: { hook: string; body: string; cta: string };
-    audioUrl: string;
-    audioId: string;
-    videoUrl: string;
-  };
-  pollingJob: number;
-  activeLogs: string[];
-  pipelineStatus: string;
-}
+const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const ACEDATA_TREASURY = 'AcEDATAVAULT1111111111111111111111111111111';
+const SOLANA_RPC = 'https://api.mainnet-beta.solana.com';
 
 export default defineComponent({
-  name: 'AgentStudio',
-  components: {
-    Layout,
-    ElInput,
-    ElSelect,
-    ElOption,
-    ElButton,
-    ElProgress,
-    FontAwesomeIcon
+  name: 'StudioIndex',
+  components: { PipelineTracker, CostBreakdown, ApiKeyPanel },
+  setup() {
+    const { publicKey, sendTransaction } = useWallet();
+    return { walletPublicKey: publicKey, walletSendTransaction: sendTransaction };
   },
-  data(): AgentState {
+  data() {
     return {
-      workflowState: 'IDLE',
-      localApiKey: localStorage.getItem('vs_api_key') || '',
-      config: {
-        topic: '',
-        platform: 'TikTok',
-        tone: 'Educational'
-      },
-      loading: {
-        script: false,
-        audio: false,
-        visual: false
-      },
-      outputs: {
-        script: { hook: '', body: '', cta: '' },
-        audioUrl: '',
-        audioId: '',
-        videoUrl: ''
-      },
-      pollingJob: 0,
-      activeLogs: [],
-      pipelineStatus: 'Initializing production assets...'
+      walletAddress: null as string | null,
+      isPaying: false,
+      paymentTx: null as string | null,
+      pipelineError: null as string | null
     };
   },
   computed: {
-    authenticated() {
-      return !!this.$store.state.token.access;
+    vs(): any { return (this.$store.state as any).videoStudio; },
+    idea: {
+      get(): string { return this.vs.config.idea; },
+      set(v: string) { this.$store.dispatch('videoStudio/setConfig', { idea: v }); }
     },
-    service() {
-      return this.$store.state.chat.service;
+    musicStyle: {
+      get(): string { return this.vs.config.musicStyle; },
+      set(v: string) { this.$store.dispatch('videoStudio/setConfig', { musicStyle: v }); }
     },
-    application() {
-      return this.$store.state.chat.application;
+    voiceGender: {
+      get(): string { return this.vs.config.voiceGender; },
+      set(v: string) { this.$store.dispatch('videoStudio/setConfig', { voiceGender: v as IVideoStudioConfig['voiceGender'] }); }
     },
-    credential() {
-      return this.$store.state.chat.credential;
+    instrumental: {
+      get(): boolean { return this.vs.config.instrumental; },
+      set(v: boolean) { this.$store.dispatch('videoStudio/setConfig', { instrumental: v }); }
     },
-    sunoCredential() {
-      return this.$store.state.suno.credential;
+    apiKey: {
+      get(): string { return this.vs.apiKey; },
+      set(v: string) { this.$store.dispatch('videoStudio/setApiKey', v); }
     },
-    producerCredential() {
-      return this.$store.state.producer.credential;
+    steps() { return this.vs.steps; },
+    totalCostUsd() { return this.vs.totalCostUsd; },
+    finalAudioUrl() { return this.vs.finalAudioUrl; },
+    finalVideoUrl() { return this.vs.finalVideoUrl; },
+    scriptOutput() { return this.vs.scriptOutput; },
+    isRunning(): boolean {
+      return this.steps.some((s: any) => s.status === 'running' || s.status === 'polling');
     },
-    initializing() {
-      return (
-        this.$store.state.chat.status.getApplications === Status.Request ||
-        this.$store.state.suno.status.getApplications === Status.Request ||
-        this.$store.state.producer.status.getApplications === Status.Request
-      );
-    },
-    ready(): boolean {
-      const hasToken =
-        !!this.localApiKey ||
-        !!this.credential?.token ||
-        !!(this.$store.state as any).token?.provider_token;
-      return hasToken;
+    canGenerate(): boolean {
+      return !!this.idea.trim() && !!this.apiKey.trim();
     }
   },
-  async mounted() {
-    await Promise.all([
-      this.$store.dispatch('chat/getService'),
-      this.$store.dispatch('chat/getApplications'),
-      this.$store.dispatch('suno/getService'),
-      this.$store.dispatch('suno/getApplications'),
-      this.$store.dispatch('producer/getService'),
-      this.$store.dispatch('producer/getApplications')
-    ]);
-  },
-  beforeUnmount() {
-    this.stopPolling();
-  },
   methods: {
-    onChangeConversation(id?: string) {
-      console.debug('onChangeConversation in studio', id);
-      if (id) {
-        this.$router.push(`/chatgpt/conversations/${id}`);
-      }
+    onWalletAddress(addr: string | null) {
+      this.walletAddress = addr;
     },
-
-    addLog(msg: string) {
-      this.activeLogs.push(msg);
-      if (this.activeLogs.length > 5) this.activeLogs.shift();
-    },
-
-    async generateScript() {
-      if (!this.authenticated) {
-        this.$store.dispatch('login');
+    async onGenerate() {
+      if (!this.canGenerate) {
+        ElMessage.warning('Please enter your idea and API key.');
         return;
       }
-
-      this.workflowState = 'GENERATING_SCRIPT';
-      this.loading.script = true;
-      this.activeLogs = [];
-
-      this.addLog('Analyzing intent...');
-      setTimeout(() => this.addLog('Retrieving model context...'), 800);
-      setTimeout(() => this.addLog('Optimizing token allocation...'), 1500);
-
-      const systemPrompt = `You are an elite short-form video content strategist.
-Given a topic, generate a highly engaging script.
-Strictly use this format:
-HOOK: [attention-grabbing opening]
-BODY: [3-4 value-packed points]
-CTA: [strong call to action]
-Target Platform: ${this.config.platform}
-Tone: ${this.config.tone}`;
-
-      const userPrompt = `Video Topic: ${this.config.topic}`;
-
+      this.pipelineError = null;
       try {
-        const token =
-          this.localApiKey ||
-          (this.$store.state as any).token?.provider_token ||
-          this.credential?.token;
-        if (!token) {
-          throw new Error('API key required. Please enter your Ace Data Cloud API key.');
-        }
-        if (this.localApiKey) localStorage.setItem('vs_api_key', this.localApiKey);
-        const res = await chatOperator.chatConversation(
-          {
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: userPrompt }
-            ],
-            model: CHAT_MODEL_NAME_GEMINI_2_5_FLASH as IChatModelName
+        await this.$store.dispatch('videoStudio/runPipeline');
+        ElMessage.success('Video generated successfully!');
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'An error occurred during generation.';
+        this.pipelineError = msg;
+        ElMessage.error(msg);
+      }
+    },
+    async onPayWithSolana() {
+      if (!this.walletPublicKey) {
+        ElMessage.warning('Please connect your Solana wallet first.');
+        return;
+      }
+      const totalCost = this.vs.totalCostUsd;
+      if (totalCost <= 0) {
+        ElMessage.warning('Run a generation first to calculate cost.');
+        return;
+      }
+      this.isPaying = true;
+      this.paymentTx = null;
+      try {
+        const connection = new Connection(SOLANA_RPC, 'confirmed');
+        const sendTx = this.walletSendTransaction;
+        const signAndSendAdapter = async (tx: Transaction): Promise<string> => {
+          return await sendTx(tx, connection);
+        };
+        const amountLamports = BigInt(Math.ceil(totalCost * 1_000_000));
+        const result = await executeSolanaPayment({
+          requirements: {
+            payTo: ACEDATA_TREASURY,
+            asset: USDC_MINT,
+            maxAmountRequired: amountLamports.toString(),
+            scheme: 'exact',
+            network: 'solana',
+            extra: { decimals: 6, computeUnitLimit: 200_000, computeUnitPriceMicroLamports: 1 }
           },
-          { token }
-        );
-
-        this.addLog('Script drafted successfully.');
-        setTimeout(() => {
-          this.outputs.script = this.parseScript(res.answer);
-          this.workflowState = 'REVIEW_SCRIPT';
-        }, 500);
-      } catch (err: any) {
-        ElMessage.error(err.message || 'Script generation failed');
-        this.workflowState = 'IDLE';
+          payerAddress: this.walletPublicKey.toBase58(),
+          signAndSendTransaction: signAndSendAdapter
+        });
+        this.paymentTx = result.signature;
+        ElMessage.success('Payment confirmed on Solana!');
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Payment failed.';
+        ElMessage.error(msg);
       } finally {
-        this.loading.script = false;
+        this.isPaying = false;
       }
-    },
-
-    parseScript(content: string) {
-      const hookMatch = content.match(/HOOK:([\s\S]*?)BODY:/i);
-      const bodyMatch = content.match(/BODY:([\s\S]*?)CTA:/i);
-      const ctaMatch = content.match(/CTA:([\s\S]*?)$/i);
-      return {
-        hook: hookMatch ? hookMatch[1].trim() : content.substring(0, 50),
-        body: bodyMatch ? bodyMatch[1].trim() : '...',
-        cta: ctaMatch ? ctaMatch[1].trim() : '...'
-      };
-    },
-
-    async startMediaGeneration() {
-      if (!this.authenticated) {
-        this.$store.dispatch('login');
-        return;
-      }
-      this.workflowState = 'GENERATING_MEDIA';
-      this.loading.audio = true;
-      this.loading.visual = true;
-      this.pipelineStatus = 'Synthesizing voiceover and background score...';
-
-      try {
-        await this.generateVoiceover();
-      } catch (err) {
-        this.workflowState = 'REVIEW_SCRIPT';
-      }
-    },
-
-    async generateVoiceover() {
-      const scriptText = `${this.outputs.script.hook}. ${this.outputs.script.body}. ${this.outputs.script.cta}`;
-      const token =
-        this.localApiKey ||
-        (this.$store.state as any).token?.provider_token ||
-        this.sunoCredential?.token;
-
-      try {
-        if (!token) throw new Error('API key required.');
-
-        const res = await sunoOperator.audio(
-          {
-            prompt: scriptText,
-            model: SUNO_DEFAULT_MODEL,
-            custom: true,
-            lyric: scriptText,
-            style: 'Narrative Voiceover, Professional Background Music',
-            instrumental: false
-          },
-          { token }
-        );
-
-        this.startPolling(res.data.task_id, token, 'audio');
-      } catch (err: any) {
-        this.loading.audio = false;
-        ElMessage.error('Audio asset generation failed');
-        throw err;
-      }
-    },
-
-    async generateFinalVideo(audioId: string) {
-      this.loading.visual = true;
-      this.pipelineStatus = 'Orchestrating context-aware visuals and packaging...';
-      const token =
-        this.localApiKey ||
-        (this.$store.state as any).token?.provider_token ||
-        this.producerCredential?.token;
-
-      try {
-        if (!token) throw new Error('API key required.');
-
-        const res = await producerOperator.video(
-          {
-            audio_id: audioId
-          },
-          { token }
-        );
-
-        this.startPolling(res.data.task_id, token, 'video');
-      } catch (err: any) {
-        this.loading.visual = false;
-        ElMessage.error('Video assembly failed');
-      }
-    },
-
-    startPolling(taskId: string, token: string, type: 'audio' | 'video') {
-      this.stopPolling();
-
-      this.pollingJob = window.setInterval(async () => {
-        try {
-          if (type === 'audio') {
-            const res = await sunoOperator.task(taskId, { token });
-            const data = (res.data.response as any)?.data;
-            if (data && data[0]?.audio_url) {
-              this.outputs.audioUrl = data[0].audio_url;
-              this.outputs.audioId = data[0].id;
-              this.loading.audio = false;
-              this.stopPolling();
-              this.generateFinalVideo(this.outputs.audioId);
-            }
-          } else {
-            const res = await producerOperator.task(taskId, { token });
-            const data = (res.data.response as any)?.data;
-            if (data && data.video_url) {
-              this.outputs.videoUrl = data.video_url;
-              this.loading.visual = false;
-              this.stopPolling();
-              this.workflowState = 'FINAL_RESULT';
-            }
-          }
-        } catch (e) {
-          console.error('Polling error:', e);
-        }
-      }, 5000);
-    },
-
-    stopPolling() {
-      if (this.pollingJob) {
-        window.clearInterval(this.pollingJob);
-        this.pollingJob = 0;
-      }
-    },
-
-    downloadVideo() {
-      if (!this.outputs.videoUrl) return;
-      const link = document.createElement('a');
-      link.href = this.outputs.videoUrl;
-      link.setAttribute('download', `voirax-video-${Date.now()}.mp4`);
-      link.setAttribute('target', '_blank');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
-
-    resetWorkflow() {
-      this.workflowState = 'IDLE';
-      this.outputs.script = { hook: '', body: '', cta: '' };
-      this.outputs.audioUrl = '';
-      this.outputs.videoUrl = '';
-      this.outputs.audioId = '';
-      this.activeLogs = [];
     }
   }
 });
 </script>
 
-<style lang="scss" scoped>
-.agent-studio {
-  height: 100%;
-  width: 100%;
-  padding: 40px 20px;
-  background: #020617;
-  color: #f8fafc;
-  position: relative;
-  overflow-y: auto;
-  font-family: 'Outfit', sans-serif;
+<style scoped lang="scss">
+.video-studio {
+  min-height: 100%;
+  background: #0a0a0a;
+  color: #e5e5e5;
+  padding: 32px 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+}
 
-  .blob {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    z-index: 0;
-    filter: blur(120px);
-    opacity: 0.1;
-  }
-  .blob-1 {
-    top: -100px;
-    right: -50px;
-    background: #6366f1;
-  }
-  .blob-2 {
-    bottom: -100px;
-    left: -50px;
-    background: #a855f7;
-  }
-  .blob-3 {
-    top: 30%;
-    left: 20%;
-    width: 300px;
-    height: 300px;
-    background: #3b82f6;
-  }
+.studio-header {
+  margin-bottom: 28px;
+}
 
-  .studio-content {
-    position: relative;
-    z-index: 1;
-    max-width: 860px;
-    margin: 0 auto;
-  }
+.studio-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
 
-  .studio-header {
-    text-align: center;
-    margin-bottom: 50px;
-    .agent-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 14px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      border-radius: 100px;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      margin-bottom: 16px;
-    }
-    h1 {
-      font-size: 48px;
-      font-weight: 900;
-      letter-spacing: -2px;
-      margin-bottom: 12px;
-    }
-    p {
-      font-size: 16px;
-      color: #94a3b8;
-    }
-  }
+.studio-subtitle {
+  font-size: 13px;
+  color: #666;
+}
 
-  .gradient-text {
-    background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+.studio-body {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
 
-  .api-key-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .api-key-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .api-key-input {
-    :deep(.el-input__wrapper) {
-      background: rgba(2, 6, 23, 0.3) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 12px;
-    }
-    :deep(.el-input__inner) {
-      color: #f1f5f9;
-    }
-    &:deep(.el-input__wrapper.is-focus) {
-      border-color: #6366f1 !important;
-    }
-  }
-
-  .api-key-hint {
-    font-size: 11px;
-    color: #475569;
-  }
-
-  .hint-link {
-    color: #818cf8;
-    text-decoration: none;
-    &:hover { text-decoration: underline; }
-  }
-
-  .agent-card {
-    padding: 40px;
-    border-radius: 32px;
-    background: rgba(15, 23, 42, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px);
-  }
-
-  .glass-dark {
-    background: rgba(2, 6, 23, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 20px;
-  }
-
-  .section-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: #f1f5f9;
-    display: flex;
-    align-items: center;
-    &::before {
-      content: '';
-      width: 4px;
-      height: 24px;
-      background: #6366f1;
-      margin-right: 12px;
-      border-radius: 10px;
-    }
-  }
-
-  .premium-input {
-    :deep(.el-textarea__inner) {
-      background: rgba(2, 6, 23, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #f1f5f9;
-      border-radius: 16px;
-      font-size: 16px;
-      padding: 16px;
-      &:focus {
-        border-color: #6366f1;
-      }
-    }
-  }
-
-  .config-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      color: #64748b;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-  }
-
-  .premium-select {
-    :deep(.el-input__wrapper) {
-      background: rgba(2, 6, 23, 0.3) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 12px;
-      height: 48px;
-    }
-  }
-
-  .generate-btn {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    border: none;
-    height: 56px;
-    padding: 0 40px;
-    font-size: 17px;
-    font-weight: 800;
-    border-radius: 100px;
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-    }
-  }
-
-  .agent-animation {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .agent-icon {
-      font-size: 54px;
-      color: #818cf8;
-    }
-    .pulse-ring,
-    .pulse-ring-slow {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border: 2px solid rgba(99, 102, 241, 0.3);
-      border-radius: 50%;
-    }
-    .pulse-ring {
-      animation: pulse 2s infinite;
-    }
-    .pulse-ring-slow {
-      animation: pulse 3s infinite 0.5s;
-    }
-  }
-
-  .agent-logs {
-    padding: 16px;
-    max-width: 360px;
-    margin: 0 auto;
-    .log-entry {
-      font-family: monospace;
-      font-size: 11px;
-      color: #64748b;
-      text-align: left;
-      margin-bottom: 6px;
-    }
-  }
-
-  .token-saver-badge {
-    font-size: 10px;
-    font-weight: 800;
-    background: rgba(14, 165, 233, 0.2);
-    color: #0ea5e9;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-
-  .script-editor {
-    padding: 24px;
-  }
-
-  .block-header {
-    font-size: 10px;
-    font-weight: 800;
-    color: #6366f1;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  .script-block :deep(.el-textarea__inner) {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    color: #f1f5f9;
-    padding: 0;
-    font-size: 16px;
-  }
-
-  .approve-btn {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border: none;
-    height: 54px;
-    font-weight: 800;
-    border-radius: 14px;
-  }
-
-  .glass-btn {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #94a3b8;
-    height: 54px;
-    border-radius: 14px;
-  }
-
-  .track-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    span {
-      font-weight: 700;
-      font-size: 14px;
-    }
-  }
-
-  .premium-progress {
-    :deep(.el-progress-bar__outer) {
-      background: rgba(255, 255, 255, 0.04);
-      height: 6px !important;
-    }
-    :deep(.el-progress-bar__inner) {
-      background: #6366f1;
-    }
-    &.purple :deep(.el-progress-bar__inner) {
-      background: #a855f7;
-    }
-  }
-
-  .preview-container {
-    padding: 12px;
-    .main-video {
-      width: 100%;
-      border-radius: 16px;
-      max-height: 480px;
-      background: #000;
-    }
-    .video-overlay-badge {
-      position: absolute;
-      top: 30px;
-      right: 30px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 9px;
-      font-weight: 800;
-      color: #6366f1;
-    }
-  }
-
-  .download-btn {
-    background: #3b82f6;
-    border: none;
-    height: 56px;
-    font-weight: 800;
-    border-radius: 100px;
-    &:hover {
-      transform: scale(1.02);
-    }
-  }
-
-  .text-secondary {
-    color: #64748b;
-  }
-  .text-success {
-    color: #10b981;
-  }
-  .text-primary {
-    color: #6366f1;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.8;
+.studio-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.studio-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.config-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.config-row {
+  flex-direction: row;
+  gap: 12px;
+}
+
+.config-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+
+.idea-textarea {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #e5e5e5;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+
+  &::placeholder { color: #444; }
+  &:focus { border-color: #0070f3; }
+}
+
+.text-input {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #e5e5e5;
+  outline: none;
+  transition: border-color 0.15s;
+
+  &::placeholder { color: #444; }
+  &:focus { border-color: #0070f3; }
+}
+
+.select-input {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #e5e5e5;
+  outline: none;
+  cursor: pointer;
+
+  option { background: #111; }
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-check { display: none; }
+
+.toggle-text {
+  font-size: 12px;
+  color: #888;
+  flex: 1;
+}
+
+.toggle-slider {
+  width: 36px;
+  height: 20px;
+  background: #2a2a2a;
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background: #555;
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
   }
-  100% {
-    transform: scale(1.4);
-    opacity: 0;
+
+  &--on {
+    background: #0070f3;
+
+    &::after {
+      transform: translateX(16px);
+      background: #fff;
+    }
   }
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+
+  &:hover:not(:disabled) { opacity: 0.88; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #e5e5e5;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) { border-color: #555; color: #fff; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+}
+
+.btn-spinner {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.payment-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #00d084;
+  background: rgba(0, 208, 132, 0.06);
+  border: 1px solid rgba(0, 208, 132, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.tx-link {
+  color: #00d084;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+.pipeline-error {
+  font-size: 12px;
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.06);
+  border: 1px solid rgba(255, 68, 68, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.panel-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.panel-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 14px;
+}
+
+.mt-3 { margin-top: 0; }
+
+.result-section {
+  border-top: 1px solid #1a1a1a;
+  padding-top: 24px;
+}
+
+.result-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.result-body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.result-video-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.result-video {
+  width: 240px;
+  max-width: 100%;
+  border-radius: 8px;
+  background: #111;
+  border: 1px solid #222;
+}
+
+.download-link {
+  font-size: 11px;
+  color: #0070f3;
+  text-decoration: none;
+  text-align: center;
+  &:hover { text-decoration: underline; }
+}
+
+.result-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.audio-section, .script-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.result-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.result-audio {
+  width: 100%;
+  max-width: 380px;
+  height: 36px;
+}
+
+.script-hook {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.script-body {
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+.script-cta {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0070f3;
+  letter-spacing: 0.02em;
 }
 </style>
