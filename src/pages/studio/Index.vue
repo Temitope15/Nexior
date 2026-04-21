@@ -392,9 +392,11 @@ Tone: ${this.config.tone}`;
 
     async generateVoiceover() {
       const scriptText = `${this.outputs.script.hook}. ${this.outputs.script.body}. ${this.outputs.script.cta}`;
-      const token = this.$store.state.token.access;
-      
+      const token = this.$store.state.token.access as string | undefined;
+
       try {
+        if (!token) throw new Error('Authentication required.');
+
         const res = await sunoOperator.audio({
           prompt: scriptText,
           model: SUNO_DEFAULT_MODEL,
@@ -404,7 +406,7 @@ Tone: ${this.config.tone}`;
           instrumental: false
         }, { token });
 
-        this.startPolling(res.data.task_id as string, token, 'audio');
+        this.startPolling(res.data.task_id, token, 'audio');
       } catch (err: any) {
         this.loading.audio = false;
         ElMessage.error('Audio asset generation failed');
@@ -415,9 +417,11 @@ Tone: ${this.config.tone}`;
     async generateFinalVideo(audioId: string) {
       this.loading.visual = true;
       this.pipelineStatus = 'Orchestrating context-aware visuals and packaging...';
-      const token = this.$store.state.token.access;
+      const token = this.$store.state.token.access as string | undefined;
 
       try {
+        if (!token) throw new Error('Authentication required.');
+
         const res = await producerOperator.video({
           audio_id: audioId
         }, { token });

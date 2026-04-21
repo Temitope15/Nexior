@@ -106,7 +106,6 @@ import { chatOperator } from '@/operators';
 import {
   IChatConversation,
   IChatModelGroup,
-  IChatMessageContentItem,
   IApplication,
   IUser,
   Status
