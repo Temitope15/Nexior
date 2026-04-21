@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { IVideoStudioState } from './models';
 import { IRootState } from '../common/models';
-import { ISunoAudioResponse, IProducerAudioResponse, IProducerVideoResponse } from '@/models';
+import { ISunoAudioResponse, IProducerAudioResponse } from '@/models';
 import { sunoOperator, producerOperator } from '@/operators';
 import { scriptGeneratorOperator } from '@/operators/scriptGenerator';
 import {
@@ -47,6 +47,7 @@ async function generateScript({ commit, state }: Context): Promise<void> {
   }
 }
 
+// Returns the Suno audio ID (needed for video generation via sunoOperator.mp4)
 async function generateMusic({ commit, state }: Context): Promise<string> {
   if (!state.scriptOutput) throw new Error('Script output missing');
   commit('setStepStatus', { id: 'music', status: 'running' });
@@ -69,16 +70,20 @@ async function generateMusic({ commit, state }: Context): Promise<string> {
     commit('setStepTaskId', { id: 'music', taskId });
     commit('setStepStatus', { id: 'music', status: 'polling' });
 
-    const audioUrl = await pollUntil(async () => {
+    const { audioUrl, sunoAudioId } = await pollUntil(async () => {
       const taskRes = await sunoOperator.task(taskId, { token: state.apiKey });
       const audioData = (taskRes.data.response as ISunoAudioResponse)?.data;
-      return audioData?.[0]?.audio_url ?? null;
+      const first = audioData?.[0];
+      if (first?.audio_url && first?.id) {
+        return { audioUrl: first.audio_url, sunoAudioId: first.id };
+      }
+      return null;
     });
 
-    commit('setStepOutput', { id: 'music', output: { audio_url: audioUrl } });
+    commit('setStepOutput', { id: 'music', output: { audio_url: audioUrl, audio_id: sunoAudioId } });
     commit('setFinalUrls', { audioUrl });
     commit('setStepStatus', { id: 'music', status: 'done' });
-    return audioUrl;
+    return sunoAudioId;
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Music generation failed';
     commit('setStepStatus', { id: 'music', status: 'error', error: msg });
@@ -86,7 +91,7 @@ async function generateMusic({ commit, state }: Context): Promise<string> {
   }
 }
 
-async function generateVoiceover({ commit, state }: Context): Promise<string> {
+async function generateVoiceover({ commit, state }: Context): Promise<void> {
   if (!state.scriptOutput) throw new Error('Script output missing');
   commit('setStepStatus', { id: 'voiceover', status: 'running' });
   try {
@@ -119,7 +124,6 @@ async function generateVoiceover({ commit, state }: Context): Promise<string> {
 
     commit('setStepOutput', { id: 'voiceover', output: { audio_url: audioUrl, audio_id: audioId } });
     commit('setStepStatus', { id: 'voiceover', status: 'done' });
-    return audioId;
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Voiceover generation failed';
     commit('setStepStatus', { id: 'voiceover', status: 'error', error: msg });
@@ -127,18 +131,31 @@ async function generateVoiceover({ commit, state }: Context): Promise<string> {
   }
 }
 
-async function generateVideo({ commit, state }: Context, audioId: string): Promise<void> {
+// Uses Suno mp4 endpoint — takes a Suno audio_id, returns video_url synchronously
+async function generateVideo({ commit, state }: Context, sunoAudioId: string): Promise<void> {
   commit('setStepStatus', { id: 'video', status: 'running' });
   try {
-    const res = await producerOperator.video({ audio_id: audioId }, { token: state.apiKey });
-    const taskId = res.data.task_id;
+    const res = await sunoOperator.mp4({ audio_id: sunoAudioId }, { token: state.apiKey });
+    const taskId = res.data?.task_id;
+
+    // mp4 may return the video_url directly or via task polling
+    const directUrl = res.data?.data?.video_url;
+    if (directUrl) {
+      commit('setStepOutput', { id: 'video', output: { video_url: directUrl } });
+      commit('setFinalUrls', { videoUrl: directUrl });
+      commit('setStepStatus', { id: 'video', status: 'done' });
+      return;
+    }
+
+    if (!taskId) throw new Error('No task ID returned from video generation');
+
     commit('setStepTaskId', { id: 'video', taskId });
     commit('setStepStatus', { id: 'video', status: 'polling' });
 
     const videoUrl = await pollUntil(async () => {
-      const taskRes = await producerOperator.task(taskId, { token: state.apiKey });
-      const videoData = (taskRes.data.response as unknown as IProducerVideoResponse)?.data;
-      return videoData?.video_url ?? null;
+      const taskRes = await sunoOperator.task(taskId, { token: state.apiKey });
+      const audioData = (taskRes.data.response as ISunoAudioResponse)?.data;
+      return audioData?.[0]?.video_url ?? null;
     });
 
     commit('setStepOutput', { id: 'video', output: { video_url: videoUrl } });
@@ -169,9 +186,9 @@ export const runPipeline = async (context: Context): Promise<void> => {
   commit('setTotalCost');
 
   await generateScript(context);
-  await generateMusic(context);
-  const audioId = await generateVoiceover(context);
-  await generateVideo(context, audioId);
+  const sunoAudioId = await generateMusic(context);
+  await generateVoiceover(context);
+  await generateVideo(context, sunoAudioId);
 };
 
 export default {
