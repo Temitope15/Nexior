@@ -513,30 +513,38 @@ export default defineComponent({
       .el-dropdown {
         width: 100%;
       }
-      .cursor-pointer {
-        width: 100%;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        padding: 0 12px;
-        border-radius: 10px;
-        gap: 12px;
-        transition: background-color 0.15s ease;
+        &.cursor-pointer {
+          width: 100%;
+          height: 44px;
+          display: flex;
+          align-items: center;
+          padding: 0 12px;
+          border-radius: 10px;
+          gap: 12px;
+          transition: background-color 0.15s ease;
 
-        &:hover {
-          background-color: var(--el-bg-color-page);
-        }
+          &:hover {
+            background-color: var(--el-bg-color-page);
+          }
 
-        &::after {
-          content: attr(data-username);
-          font-size: 14px;
-          font-weight: 600;
-          color: var(--el-text-color-primary);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          .avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            flex-shrink: 0;
+          }
+
+          &::after {
+            content: attr(data-username);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--el-text-color-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+          }
         }
-      }
     }
   }
 }

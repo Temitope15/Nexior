@@ -56,7 +56,8 @@
                     type="primary" 
                     size="large" 
                     class="generate-btn"
-                    :disabled="!config.topic"
+                    :disabled="!config.topic || !ready || initializing"
+                    :loading="initializing"
                     @click="generateScript"
                   >
                     Initiate Generation Agent
@@ -229,6 +230,7 @@ import {
   CHAT_MODEL_NAME_GEMINI_2_5_FLASH, 
   SUNO_DEFAULT_MODEL 
 } from '@/constants';
+import { Status } from '@/models/common';
 import Layout from '@/layouts/Chat.vue';
 
 type WorkflowState = 'IDLE' | 'GENERATING_SCRIPT' | 'REVIEW_SCRIPT' | 'GENERATING_MEDIA' | 'FINAL_RESULT';
@@ -294,7 +296,40 @@ export default defineComponent({
   computed: {
     authenticated() {
        return !!this.$store.state.token.access;
+    },
+    service() {
+      return this.$store.state.chat.service;
+    },
+    application() {
+      return this.$store.state.chat.application;
+    },
+    credential() {
+      return this.$store.state.chat.credential;
+    },
+    sunoCredential() {
+      return this.$store.state.suno.credential;
+    },
+    producerCredential() {
+      return this.$store.state.producer.credential;
+    },
+    initializing() {
+      return this.$store.state.chat.status.getApplications === Status.Request ||
+             this.$store.state.suno.status.getApplications === Status.Request ||
+             this.$store.state.producer.status.getApplications === Status.Request;
+    },
+    ready(): boolean {
+      return !this.initializing && !!this.credential?.token;
     }
+  },
+  async mounted() {
+    await Promise.all([
+      this.$store.dispatch('chat/getService'),
+      this.$store.dispatch('chat/getApplications'),
+      this.$store.dispatch('suno/getService'),
+      this.$store.dispatch('suno/getApplications'),
+      this.$store.dispatch('producer/getService'),
+      this.$store.dispatch('producer/getApplications')
+    ]);
   },
   beforeUnmount() {
     this.stopPolling();
@@ -338,7 +373,7 @@ Tone: ${this.config.tone}`;
       const userPrompt = `Video Topic: ${this.config.topic}`;
 
       try {
-        const token = this.$store.state.token.access;
+        const token = this.credential?.token;
         if (!token) throw new Error('Authentication required.');
 
         const res = await chatOperator.chatConversation({
@@ -392,10 +427,10 @@ Tone: ${this.config.tone}`;
 
     async generateVoiceover() {
       const scriptText = `${this.outputs.script.hook}. ${this.outputs.script.body}. ${this.outputs.script.cta}`;
-      const token = this.$store.state.token.access as string | undefined;
+      const token = this.sunoCredential?.token;
 
       try {
-        if (!token) throw new Error('Authentication required.');
+        if (!token) throw new Error('Authentication required (Suno).');
 
         const res = await sunoOperator.audio({
           prompt: scriptText,
@@ -417,10 +452,10 @@ Tone: ${this.config.tone}`;
     async generateFinalVideo(audioId: string) {
       this.loading.visual = true;
       this.pipelineStatus = 'Orchestrating context-aware visuals and packaging...';
-      const token = this.$store.state.token.access as string | undefined;
+      const token = this.producerCredential?.token;
 
       try {
-        if (!token) throw new Error('Authentication required.');
+        if (!token) throw new Error('Authentication required (Producer).');
 
         const res = await producerOperator.video({
           audio_id: audioId
