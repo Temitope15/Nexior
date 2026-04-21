@@ -2,7 +2,7 @@
   <div class="tokens-container">
     <el-card class="tokens-card" shadow="always">
       <div class="header">
-        <el-image :src="site.logo" class="logo" fit="contain" />
+        <el-image :src="site?.logo" class="logo" fit="contain" />
         <h2 class="title">{{ $t('auth.title.setupApi') }}</h2>
         <p class="subtitle">{{ $t('auth.subtitle.setupApi') }}</p>
       </div>

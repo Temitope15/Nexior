@@ -4,7 +4,7 @@
     <nav class="navbar">
       <div class="container flex justify-between items-center py-6">
         <div class="logo-wrapper">
-          <img :src="site.logo" class="h-10" />
+          <img :src="site?.logo" class="h-10" />
         </div>
         <div class="nav-links hidden md:flex items-center gap-8">
           <a href="#features" class="nav-link">{{ $t('index.nav.features') }}</a>
@@ -126,9 +126,9 @@
         </div>
         <div class="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div class="logo-wrapper opacity-50">
-            <img :src="site.logo" class="h-8" />
+            <img :src="site?.logo" class="h-8" />
           </div>
-          <p class="text-white/30 text-sm">© {{ new Date().getFullYear() }} {{ site.title }}. All rights reserved.</p>
+          <p class="text-white/30 text-sm">© {{ new Date().getFullYear() }} {{ site?.title }}. All rights reserved.</p>
           <div class="social-links flex gap-6">
             <a href="#" class="text-white/30 hover:text-white"><font-awesome-icon icon="fa-brands fa-twitter" /></a>
             <a href="#" class="text-white/30 hover:text-white"><font-awesome-icon icon="fa-brands fa-github" /></a>
