@@ -51,13 +51,33 @@
                   </div>
                 </div>
 
-                <div class="actions center mt-12">
+                <!-- API Key input for standalone / direct usage -->
+                <div class="api-key-row mt-8">
+                  <div class="api-key-label">
+                    <font-awesome-icon icon="fa-solid fa-key" class="mr-2 opacity-50" />
+                    Ace Data Cloud API Key
+                  </div>
+                  <el-input
+                    v-model="localApiKey"
+                    type="password"
+                    show-password
+                    placeholder="Paste your AceData API key to generate"
+                    class="premium-input api-key-input"
+                    clearable
+                  />
+                  <div v-if="!localApiKey && !credential" class="api-key-hint">
+                    <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="hint-link">
+                      Get a free API key &rarr;
+                    </a>
+                  </div>
+                </div>
+
+                <div class="actions center mt-8">
                   <el-button
                     type="primary"
                     size="large"
                     class="generate-btn"
-                    :disabled="!config.topic || !ready || initializing"
-                    :loading="initializing"
+                    :disabled="!config.topic || !ready"
                     @click="generateScript"
                   >
                     Initiate Generation Agent
@@ -232,6 +252,7 @@ type WorkflowState = 'IDLE' | 'GENERATING_SCRIPT' | 'REVIEW_SCRIPT' | 'GENERATIN
 
 interface AgentState {
   workflowState: WorkflowState;
+  localApiKey: string;
   config: {
     topic: string;
     platform: string;
@@ -267,6 +288,7 @@ export default defineComponent({
   data(): AgentState {
     return {
       workflowState: 'IDLE',
+      localApiKey: localStorage.getItem('vs_api_key') || '',
       config: {
         topic: '',
         platform: 'TikTok',
@@ -315,7 +337,11 @@ export default defineComponent({
       );
     },
     ready(): boolean {
-      return !this.initializing && !!this.credential?.token;
+      const hasToken =
+        !!this.localApiKey ||
+        !!this.credential?.token ||
+        !!(this.$store.state as any).token?.provider_token;
+      return hasToken;
     }
   },
   async mounted() {
@@ -370,10 +396,14 @@ Tone: ${this.config.tone}`;
       const userPrompt = `Video Topic: ${this.config.topic}`;
 
       try {
-        const token = this.$store.state.token?.provider_token || this.credential?.token;
+        const token =
+          this.localApiKey ||
+          (this.$store.state as any).token?.provider_token ||
+          this.credential?.token;
         if (!token) {
-          throw new Error('Authentication required.');
+          throw new Error('API key required. Please enter your Ace Data Cloud API key.');
         }
+        if (this.localApiKey) localStorage.setItem('vs_api_key', this.localApiKey);
         const res = await chatOperator.chatConversation(
           {
             messages: [
@@ -428,10 +458,13 @@ Tone: ${this.config.tone}`;
 
     async generateVoiceover() {
       const scriptText = `${this.outputs.script.hook}. ${this.outputs.script.body}. ${this.outputs.script.cta}`;
-      const token = this.$store.state.token?.provider_token || this.sunoCredential?.token;
+      const token =
+        this.localApiKey ||
+        (this.$store.state as any).token?.provider_token ||
+        this.sunoCredential?.token;
 
       try {
-        if (!token) throw new Error('Authentication required (Suno).');
+        if (!token) throw new Error('API key required.');
 
         const res = await sunoOperator.audio(
           {
@@ -456,10 +489,13 @@ Tone: ${this.config.tone}`;
     async generateFinalVideo(audioId: string) {
       this.loading.visual = true;
       this.pipelineStatus = 'Orchestrating context-aware visuals and packaging...';
-      const token = this.$store.state.token?.provider_token || this.producerCredential?.token;
+      const token =
+        this.localApiKey ||
+        (this.$store.state as any).token?.provider_token ||
+        this.producerCredential?.token;
 
       try {
-        if (!token) throw new Error('Authentication required (Producer).');
+        if (!token) throw new Error('API key required.');
 
         const res = await producerOperator.video(
           {
@@ -612,7 +648,47 @@ Tone: ${this.config.tone}`;
   .gradient-text {
     background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  .api-key-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .api-key-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .api-key-input {
+    :deep(.el-input__wrapper) {
+      background: rgba(2, 6, 23, 0.3) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 12px;
+    }
+    :deep(.el-input__inner) {
+      color: #f1f5f9;
+    }
+    &:deep(.el-input__wrapper.is-focus) {
+      border-color: #6366f1 !important;
+    }
+  }
+
+  .api-key-hint {
+    font-size: 11px;
+    color: #475569;
+  }
+
+  .hint-link {
+    color: #818cf8;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
   }
 
   .agent-card {
