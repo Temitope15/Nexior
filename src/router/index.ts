@@ -29,6 +29,7 @@ import serp from './serp';
 import wan from './wan';
 import site from './site';
 import profile from './profile';
+import pricing from './pricing';
 
 import { getCookie } from 'typescript-cookie';
 import { I18N_DEFAULT_LOCALE } from '@/constants/i18n';
@@ -237,7 +238,8 @@ const routes = [
   distribution,
   download,
   site,
-  profile
+  profile,
+  pricing
 ];
 
 const router = createRouter({

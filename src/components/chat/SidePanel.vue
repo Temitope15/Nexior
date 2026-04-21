@@ -103,13 +103,7 @@ import {
 } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { chatOperator } from '@/operators';
-import {
-  IChatConversation,
-  IChatModelGroup,
-  IApplication,
-  IUser,
-  Status
-} from '@/models';
+import { IChatConversation, IChatModelGroup, IApplication, IUser, Status } from '@/models';
 import UserCenter from '@/components/user/Center.vue';
 
 type ConversationCommand = 'rename' | 'delete';
@@ -217,10 +211,10 @@ export default defineComponent({
       return this.$store.state.chat?.credential?.token;
     },
     authenticated(): boolean {
-       return !!this.$store.state.token.access;
+      return !!this.$store.state.token.access;
     },
     currentUser(): IUser {
-       return this.$store.getters.user || {};
+      return this.$store.getters.user || {};
     }
   },
   watch: {
@@ -330,7 +324,7 @@ export default defineComponent({
       window.open('https://docs.acedata.cloud', '_blank');
     },
     onLogin() {
-       this.$store.dispatch('login');
+      this.$store.dispatch('login');
     }
   }
 });
@@ -513,38 +507,38 @@ export default defineComponent({
       .el-dropdown {
         width: 100%;
       }
-        &.cursor-pointer {
-          width: 100%;
-          height: 44px;
-          display: flex;
-          align-items: center;
-          padding: 0 12px;
-          border-radius: 10px;
-          gap: 12px;
-          transition: background-color 0.15s ease;
+      &.cursor-pointer {
+        width: 100%;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 10px;
+        gap: 12px;
+        transition: background-color 0.15s ease;
 
-          &:hover {
-            background-color: var(--el-bg-color-page);
-          }
-
-          .avatar {
-            width: 32px !important;
-            height: 32px !important;
-            border-radius: 50% !important;
-            flex-shrink: 0;
-          }
-
-          &::after {
-            content: attr(data-username);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--el-text-color-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex: 1;
-          }
+        &:hover {
+          background-color: var(--el-bg-color-page);
         }
+
+        .avatar {
+          width: 32px !important;
+          height: 32px !important;
+          border-radius: 50% !important;
+          flex-shrink: 0;
+        }
+
+        &::after {
+          content: attr(data-username);
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--el-text-color-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          flex: 1;
+        }
+      }
     }
   }
 }

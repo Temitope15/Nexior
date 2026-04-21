@@ -106,7 +106,7 @@
           <div class="audio-label">{{ $t('studio.audio.generated') }}</div>
           <audio controls :src="audioUrl" class="w-full mt-1"></audio>
         </div>
-        
+
         <div v-if="generateError" class="generate-error">
           {{ generateError }}
         </div>
@@ -303,6 +303,7 @@ export default defineComponent({
       return this.message.role === ROLE_ASSISTANT && this.message.error?.code === ERROR_CODE_USED_UP;
     }
   },
+  watch: {},
   async mounted() {
     if (this.isScript && this.message.role === ROLE_ASSISTANT) {
       this.$store.dispatch('suno/getApplications');
@@ -313,7 +314,6 @@ export default defineComponent({
       window.clearInterval(this.pollingJob);
     }
   },
-  watch: {},
   methods: {
     startEditing() {
       this.isEditing = true;
@@ -351,20 +351,23 @@ export default defineComponent({
       });
     },
     onEnableSuno() {
-      applicationOperator.create({
-        service_id: SUNO_SERVICE_ID
-      }).then(() => {
-        this.$store.dispatch('suno/getApplications');
-        ElMessage.success(this.$t('application.message.applySuccessfully'));
-      }).catch(err => {
-        ElMessage.error(err?.response?.data?.error?.message || 'Failed to enable service');
-      });
+      applicationOperator
+        .create({
+          service_id: SUNO_SERVICE_ID
+        })
+        .then(() => {
+          this.$store.dispatch('suno/getApplications');
+          ElMessage.success(this.$t('application.message.applySuccessfully'));
+        })
+        .catch((err) => {
+          ElMessage.error(err?.response?.data?.error?.message || 'Failed to enable service');
+        });
     },
     onGenerateAudio() {
       const content = this.message.content as string;
       const script = this.extractScript(content);
       const style = this.audioStyle === 'Custom' ? this.customStyle : this.getStylePrompt(this.audioStyle);
-      
+
       const token = this.$store.state.suno.credential?.token;
       if (!token) {
         this.generateError = 'Suno credential not found. Please refresh page.';
@@ -383,12 +386,13 @@ export default defineComponent({
       this.generatingAudio = true;
       this.generateError = '';
 
-      sunoOperator.audio(request, { token })
-        .then(res => {
+      sunoOperator
+        .audio(request, { token })
+        .then((res) => {
           const taskId = res.data.task_id;
           this.startPolling(taskId, token);
         })
-        .catch(err => {
+        .catch((err) => {
           this.generatingAudio = false;
           this.generateError = err?.response?.data?.error?.message || this.$t('studio.audio.failed');
         });
@@ -398,26 +402,32 @@ export default defineComponent({
       const hookMatch = content.match(/HOOK:([\s\S]*?)BODY:/i);
       const bodyMatch = content.match(/BODY:([\s\S]*?)CTA:/i);
       const ctaMatch = content.match(/CTA:([\s\S]*?)$/i);
-      
+
       const hook = hookMatch ? hookMatch[1].trim() : '';
       const body = bodyMatch ? bodyMatch[1].trim() : '';
       const cta = ctaMatch ? ctaMatch[1].trim() : '';
-      
+
       return `${hook}\n\n${body}\n\n${cta}`.trim();
     },
     getStylePrompt(preset: string) {
       switch (preset) {
-        case 'Professional': return 'Narrative, Professional Voiceover, Soft Background Music';
-        case 'Energetic': return 'Fast-paced, Energetic Voiceover, Upbeat Tech Music';
-        case 'Relaxed': return 'Calm, Soothing Voiceover, Ambient Background Music';
-        case 'Cinematic': return 'Deep Voiceover, Epic Cinematic Music, Dramatic Orchestral';
-        default: return 'Narrative Voiceover';
+        case 'Professional':
+          return 'Narrative, Professional Voiceover, Soft Background Music';
+        case 'Energetic':
+          return 'Fast-paced, Energetic Voiceover, Upbeat Tech Music';
+        case 'Relaxed':
+          return 'Calm, Soothing Voiceover, Ambient Background Music';
+        case 'Cinematic':
+          return 'Deep Voiceover, Epic Cinematic Music, Dramatic Orchestral';
+        default:
+          return 'Narrative Voiceover';
       }
     },
     startPolling(taskId: string, token: string) {
       this.pollingJob = window.setInterval(() => {
-        sunoOperator.task(taskId, { token })
-          .then(res => {
+        sunoOperator
+          .task(taskId, { token })
+          .then((res) => {
             const task = res.data;
             // task.response may contain audios
             const audios = (task.response as any)?.data;
@@ -428,7 +438,7 @@ export default defineComponent({
               this.pollingJob = 0;
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.error('polling error', err);
           });
       }, 5000);
@@ -638,7 +648,7 @@ export default defineComponent({
       margin-bottom: 4px;
     }
   }
-  
+
   .generate-error {
     margin-top: 8px;
     color: var(--el-color-danger);

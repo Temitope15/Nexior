@@ -7,9 +7,7 @@
       clearable
       @change="onTokenChange"
     />
-    <p class="settings-tip mt-2">
-      Override the default service token with your own API key to bypass platform limits.
-    </p>
+    <p class="settings-tip mt-2">Override the default service token with your own API key to bypass platform limits.</p>
   </div>
 </template>
 

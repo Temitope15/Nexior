@@ -7,7 +7,7 @@
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
 
-        <div class="studio-content" v-motion-fade>
+        <div v-motion-fade class="studio-content">
           <header class="studio-header">
             <div class="agent-badge">
               <font-awesome-icon icon="fa-solid fa-robot" class="mr-2" />
@@ -20,7 +20,7 @@
           <!-- Main Agent Interface -->
           <div class="agent-card glass">
             <!-- Step 0: Input Configuration -->
-            <div v-if="workflowState === 'IDLE'" class="workflow-step" v-motion-slide-up>
+            <div v-if="workflowState === 'IDLE'" v-motion-slide-up class="workflow-step">
               <div class="input-section">
                 <h2 class="section-title">What's the concept?</h2>
                 <el-input
@@ -30,7 +30,7 @@
                   placeholder="E.g. Create a 60-second viral TikTok script about why consistency is better than talent in business, with a high-energy tone and a clear call to action."
                   class="premium-input"
                 />
-                
+
                 <div class="config-grid mt-8">
                   <div class="config-item">
                     <label>Platform Optimization</label>
@@ -52,9 +52,9 @@
                 </div>
 
                 <div class="actions center mt-12">
-                  <el-button 
-                    type="primary" 
-                    size="large" 
+                  <el-button
+                    type="primary"
+                    size="large"
                     class="generate-btn"
                     :disabled="!config.topic || !ready || initializing"
                     :loading="initializing"
@@ -68,7 +68,7 @@
             </div>
 
             <!-- Step 1: Script Generation / Loading -->
-            <div v-if="workflowState === 'GENERATING_SCRIPT'" class="workflow-step text-center py-24" v-motion-fade>
+            <div v-if="workflowState === 'GENERATING_SCRIPT'" v-motion-fade class="workflow-step text-center py-24">
               <div class="agent-animation">
                 <div class="pulse-ring"></div>
                 <div class="pulse-ring-slow"></div>
@@ -76,22 +76,22 @@
               </div>
               <h3 class="mt-10 text-2xl font-black letter-spacing-tight">Drafting Scripting Agent...</h3>
               <p class="text-secondary mt-2">Economizing tokens via Gemini 2.5 Flash architecture.</p>
-              
+
               <div class="agent-logs mt-10 glass-dark">
-                 <div v-for="(log, i) in activeLogs" :key="i" class="log-entry" v-motion-slide-left>
-                    <font-awesome-icon icon="fa-solid fa-terminal" class="mr-2 text-xs opacity-50" />
-                    {{ log }}
-                 </div>
+                <div v-for="(log, i) in activeLogs" :key="i" v-motion-slide-left class="log-entry">
+                  <font-awesome-icon icon="fa-solid fa-terminal" class="mr-2 text-xs opacity-50" />
+                  {{ log }}
+                </div>
               </div>
             </div>
 
             <!-- Step 2: Script Review & Approval -->
-            <div v-if="workflowState === 'REVIEW_SCRIPT'" class="workflow-step" v-motion-slide-up>
+            <div v-if="workflowState === 'REVIEW_SCRIPT'" v-motion-slide-up class="workflow-step">
               <div class="flex justify-between items-center mb-6">
                 <h2 class="section-title mb-0">Agent Proposal: Script</h2>
                 <div class="token-saver-badge">TOKEN OPTIMIZED</div>
               </div>
-              
+
               <div class="script-editor glass-dark">
                 <div class="script-block">
                   <div class="block-header">
@@ -129,89 +129,87 @@
             </div>
 
             <!-- Step 3: Media Generation (Audio & Video) -->
-            <div v-if="workflowState === 'GENERATING_MEDIA'" class="workflow-step" v-motion-fade>
+            <div v-if="workflowState === 'GENERATING_MEDIA'" v-motion-fade class="workflow-step">
               <h2 class="section-title mb-8">Production Pipeline</h2>
-              
-              <div class="generation-status py-6">
-                 <div class="media-track glass-dark p-6 mb-6">
-                    <div class="track-info">
-                      <div class="flex items-center">
-                        <font-awesome-icon icon="fa-solid fa-microphone-lines" class="mr-3 text-primary" />
-                        <span>Vocal & Audio Synthesis</span>
-                      </div>
-                      <div class="status-indicator">
-                        <font-awesome-icon v-if="loading.audio" icon="fa-solid fa-spinner" spin />
-                        <font-awesome-icon v-else icon="fa-solid fa-circle-check" class="text-success" />
-                        <span class="ml-2 text-xs font-bold">{{ loading.audio ? 'SYNTHESIZING' : 'READY' }}</span>
-                      </div>
-                    </div>
-                    <el-progress 
-                      :percentage="loading.audio ? 70 : 100" 
-                      :status="loading.audio ? 'exception' : 'success'" 
-                      :show-text="false"
-                      class="premium-progress"
-                    />
-                 </div>
 
-                 <div class="media-track glass-dark p-6">
-                    <div class="track-info">
-                      <div class="flex items-center">
-                        <font-awesome-icon icon="fa-solid fa-film" class="mr-3 text-purple" />
-                        <span>Visual Orchestration & Packaging</span>
-                      </div>
-                      <div class="status-indicator">
-                        <font-awesome-icon v-if="loading.visual" icon="fa-solid fa-spinner" spin />
-                        <font-awesome-icon v-else icon="fa-solid fa-circle-check" class="text-success" />
-                        <span class="ml-2 text-xs font-bold">{{ loading.visual ? 'RENDERING' : 'READY' }}</span>
-                      </div>
+              <div class="generation-status py-6">
+                <div class="media-track glass-dark p-6 mb-6">
+                  <div class="track-info">
+                    <div class="flex items-center">
+                      <font-awesome-icon icon="fa-solid fa-microphone-lines" class="mr-3 text-primary" />
+                      <span>Vocal & Audio Synthesis</span>
                     </div>
-                    <el-progress 
-                      :percentage="loading.visual ? 35 : 100" 
-                      :status="loading.visual ? 'exception' : 'success'" 
-                      :show-text="false"
-                      class="premium-progress purple"
-                    />
-                 </div>
-                 
-                 <div class="pipeline-logs mt-10">
-                    <p class="text-center text-secondary text-sm italic">
-                      <font-awesome-icon icon="fa-solid fa-circle-notch" spin class="mr-2" />
-                      {{ pipelineStatus }}
-                    </p>
-                 </div>
+                    <div class="status-indicator">
+                      <font-awesome-icon v-if="loading.audio" icon="fa-solid fa-spinner" spin />
+                      <font-awesome-icon v-else icon="fa-solid fa-circle-check" class="text-success" />
+                      <span class="ml-2 text-xs font-bold">{{ loading.audio ? 'SYNTHESIZING' : 'READY' }}</span>
+                    </div>
+                  </div>
+                  <el-progress
+                    :percentage="loading.audio ? 70 : 100"
+                    :status="loading.audio ? 'exception' : 'success'"
+                    :show-text="false"
+                    class="premium-progress"
+                  />
+                </div>
+
+                <div class="media-track glass-dark p-6">
+                  <div class="track-info">
+                    <div class="flex items-center">
+                      <font-awesome-icon icon="fa-solid fa-film" class="mr-3 text-purple" />
+                      <span>Visual Orchestration & Packaging</span>
+                    </div>
+                    <div class="status-indicator">
+                      <font-awesome-icon v-if="loading.visual" icon="fa-solid fa-spinner" spin />
+                      <font-awesome-icon v-else icon="fa-solid fa-circle-check" class="text-success" />
+                      <span class="ml-2 text-xs font-bold">{{ loading.visual ? 'RENDERING' : 'READY' }}</span>
+                    </div>
+                  </div>
+                  <el-progress
+                    :percentage="loading.visual ? 35 : 100"
+                    :status="loading.visual ? 'exception' : 'success'"
+                    :show-text="false"
+                    class="premium-progress purple"
+                  />
+                </div>
+
+                <div class="pipeline-logs mt-10">
+                  <p class="text-center text-secondary text-sm italic">
+                    <font-awesome-icon icon="fa-solid fa-circle-notch" spin class="mr-2" />
+                    {{ pipelineStatus }}
+                  </p>
+                </div>
               </div>
             </div>
 
             <!-- Step 4: Final Preview & Download -->
-            <div v-if="workflowState === 'FINAL_RESULT'" class="workflow-step" v-motion-slide-up>
-               <h2 class="section-title mb-6">Mastering Complete</h2>
-               
-               <div class="preview-container glass-dark relative">
-                  <video 
-                    v-if="outputs.videoUrl" 
-                    :src="outputs.videoUrl" 
-                    controls 
-                    class="main-video premium-shadow"
-                    autoplay
-                  ></video>
-                  <div class="video-overlay-badge">PREVIEW READY</div>
-               </div>
+            <div v-if="workflowState === 'FINAL_RESULT'" v-motion-slide-up class="workflow-step">
+              <h2 class="section-title mb-6">Mastering Complete</h2>
 
-               <div class="actions center mt-10">
-                 <el-button size="large" round class="glass-btn" @click="resetWorkflow">
-                    New Project
-                 </el-button>
-                 <el-button 
-                    type="primary" 
-                    size="large" 
-                    class="download-btn premium-shadow"
-                    :disabled="!outputs.videoUrl"
-                    @click="downloadVideo"
-                 >
-                    Download Master File (.mp4)
-                    <font-awesome-icon icon="fa-solid fa-cloud-arrow-down" class="ml-2" />
-                 </el-button>
-               </div>
+              <div class="preview-container glass-dark relative">
+                <video
+                  v-if="outputs.videoUrl"
+                  :src="outputs.videoUrl"
+                  controls
+                  class="main-video premium-shadow"
+                  autoplay
+                ></video>
+                <div class="video-overlay-badge">PREVIEW READY</div>
+              </div>
+
+              <div class="actions center mt-10">
+                <el-button size="large" round class="glass-btn" @click="resetWorkflow"> New Project </el-button>
+                <el-button
+                  type="primary"
+                  size="large"
+                  class="download-btn premium-shadow"
+                  :disabled="!outputs.videoUrl"
+                  @click="downloadVideo"
+                >
+                  Download Master File (.mp4)
+                  <font-awesome-icon icon="fa-solid fa-cloud-arrow-down" class="ml-2" />
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
@@ -226,10 +224,7 @@ import { ElInput, ElSelect, ElOption, ElButton, ElMessage, ElProgress } from 'el
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { chatOperator, sunoOperator, producerOperator } from '@/operators';
 import { IChatModelName } from '@/models';
-import { 
-  CHAT_MODEL_NAME_GEMINI_2_5_FLASH, 
-  SUNO_DEFAULT_MODEL 
-} from '@/constants';
+import { CHAT_MODEL_NAME_GEMINI_2_5_FLASH, SUNO_DEFAULT_MODEL } from '@/constants';
 import { Status } from '@/models/common';
 import Layout from '@/layouts/Chat.vue';
 
@@ -295,7 +290,7 @@ export default defineComponent({
   },
   computed: {
     authenticated() {
-       return !!this.$store.state.token.access;
+      return !!this.$store.state.token.access;
     },
     service() {
       return this.$store.state.chat.service;
@@ -313,9 +308,11 @@ export default defineComponent({
       return this.$store.state.producer.credential;
     },
     initializing() {
-      return this.$store.state.chat.status.getApplications === Status.Request ||
-             this.$store.state.suno.status.getApplications === Status.Request ||
-             this.$store.state.producer.status.getApplications === Status.Request;
+      return (
+        this.$store.state.chat.status.getApplications === Status.Request ||
+        this.$store.state.suno.status.getApplications === Status.Request ||
+        this.$store.state.producer.status.getApplications === Status.Request
+      );
     },
     ready(): boolean {
       return !this.initializing && !!this.credential?.token;
@@ -336,15 +333,15 @@ export default defineComponent({
   },
   methods: {
     onChangeConversation(id?: string) {
-       console.debug('onChangeConversation in studio', id);
-       if (id) {
-          this.$router.push(`/chatgpt/conversations/${id}`);
-       }
+      console.debug('onChangeConversation in studio', id);
+      if (id) {
+        this.$router.push(`/chatgpt/conversations/${id}`);
+      }
     },
 
     addLog(msg: string) {
-       this.activeLogs.push(msg);
-       if (this.activeLogs.length > 5) this.activeLogs.shift();
+      this.activeLogs.push(msg);
+      if (this.activeLogs.length > 5) this.activeLogs.shift();
     },
 
     async generateScript() {
@@ -356,7 +353,7 @@ export default defineComponent({
       this.workflowState = 'GENERATING_SCRIPT';
       this.loading.script = true;
       this.activeLogs = [];
-      
+
       this.addLog('Analyzing intent...');
       setTimeout(() => this.addLog('Retrieving model context...'), 800);
       setTimeout(() => this.addLog('Optimizing token allocation...'), 1500);
@@ -377,13 +374,16 @@ Tone: ${this.config.tone}`;
         if (!token) {
           throw new Error('Authentication required.');
         }
-        const res = await chatOperator.chatConversation({
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          model: CHAT_MODEL_NAME_GEMINI_2_5_FLASH as IChatModelName
-        }, { token });
+        const res = await chatOperator.chatConversation(
+          {
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            model: CHAT_MODEL_NAME_GEMINI_2_5_FLASH as IChatModelName
+          },
+          { token }
+        );
 
         this.addLog('Script drafted successfully.');
         setTimeout(() => {
@@ -399,14 +399,14 @@ Tone: ${this.config.tone}`;
     },
 
     parseScript(content: string) {
-       const hookMatch = content.match(/HOOK:([\s\S]*?)BODY:/i);
-       const bodyMatch = content.match(/BODY:([\s\S]*?)CTA:/i);
-       const ctaMatch = content.match(/CTA:([\s\S]*?)$/i);
-       return {
-         hook: hookMatch ? hookMatch[1].trim() : content.substring(0, 50),
-         body: bodyMatch ? bodyMatch[1].trim() : '...',
-         cta: ctaMatch ? ctaMatch[1].trim() : '...'
-       };
+      const hookMatch = content.match(/HOOK:([\s\S]*?)BODY:/i);
+      const bodyMatch = content.match(/BODY:([\s\S]*?)CTA:/i);
+      const ctaMatch = content.match(/CTA:([\s\S]*?)$/i);
+      return {
+        hook: hookMatch ? hookMatch[1].trim() : content.substring(0, 50),
+        body: bodyMatch ? bodyMatch[1].trim() : '...',
+        cta: ctaMatch ? ctaMatch[1].trim() : '...'
+      };
     },
 
     async startMediaGeneration() {
@@ -418,7 +418,7 @@ Tone: ${this.config.tone}`;
       this.loading.audio = true;
       this.loading.visual = true;
       this.pipelineStatus = 'Synthesizing voiceover and background score...';
-      
+
       try {
         await this.generateVoiceover();
       } catch (err) {
@@ -433,14 +433,17 @@ Tone: ${this.config.tone}`;
       try {
         if (!token) throw new Error('Authentication required (Suno).');
 
-        const res = await sunoOperator.audio({
-          prompt: scriptText,
-          model: SUNO_DEFAULT_MODEL,
-          custom: true,
-          lyric: scriptText,
-          style: 'Narrative Voiceover, Professional Background Music',
-          instrumental: false
-        }, { token });
+        const res = await sunoOperator.audio(
+          {
+            prompt: scriptText,
+            model: SUNO_DEFAULT_MODEL,
+            custom: true,
+            lyric: scriptText,
+            style: 'Narrative Voiceover, Professional Background Music',
+            instrumental: false
+          },
+          { token }
+        );
 
         this.startPolling(res.data.task_id, token, 'audio');
       } catch (err: any) {
@@ -458,9 +461,12 @@ Tone: ${this.config.tone}`;
       try {
         if (!token) throw new Error('Authentication required (Producer).');
 
-        const res = await producerOperator.video({
-          audio_id: audioId
-        }, { token });
+        const res = await producerOperator.video(
+          {
+            audio_id: audioId
+          },
+          { token }
+        );
 
         this.startPolling(res.data.task_id, token, 'video');
       } catch (err: any) {
@@ -471,7 +477,7 @@ Tone: ${this.config.tone}`;
 
     startPolling(taskId: string, token: string, type: 'audio' | 'video') {
       this.stopPolling();
-      
+
       this.pollingJob = window.setInterval(async () => {
         try {
           if (type === 'audio') {
@@ -550,9 +556,23 @@ Tone: ${this.config.tone}`;
     filter: blur(120px);
     opacity: 0.1;
   }
-  .blob-1 { top: -100px; right: -50px; background: #6366f1; }
-  .blob-2 { bottom: -100px; left: -50px; background: #a855f7; }
-  .blob-3 { top: 30%; left: 20%; width: 300px; height: 300px; background: #3b82f6; }
+  .blob-1 {
+    top: -100px;
+    right: -50px;
+    background: #6366f1;
+  }
+  .blob-2 {
+    bottom: -100px;
+    left: -50px;
+    background: #a855f7;
+  }
+  .blob-3 {
+    top: 30%;
+    left: 20%;
+    width: 300px;
+    height: 300px;
+    background: #3b82f6;
+  }
 
   .studio-content {
     position: relative;
@@ -689,15 +709,20 @@ Tone: ${this.config.tone}`;
       font-size: 54px;
       color: #818cf8;
     }
-    .pulse-ring, .pulse-ring-slow {
+    .pulse-ring,
+    .pulse-ring-slow {
       position: absolute;
       width: 100%;
       height: 100%;
       border: 2px solid rgba(99, 102, 241, 0.3);
       border-radius: 50%;
     }
-    .pulse-ring { animation: pulse 2s infinite; }
-    .pulse-ring-slow { animation: pulse 3s infinite 0.5s; }
+    .pulse-ring {
+      animation: pulse 2s infinite;
+    }
+    .pulse-ring-slow {
+      animation: pulse 3s infinite 0.5s;
+    }
   }
 
   .agent-logs {
@@ -763,19 +788,22 @@ Tone: ${this.config.tone}`;
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
-    span { font-weight: 700; font-size: 14px; }
+    span {
+      font-weight: 700;
+      font-size: 14px;
+    }
   }
 
   .premium-progress {
     :deep(.el-progress-bar__outer) {
-       background: rgba(255, 255, 255, 0.04);
-       height: 6px !important;
+      background: rgba(255, 255, 255, 0.04);
+      height: 6px !important;
     }
     :deep(.el-progress-bar__inner) {
-       background: #6366f1;
+      background: #6366f1;
     }
     &.purple :deep(.el-progress-bar__inner) {
-       background: #a855f7;
+      background: #a855f7;
     }
   }
 
@@ -791,7 +819,7 @@ Tone: ${this.config.tone}`;
       position: absolute;
       top: 30px;
       right: 30px;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       padding: 4px 10px;
       border-radius: 6px;
       font-size: 9px;
@@ -806,16 +834,30 @@ Tone: ${this.config.tone}`;
     height: 56px;
     font-weight: 800;
     border-radius: 100px;
-    &:hover { transform: scale(1.02); }
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 
-  .text-secondary { color: #64748b; }
-  .text-success { color: #10b981; }
-  .text-primary { color: #6366f1; }
+  .text-secondary {
+    color: #64748b;
+  }
+  .text-success {
+    color: #10b981;
+  }
+  .text-primary {
+    color: #6366f1;
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.8); opacity: 0.8; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
 }
 </style>
