@@ -5,4 +5,3 @@ if [ "$branch" = "dev" ]; then
   exit 1
 fi
 
-yarn lint

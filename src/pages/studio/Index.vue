@@ -370,7 +370,7 @@ Tone: ${this.config.tone}`;
       const userPrompt = `Video Topic: ${this.config.topic}`;
 
       try {
-        const token = this.$store.state.token?.provider_token || this.chatCredential?.token;
+        const token = this.$store.state.token?.provider_token || this.credential?.token;
         if (!token) {
           throw new Error('Authentication required.');
         }
