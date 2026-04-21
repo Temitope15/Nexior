@@ -175,3 +175,10 @@ export const runPipeline = async (context: Context): Promise<void> => {
   const audioId = await generateVoiceover(context);
   await generateVideo(context, audioId);
 };
+
+export default {
+  setApiKey,
+  setConfig,
+  resetPipeline,
+  runPipeline
+};

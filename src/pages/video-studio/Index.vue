@@ -130,6 +130,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useWallet } from 'solana-wallets-vue';
+import { Connection, Transaction } from '@solana/web3.js';
 import { executeSolanaPayment } from '@/utils/x402/solana';
 import { ElMessage } from 'element-plus';
 import PipelineTracker from '@/components/video-studio/PipelineTracker.vue';
@@ -139,13 +140,14 @@ import { IVideoStudioConfig } from '@/models';
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const ACEDATA_TREASURY = 'AcEDATAVAULT1111111111111111111111111111111';
+const SOLANA_RPC = 'https://api.mainnet-beta.solana.com';
 
 export default defineComponent({
   name: 'VideoStudioIndex',
   components: { PipelineTracker, CostBreakdown, ApiKeyPanel },
   setup() {
-    const { publicKey, signAndSendTransaction } = useWallet();
-    return { walletPublicKey: publicKey, signAndSendTransaction };
+    const { publicKey, sendTransaction } = useWallet();
+    return { walletPublicKey: publicKey, walletSendTransaction: sendTransaction };
   },
   data() {
     return {
@@ -156,31 +158,32 @@ export default defineComponent({
     };
   },
   computed: {
+    vs(): any { return (this.$store.state as any).videoStudio; },
     idea: {
-      get(): string { return this.$store.state.videoStudio.config.idea; },
+      get(): string { return this.vs.config.idea; },
       set(v: string) { this.$store.dispatch('videoStudio/setConfig', { idea: v }); }
     },
     musicStyle: {
-      get(): string { return this.$store.state.videoStudio.config.musicStyle; },
+      get(): string { return this.vs.config.musicStyle; },
       set(v: string) { this.$store.dispatch('videoStudio/setConfig', { musicStyle: v }); }
     },
     voiceGender: {
-      get(): string { return this.$store.state.videoStudio.config.voiceGender; },
+      get(): string { return this.vs.config.voiceGender; },
       set(v: string) { this.$store.dispatch('videoStudio/setConfig', { voiceGender: v as IVideoStudioConfig['voiceGender'] }); }
     },
     instrumental: {
-      get(): boolean { return this.$store.state.videoStudio.config.instrumental; },
+      get(): boolean { return this.vs.config.instrumental; },
       set(v: boolean) { this.$store.dispatch('videoStudio/setConfig', { instrumental: v }); }
     },
     apiKey: {
-      get(): string { return this.$store.state.videoStudio.apiKey; },
+      get(): string { return this.vs.apiKey; },
       set(v: string) { this.$store.dispatch('videoStudio/setApiKey', v); }
     },
-    steps() { return this.$store.state.videoStudio.steps; },
-    totalCostUsd() { return this.$store.state.videoStudio.totalCostUsd; },
-    finalAudioUrl() { return this.$store.state.videoStudio.finalAudioUrl; },
-    finalVideoUrl() { return this.$store.state.videoStudio.finalVideoUrl; },
-    scriptOutput() { return this.$store.state.videoStudio.scriptOutput; },
+    steps() { return this.vs.steps; },
+    totalCostUsd() { return this.vs.totalCostUsd; },
+    finalAudioUrl() { return this.vs.finalAudioUrl; },
+    finalVideoUrl() { return this.vs.finalVideoUrl; },
+    scriptOutput() { return this.vs.scriptOutput; },
     isRunning(): boolean {
       return this.steps.some((s: any) => s.status === 'running' || s.status === 'polling');
     },
@@ -208,19 +211,24 @@ export default defineComponent({
       }
     },
     async onPayWithSolana() {
-      if (!this.walletPublicKey || !this.signAndSendTransaction) {
+      if (!this.walletPublicKey) {
         ElMessage.warning('Please connect your Solana wallet first.');
         return;
       }
-      const totalCents = this.$store.state.videoStudio.totalCostUsd;
-      if (totalCents <= 0) {
+      const totalCost = this.vs.totalCostUsd;
+      if (totalCost <= 0) {
         ElMessage.warning('Run a generation first to calculate cost.');
         return;
       }
       this.isPaying = true;
       this.paymentTx = null;
       try {
-        const amountLamports = BigInt(Math.ceil(totalCents * 1_000_000));
+        const connection = new Connection(SOLANA_RPC, 'confirmed');
+        const sendTx = this.walletSendTransaction;
+        const signAndSendAdapter = async (tx: Transaction): Promise<string> => {
+          return await sendTx(tx, connection);
+        };
+        const amountLamports = BigInt(Math.ceil(totalCost * 1_000_000));
         const result = await executeSolanaPayment({
           requirements: {
             payTo: ACEDATA_TREASURY,
@@ -231,7 +239,7 @@ export default defineComponent({
             extra: { decimals: 6, computeUnitLimit: 200_000, computeUnitPriceMicroLamports: 1 }
           },
           payerAddress: this.walletPublicKey.toBase58(),
-          signAndSendTransaction: this.signAndSendTransaction as any
+          signAndSendTransaction: signAndSendAdapter
         });
         this.paymentTx = result.signature;
         ElMessage.success('Payment confirmed on Solana!');
