@@ -19,7 +19,9 @@ import seedream from './seedream';
 import seedance from './seedance';
 import serp from './serp';
 import wan from './wan';
+import videoStudio from './videoStudio';
 import root from './common';
+import persistVideoStudio from './videoStudio/persist';
 import persistChat from './chat/persist';
 import persistMidjourney from './midjourney/persist';
 import persistQrart from './qrart/persist';
@@ -62,7 +64,8 @@ const store = createStore({
     seedream: seedream,
     seedance: seedance,
     serp: serp,
-    wan: wan
+    wan: wan,
+    videoStudio: videoStudio
   },
   plugins: [
     createPersistedState({
@@ -86,7 +89,8 @@ const store = createStore({
         ...persistSeedream,
         ...persistSeedance,
         ...persistSerp,
-        ...persistWan
+        ...persistWan,
+        ...persistVideoStudio
       ]
     })
   ]

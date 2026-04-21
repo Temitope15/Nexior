@@ -34,3 +34,4 @@ export * from './skill';
 export * from './wan';
 export * from './config';
 export * from './agent';
+export * from './scriptGenerator';

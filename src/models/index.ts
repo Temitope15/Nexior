@@ -34,3 +34,4 @@ export * from './skill';
 export * from './exchange';
 export * from './error';
 export * from './config';
+export * from './videoStudio';

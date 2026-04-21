@@ -30,6 +30,7 @@ import wan from './wan';
 import site from './site';
 import profile from './profile';
 import pricing from './pricing';
+import videoStudio from './videoStudio';
 
 import { getCookie } from 'typescript-cookie';
 import { I18N_DEFAULT_LOCALE } from '@/constants/i18n';
@@ -190,6 +191,12 @@ const ROUTE_SEO: Record<string, { title: string; description: string; keywords: 
       'Search the web with Google — powered by SERP API. Get organic results, knowledge graphs, images, and more.',
     keywords: ['Search', 'Google Search', 'SERP', 'Web Search'],
     category: 'Web Search'
+  },
+  'video-studio': {
+    title: 'Video Studio | Voirax',
+    description: 'Convert any idea into a ready-to-post short-form video with AI-generated script, music, voiceover, and video.',
+    keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno', 'Voirax'],
+    category: 'AI Video Generation'
   }
 };
 
@@ -241,7 +248,8 @@ const routes = [
   download,
   site,
   profile,
-  pricing
+  pricing,
+  videoStudio
 ];
 
 const router = createRouter({
