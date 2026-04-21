@@ -38,142 +38,142 @@ import { updateSeo, setWebApplicationSchema, setOrganization, resetSeo } from '@
 // SEO metadata per route path prefix
 const ROUTE_SEO: Record<string, { title: string; description: string; keywords: string[]; category: string }> = {
   chatgpt: {
-    title: 'ChatGPT',
+    title: 'ChatGPT | Voirax',
     description: 'Chat with ChatGPT AI — powered by OpenAI GPT models. Free AI conversations with the latest GPT.',
-    keywords: ['ChatGPT', 'GPT', 'AI Chat', 'OpenAI'],
+    keywords: ['ChatGPT', 'GPT', 'AI Chat', 'OpenAI', 'Voirax'],
     category: 'AI Chat'
   },
   claude: {
-    title: 'Claude',
+    title: 'Claude | Voirax',
     description: 'Chat with Claude AI — powered by Anthropic. Intelligent AI conversations with Claude.',
-    keywords: ['Claude', 'Anthropic', 'AI Chat', 'Claude AI'],
+    keywords: ['Claude', 'Anthropic', 'AI Chat', 'Claude AI', 'Voirax'],
     category: 'AI Chat'
   },
   gemini: {
-    title: 'Gemini',
+    title: 'Gemini | Voirax',
     description: 'Chat with Gemini AI — powered by Google. Advanced AI conversations with Gemini.',
-    keywords: ['Gemini', 'Google AI', 'AI Chat', 'Gemini AI'],
+    keywords: ['Gemini', 'Google AI', 'AI Chat', 'Gemini AI', 'Voirax'],
     category: 'AI Chat'
   },
   grok: {
-    title: 'Grok',
+    title: 'Grok | Voirax',
     description: 'Chat with Grok AI — powered by xAI. Real-time AI conversations with Grok.',
-    keywords: ['Grok', 'xAI', 'AI Chat', 'Grok AI'],
+    keywords: ['Grok', 'xAI', 'AI Chat', 'Grok AI', 'Voirax'],
     category: 'AI Chat'
   },
   deepseek: {
-    title: 'DeepSeek',
+    title: 'DeepSeek | Voirax',
     description: 'Chat with DeepSeek AI — advanced reasoning and coding AI assistant.',
-    keywords: ['DeepSeek', 'AI Chat', 'AI Coding', 'DeepSeek AI'],
+    keywords: ['DeepSeek', 'AI Chat', 'AI Coding', 'DeepSeek AI', 'Voirax'],
     category: 'AI Chat'
   },
   kimi: {
-    title: 'Kimi',
+    title: 'Kimi | Voirax',
     description: 'Chat with Kimi AI — advanced AI conversations powered by Moonshot AI.',
-    keywords: ['Kimi', 'Moonshot AI', 'AI Chat', 'Kimi AI'],
+    keywords: ['Kimi', 'Moonshot AI', 'AI Chat', 'Kimi AI', 'Voirax'],
     category: 'AI Chat'
   },
   midjourney: {
-    title: 'Midjourney',
+    title: 'Midjourney | Voirax',
     description:
       'Generate stunning AI images with Midjourney — create art, illustrations, and designs with text prompts.',
-    keywords: ['Midjourney', 'AI Image', 'AI Art', 'Image Generation', 'Text to Image'],
+    keywords: ['Midjourney', 'AI Image', 'AI Art', 'Image Generation', 'Text to Image', 'Voirax'],
     category: 'AI Image Generation'
   },
   flux: {
-    title: 'Flux',
+    title: 'Flux | Voirax',
     description: 'Generate AI images with Flux — fast, high-quality image generation from text descriptions.',
-    keywords: ['Flux', 'AI Image', 'Image Generation', 'Text to Image'],
+    keywords: ['Flux', 'AI Image', 'Image Generation', 'Text to Image', 'Voirax'],
     category: 'AI Image Generation'
   },
   qrart: {
-    title: 'QR Art',
+    title: 'QR Art | Voirax',
     description: 'Generate artistic QR codes with AI — beautiful, scannable QR code art.',
-    keywords: ['QR Art', 'AI QR Code', 'QR Code Generator', 'Artistic QR'],
+    keywords: ['QR Art', 'AI QR Code', 'QR Code Generator', 'Artistic QR', 'Voirax'],
     category: 'AI Image Generation'
   },
   headshots: {
-    title: 'AI Headshots',
+    title: 'AI Headshots | Voirax',
     description: 'Generate professional AI headshots — perfect for LinkedIn, resumes, and business profiles.',
-    keywords: ['AI Headshots', 'Professional Photos', 'AI Portrait', 'LinkedIn Photo'],
+    keywords: ['AI Headshots', 'Professional Photos', 'AI Portrait', 'LinkedIn Photo', 'Voirax'],
     category: 'AI Image Generation'
   },
   nanobanana: {
-    title: 'NanoBanana',
+    title: 'NanoBanana | Voirax',
     description: 'Generate and edit AI images with NanoBanana — powered by Gemini for creative image generation.',
-    keywords: ['NanoBanana', 'AI Image', 'Gemini', 'Image Editing'],
+    keywords: ['NanoBanana', 'AI Image', 'Gemini', 'Image Editing', 'Voirax'],
     category: 'AI Image Generation'
   },
   seedream: {
-    title: 'Seedream',
+    title: 'Seedream | Voirax',
     description: 'Generate AI images with Seedream — high-quality image generation by ByteDance.',
-    keywords: ['Seedream', 'AI Image', 'ByteDance', 'Image Generation'],
+    keywords: ['Seedream', 'AI Image', 'ByteDance', 'Image Generation', 'Voirax'],
     category: 'AI Image Generation'
   },
   luma: {
-    title: 'Luma',
+    title: 'Luma | Voirax',
     description: 'Generate AI videos with Luma Dream Machine — create stunning videos from text and images.',
-    keywords: ['Luma', 'AI Video', 'Dream Machine', 'Video Generation', 'Text to Video'],
+    keywords: ['Luma', 'AI Video', 'Dream Machine', 'Video Generation', 'Text to Video', 'Voirax'],
     category: 'AI Video Generation'
   },
   sora: {
-    title: 'Sora',
+    title: 'Sora | Voirax',
     description: 'Generate AI videos with OpenAI Sora — create realistic videos from text descriptions.',
-    keywords: ['Sora', 'OpenAI', 'AI Video', 'Video Generation', 'Text to Video'],
+    keywords: ['Sora', 'OpenAI', 'AI Video', 'Video Generation', 'Text to Video', 'Voirax'],
     category: 'AI Video Generation'
   },
   veo: {
-    title: 'Veo',
+    title: 'Veo | Voirax',
     description: 'Generate AI videos with Google Veo — high-quality video generation from text prompts.',
-    keywords: ['Veo', 'Google', 'AI Video', 'Video Generation'],
+    keywords: ['Veo', 'Google', 'AI Video', 'Video Generation', 'Voirax'],
     category: 'AI Video Generation'
   },
   pika: {
-    title: 'Pika',
+    title: 'Pika | Voirax',
     description: 'Generate AI videos with Pika — creative video generation and editing with AI.',
-    keywords: ['Pika', 'AI Video', 'Video Generation', 'Video Editing'],
+    keywords: ['Pika', 'AI Video', 'Video Generation', 'Video Editing', 'Voirax'],
     category: 'AI Video Generation'
   },
   kling: {
-    title: 'Kling',
+    title: 'Kling | Voirax',
     description: 'Generate AI videos with Kling — high-quality video generation by Kuaishou.',
-    keywords: ['Kling', 'AI Video', 'Kuaishou', 'Video Generation'],
+    keywords: ['Kling', 'AI Video', 'Kuaishou', 'Video Generation', 'Voirax'],
     category: 'AI Video Generation'
   },
   pixverse: {
-    title: 'Pixverse',
+    title: 'Pixverse | Voirax',
     description: 'Generate AI videos with Pixverse — creative video generation from text and images.',
-    keywords: ['Pixverse', 'AI Video', 'Video Generation'],
+    keywords: ['Pixverse', 'AI Video', 'Video Generation', 'Voirax'],
     category: 'AI Video Generation'
   },
   hailuo: {
-    title: 'Hailuo',
+    title: 'Hailuo | Voirax',
     description: 'Generate AI videos with Hailuo (MiniMax) — expressive video generation from text.',
-    keywords: ['Hailuo', 'MiniMax', 'AI Video', 'Video Generation'],
+    keywords: ['Hailuo', 'MiniMax', 'AI Video', 'Video Generation', 'Voirax'],
     category: 'AI Video Generation'
   },
   seedance: {
-    title: 'Seedance',
+    title: 'Seedance | Voirax',
     description: 'Generate AI dance videos with Seedance — AI-powered dance video generation by ByteDance.',
-    keywords: ['Seedance', 'AI Video', 'Dance Video', 'ByteDance'],
+    keywords: ['Seedance', 'AI Video', 'Dance Video', 'ByteDance', 'Voirax'],
     category: 'AI Video Generation'
   },
   wan: {
-    title: 'Wan',
+    title: 'Wan | Voirax',
     description: 'Generate AI videos with Wan — high-quality video generation by Tongyi Wanxiang.',
-    keywords: ['Wan', 'Tongyi', 'AI Video', 'Video Generation'],
+    keywords: ['Wan', 'Tongyi', 'AI Video', 'Video Generation', 'Voirax'],
     category: 'AI Video Generation'
   },
   suno: {
-    title: 'Suno',
+    title: 'Suno | Voirax',
     description: 'Create AI music with Suno — generate songs, lyrics, and music from text descriptions.',
-    keywords: ['Suno', 'AI Music', 'Music Generation', 'AI Song', 'Text to Music'],
+    keywords: ['Suno', 'AI Music', 'Music Generation', 'AI Song', 'Text to Music', 'Voirax'],
     category: 'AI Music Generation'
   },
   producer: {
-    title: 'Producer',
+    title: 'Producer | Voirax',
     description: 'Create AI music with Producer — generate songs, lyrics, and music with FUZZ models.',
-    keywords: ['Producer', 'AI Music', 'Music Generation', 'FUZZ', 'AI Song'],
+    keywords: ['Producer', 'AI Music', 'Music Generation', 'FUZZ', 'AI Song', 'Voirax'],
     category: 'AI Music Generation'
   },
   distribution: {

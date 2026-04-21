@@ -784,7 +784,7 @@
     "description": "Title displaying which open source project this site is built on in the about page"
   },
   "settings.poweredByTip": {
-    "message": "This site is built on the Nexior open-source project, and the code is fully open-source.",
+    "message": "This site is built on the Voirax open-source project, and the code is fully open-source.",
     "description": "Description displayed on the about page indicating which open-source project this site is based on."
   },
   "settings.apiService": {

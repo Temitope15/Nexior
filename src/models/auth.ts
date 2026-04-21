@@ -2,6 +2,7 @@ export interface IToken {
   access?: string;
   refresh?: string;
   expiration?: number;
+  provider_token?: string;
 }
 
 export interface ITokenResponse extends IToken {}

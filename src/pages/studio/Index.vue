@@ -13,7 +13,7 @@
               <font-awesome-icon icon="fa-solid fa-robot" class="mr-2" />
               AI CONTENT AGENT v2.5
             </div>
-            <h1>Nexior <span class="gradient-text">Studio</span></h1>
+            <h1>Voirax <span class="gradient-text">Studio</span></h1>
             <p>Turning thoughts into cinematic short-form content</p>
           </header>
 
@@ -373,9 +373,10 @@ Tone: ${this.config.tone}`;
       const userPrompt = `Video Topic: ${this.config.topic}`;
 
       try {
-        const token = this.credential?.token;
-        if (!token) throw new Error('Authentication required.');
-
+        const token = this.$store.state.token?.provider_token || this.chatCredential?.token;
+        if (!token) {
+          throw new Error('Authentication required.');
+        }
         const res = await chatOperator.chatConversation({
           messages: [
             { role: 'system', content: systemPrompt },
@@ -427,7 +428,7 @@ Tone: ${this.config.tone}`;
 
     async generateVoiceover() {
       const scriptText = `${this.outputs.script.hook}. ${this.outputs.script.body}. ${this.outputs.script.cta}`;
-      const token = this.sunoCredential?.token;
+      const token = this.$store.state.token?.provider_token || this.sunoCredential?.token;
 
       try {
         if (!token) throw new Error('Authentication required (Suno).');
@@ -452,7 +453,7 @@ Tone: ${this.config.tone}`;
     async generateFinalVideo(audioId: string) {
       this.loading.visual = true;
       this.pipelineStatus = 'Orchestrating context-aware visuals and packaging...';
-      const token = this.producerCredential?.token;
+      const token = this.$store.state.token?.provider_token || this.producerCredential?.token;
 
       try {
         if (!token) throw new Error('Authentication required (Producer).');
@@ -510,7 +511,7 @@ Tone: ${this.config.tone}`;
       if (!this.outputs.videoUrl) return;
       const link = document.createElement('a');
       link.href = this.outputs.videoUrl;
-      link.setAttribute('download', `nexior-video-${Date.now()}.mp4`);
+      link.setAttribute('download', `voirax-video-${Date.now()}.mp4`);
       link.setAttribute('target', '_blank');
       document.body.appendChild(link);
       link.click();

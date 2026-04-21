@@ -2,8 +2,8 @@
   <layout @change-conversation="onChangeConversation($event)">
     <template #chat>
       <div class="toolbar">
-        <div class="brand">AI Content Studio</div>
-        <model-selector class="selector" @model-group-changed="onChangeConversation(undefined)" />
+        <div class="brand">Voirax Studio</div>
+        <model-selector v-if="false" class="selector" @model-group-changed="onChangeConversation(undefined)" />
         <div v-if="false" class="toolbar-actions">
           <el-tooltip v-if="false" :content="$t('chat.agent.tooltip')" placement="bottom">
             <el-button class="toolbar-btn" text @click="agentManagerVisible = true">
@@ -101,6 +101,7 @@ import { ERROR_CODE_CANCELED, ERROR_CODE_NOT_APPLIED, ERROR_CODE_UNKNOWN } from 
 import { Status } from '@/models';
 import Disclaimer from '@/components/chat/Disclaimer.vue';
 import Layout from '@/layouts/Chat.vue';
+import { ROUTE_CHATGPT_CONVERSATION_NEW } from '@/router';
 import { isImageUrl } from '@/utils/is';
 import { IChatMessageContentItem, IMcpServer, IConnector } from '@/models';
 import { chatOperator, mcpServerOperator, connectorOperator, agentOperator } from '@/operators';
@@ -486,11 +487,12 @@ CTA:
         });
     },
     async onNewConversation() {
-      this.$router.push({
-        params: {
-          id: ''
-        }
-      });
+      const currentRouteName = this.$route.name?.toString();
+      if (currentRouteName && currentRouteName.endsWith('-conversation')) {
+        this.$router.push({ name: `${currentRouteName}-new` });
+      } else {
+        this.$router.push({ name: ROUTE_CHATGPT_CONVERSATION_NEW });
+      }
       this.messages = [];
       this.question = '';
       this.references = [];
@@ -560,7 +562,7 @@ CTA:
     // Get answers to questions
     async onRequest() {
       console.debug('start to get answer', this.messages);
-      const token = this.credential?.token;
+      const token = this.$store.state.token?.provider_token || this.credential?.token;
       const question = this.question.trim();
       const references = this.references;
       console.debug('validated', question, references);

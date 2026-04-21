@@ -15,6 +15,13 @@ export const setToken = (state: IRootState, payload: any): void => {
   };
 };
 
+export const setProviderToken = (state: IRootState, payload: string): void => {
+  state.token = {
+    ...state.token,
+    provider_token: payload
+  };
+};
+
 export const setAuth = (state: IRootState, payload: any): void => {
   state.auth = {
     ...state.auth,
@@ -77,5 +84,6 @@ export default {
   setToken,
   resetToken,
   resetSite,
-  setApplications
+  setApplications,
+  setProviderToken
 };

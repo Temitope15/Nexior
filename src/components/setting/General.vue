@@ -18,6 +18,15 @@
     </section>
     <section class="settings-item">
       <div class="settings-label">
+        <p class="settings-title">Custom API Token</p>
+        <p class="settings-tip">Override the default service token with your own API key to bypass platform limits.</p>
+      </div>
+      <div class="settings-content">
+        <provider-token />
+      </div>
+    </section>
+    <section class="settings-item">
+      <div class="settings-label">
         <p class="settings-title">{{ $t('common.settings.github') }}</p>
       </div>
       <div class="settings-content">
@@ -35,12 +44,14 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import ThemeSwitcher from '@/components/user/Theme.vue';
 import LocaleSwitcher from '@/components/user/Locale.vue';
+import ProviderToken from '@/components/user/ProviderToken.vue';
 
 export default defineComponent({
   name: 'GeneralSettings',
   components: {
     ThemeSwitcher,
     LocaleSwitcher,
+    ProviderToken,
     FontAwesomeIcon
   },
   data() {
