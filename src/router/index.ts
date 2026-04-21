@@ -215,7 +215,7 @@ const routes = [
   {
     path: '/studio',
     component: () => import('@/layouts/Main.vue'),
-    meta: { auth: true, appName: 'videoStudio' },
+    meta: { auth: true, appName: 'videoStudio', hideNav: true },
     children: [
       {
         path: '',

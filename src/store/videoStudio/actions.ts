@@ -93,9 +93,12 @@ async function generateVoiceover({ commit, state }: Context): Promise<string> {
     const res = await producerOperator.audio(
       {
         action: 'generate',
-        prompt: state.scriptOutput.voiceoverText,
+        custom: true,
+        lyric: state.scriptOutput.voiceoverText,
+        prompt: `cinematic spoken word, ${state.config.voiceGender} vocal, motivational narration, clear voice`,
         model: VIDEO_STUDIO_PRODUCER_MODEL,
         vocal_gender: state.config.voiceGender,
+        instrumental: false,
         callback_url: VIDEO_STUDIO_PRODUCER_CALLBACK
       },
       { token: state.apiKey }
