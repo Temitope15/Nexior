@@ -35,6 +35,7 @@ import { getCookie } from 'typescript-cookie';
 import { I18N_DEFAULT_LOCALE } from '@/constants/i18n';
 import { getLocale, setI18nLanguage } from '@/i18n';
 import { updateSeo, setWebApplicationSchema, setOrganization, resetSeo } from '@/utils/seo';
+import { ROUTE_INDEX, ROUTE_STUDIO } from '@/router/constants';
 
 // SEO metadata per route path prefix
 const ROUTE_SEO: Record<string, { title: string; description: string; keywords: string[]; category: string }> = {
@@ -195,11 +196,12 @@ const ROUTE_SEO: Record<string, { title: string; description: string; keywords: 
 const routes = [
   {
     path: '/',
-    redirect: { name: 'studio' }
+    name: ROUTE_INDEX,
+    component: () => import('@/pages/index/Index.vue')
   },
   {
     path: '/studio',
-    name: 'studio',
+    name: ROUTE_STUDIO,
     component: () => import('@/pages/studio/Index.vue'),
     meta: { hideNav: false, hideSide: false, appName: 'chat' }
   },

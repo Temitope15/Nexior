@@ -1,114 +1,126 @@
 {
-  "title.chat": {
-    "message": "AI 聊天",
-    "description": "AI 聊天章节标题"
+  "nav.features": {
+    "message": "功能",
+    "description": "导航链接"
   },
-  "title.midjourney": {
-    "message": "AI 绘画",
-    "description": "AI绘画章节标题"
+  "nav.pricing": {
+    "message": "价格",
+    "description": "导航链接"
   },
-  "title.qrart": {
-    "message": "AI 艺术二维码",
-    "description": "AI 艺术二维码章节标题"
+  "nav.pipeline": {
+    "message": "流水线",
+    "description": "导航链接"
   },
-  "title.suno": {
-    "message": "AI 音乐",
-    "description": "AI 音乐章节标题"
+  "button.launchStudio": {
+    "message": "启动工作室",
+    "description": "按钮文本"
   },
-  "title.luma": {
-    "message": "AI 视频",
-    "description": "AI 视频章节标题"
+  "button.startCreating": {
+    "message": "立即开始创作",
+    "description": "按钮文本"
   },
-  "title.headshots": {
-    "message": "AI 证件照",
-    "description": "AI 证件照章节标题"
+  "button.deployStudio": {
+    "message": "部署您的工作室",
+    "description": "按钮文本"
   },
-  "title.comments": {
-    "message": "客户评价",
-    "description": "客户评价章节标题"
+  "button.getStarted": {
+    "message": "立即开始",
+    "description": "按钮文本"
   },
-  "title.introduction": {
-    "message": "我们的服务",
-    "description": "站点简介"
+  "button.launchNow": {
+    "message": "立即启动您的工作室",
+    "description": "按钮文本"
   },
-  "subtitle.banner": {
-    "message": "AI 赋能，全面提升你的生产力。",
-    "description": "站点副标题"
+  "hero.badge": {
+    "message": "内容创作的未来",
+    "description": "英雄部分徽章文本"
   },
-  "subtitle.chat": {
-    "message": "支持多种问答模型，具备联网功能，能够识别图片、文件和视频等多种内容。",
-    "description": "AI 聊天章节标题"
+  "hero.title": {
+    "message": "全球最强大的",
+    "description": "英雄部分标题"
   },
-  "subtitle.midjourney": {
-    "message": "对接最新的 Midjourney 模型，一键生成各种风格的图片和连续微调。",
-    "description": "AI绘画章节标题"
+  "hero.titleHighlight": {
+    "message": "AI 视频引擎",
+    "description": "英雄部分标题高亮"
   },
-  "subtitle.qrart": {
-    "message": "支持多种艺术二维码风格，允许上传已有二维码，轻松将其艺术化，打造独特的视觉效果。",
-    "description": "AI 艺术二维码章节标题"
+  "hero.subtitle": {
+    "message": "输入任何内容。几分钟内获得专业视频。为创作者和企业家打造的一站式仪表板，助力实现愿景。",
+    "description": "英雄部分副标题"
   },
-  "subtitle.suno": {
-    "message": "支持多种音乐风格，轻松生成你想要的音乐，并支持灵活的长度扩展选项。",
-    "description": "AI 音乐章节标题"
+  "pipeline.title": {
+    "message": "4 步制作流水线",
+    "description": "流水线部分标题"
   },
-  "subtitle.luma": {
-    "message": "对接最新的 Luma 模型，一键生成自定义的视频，并支持灵活的视频扩展选项。",
-    "description": "AI 音乐章节标题"
+  "pipeline.subtitle": {
+    "message": "从空白页到 60 秒内的病毒式视频。我们的结构化工作流处理所有复杂性。",
+    "description": "流水线部分副标题"
   },
-  "subtitle.headshots": {
-    "message": "对接最新的 AI 模型，一键生成自定义模板的证件照，并支持多种分格的证件照。",
-    "description": "AI 证件照章节标题"
+  "pipeline.step1Title": {
+    "message": "剧本创作",
+    "description": "第 1 步标题"
   },
-  "subtitle.comments": {
-    "message": "我们很高兴能够帮助这些客户，他们对我们的服务给予了很高的评价。",
-    "description": "客户评价章节标题"
+  "pipeline.step1Desc": {
+    "message": "利用 Claude 和 Gemini 的 AI 驱动剧本创作，打造高留存率叙事。",
+    "description": "第 1 步描述"
   },
-  "subtitle.introduction": {
-    "message": "我们提供一站式的 AI 服务，包括问答、绘画、二维码、音乐等多种功能，满足你的多样化需求。",
-    "description": "站点简介"
+  "pipeline.step2Title": {
+    "message": "音频合成",
+    "description": "第 2 步标题"
   },
-  "button.try": {
-    "message": "免费开始",
-    "description": "文字里面的内容"
+  "pipeline.step2Desc": {
+    "message": "根据您的语调定制专业配音和动态背景音乐生成。",
+    "description": "第 2 步描述"
   },
-  "button.testEnv": {
-    "message": "测试环境",
-    "description": "测试环境按钮"
+  "pipeline.step3Title": {
+    "message": "视觉锻造",
+    "description": "第 3 步标题"
   },
-  "customers.name1": {
-    "message": "Frank",
-    "description": "客户的姓名"
+  "pipeline.step3Desc": {
+    "message": "超现实的视觉效果和图像生成，媲美专业工作室制作。",
+    "description": "第 3 步描述"
   },
-  "customers.job1": {
-    "message": "软件工程师",
-    "description": "客户的职位"
+  "pipeline.step4Title": {
+    "message": "即时处理",
+    "description": "第 4 步标题"
   },
-  "customers.comment1": {
-    "message": "这种集成式的服务简直太方便了，我可以在一个平台使用多种 AI 各种工具，非常棒！",
-    "description": "客户的评论"
+  "pipeline.step4Desc": {
+    "message": "一键装配成最终杰作，随时准备部署。",
+    "description": "第 4 步描述"
   },
-  "customers.name2": {
-    "message": "Jacob",
-    "description": "客户的姓名"
+  "pricing.traditionalLabel": {
+    "message": "传统制作",
+    "description": "价格标签"
   },
-  "customers.job2": {
-    "message": "产品经理",
-    "description": "客户的职位"
+  "pricing.traditionalItem1": {
+    "message": "数周的反复沟通",
+    "description": "价格项目"
   },
-  "customers.comment2": {
-    "message": "平台非常好用，服务质量非常好，同时极大解放了我的生产力。",
-    "description": "客户的评论"
+  "pricing.traditionalItem2": {
+    "message": "昂贵的摄像设备",
+    "description": "价格项目"
   },
-  "customers.name3": {
-    "message": "Larry",
-    "description": "客户的姓名"
+  "pricing.traditionalItem3": {
+    "message": "专业的剪辑费用",
+    "description": "价格项目"
   },
-  "customers.job3": {
-    "message": "设计师",
-    "description": "客户的职位"
+  "pricing.voiraxLabel": {
+    "message": "Voirax 工作室",
+    "description": "价格标签"
   },
-  "customers.comment3": {
-    "message": "AI 平台太多了，但这个真的易于使用，价格合理，希望它能变得更好！",
-    "description": "客户的评论"
+  "pricing.voiraxItem1": {
+    "message": "即时 4 步工作流",
+    "description": "价格项目"
+  },
+  "pricing.voiraxItem2": {
+    "message": "专业 AI 演员",
+    "description": "价格项目"
+  },
+  "pricing.voiraxItem3": {
+    "message": "无需技术技能",
+    "description": "价格项目"
+  },
+  "footer.title": {
+    "message": "准备好重塑您的内容策略了吗？",
+    "description": "页脚标题"
   }
 }

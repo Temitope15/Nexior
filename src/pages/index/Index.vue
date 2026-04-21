@@ -1,259 +1,142 @@
 <template>
-  <div class="wrapper">
-    <div id="banner">
+  <div class="landing-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container flex justify-between items-center py-6">
+        <div class="logo-wrapper">
+          <img :src="site.logo" class="h-10" />
+        </div>
+        <div class="nav-links hidden md:flex items-center gap-8">
+          <a href="#features" class="nav-link">{{ $t('index.nav.features') }}</a>
+          <a href="#pricing" class="nav-link">{{ $t('index.nav.pricing') }}</a>
+          <a href="#pipeline" class="nav-link">{{ $t('index.nav.pipeline') }}</a>
+          <el-button type="primary" round class="px-8 shadow-glow" @click="$router.push('/studio')">
+            {{ $t('index.button.launchStudio') }}
+          </el-button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+      <div class="container grid md:grid-cols-2 gap-12 items-center pt-20 pb-32">
+        <div class="hero-content" v-motion-fade-visible-once>
+          <div class="badge mb-6">{{ $t('index.hero.badge') }}</div>
+          <h1 class="hero-title mb-6">
+            {{ $t('index.hero.title') }}
+            <span class="gradient-text">{{ $t('index.hero.titleHighlight') }}</span>
+          </h1>
+          <p class="hero-subtitle mb-10">
+            {{ $t('index.hero.subtitle') }}
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <el-button type="primary" size="large" round class="px-10 h-14 text-lg shadow-glow" @click="$router.push('/studio')">
+              {{ $t('index.button.startCreating') }}
+            </el-button>
+            <el-button size="large" round class="px-10 h-14 text-lg glass-button" @click="$router.push('/site')">
+              {{ $t('index.button.deployStudio') }}
+            </el-button>
+          </div>
+        </div>
+        <div class="hero-image-wrapper" v-motion-slide-visible-once-right>
+          <div class="image-glow"></div>
+          <img src="@/assets/images/dashboard-preview.png" class="dashboard-img shadow-2xl rounded-2xl border border-white/10" />
+        </div>
+      </div>
+    </header>
+
+    <!-- Pipeline Section -->
+    <section id="pipeline" class="pipeline-section py-32 bg-section-dark">
       <div class="container">
-        <el-row>
-          <el-col :md="12" :xs="24" class="left">
-            <div class="info">
-              <h1 class="title">
-                {{ site?.title }}
-              </h1>
-              <h3 class="subtitle">
-                {{ $t('index.subtitle.banner') }}
-              </h3>
-              <div class="operations">
-                <el-button
-                  type="primary"
-                  round
-                  class="btn-apply"
-                  @click="
-                    $router.push({
-                      path: '/chat'
-                    })
-                  "
-                >
-                  {{ $t('common.button.startForFree') }}
-                </el-button>
-              </div>
+        <div class="text-center mb-20">
+          <h2 class="section-title mb-4">{{ $t('index.pipeline.title') }}</h2>
+          <p class="section-subtitle">{{ $t('index.pipeline.subtitle') }}</p>
+        </div>
+        <div class="grid md:grid-cols-4 gap-6">
+          <div v-for="(step, index) in steps" :key="index" class="pipeline-card" v-motion-fade-visible-once :delay="index * 100">
+            <div class="step-number">{{ index + 1 }}</div>
+            <div class="icon-box mb-6">
+              <font-awesome-icon :icon="step.icon" />
             </div>
-          </el-col>
-          <el-col :md="12" :xs="24" class="right">
-            <el-image src="https://cdn.acedata.cloud/illustration1.png" class="brand" />
-          </el-col>
-        </el-row>
+            <h3 class="card-title mb-3">{{ step.title }}</h3>
+            <p class="card-text">{{ step.description }}</p>
+          </div>
+        </div>
       </div>
-    </div>
-    <div id="introduction">
+    </section>
+
+    <!-- Pricing Comparison Section -->
+    <section id="pricing" class="pricing-section py-32">
       <div class="container">
-        <el-row class="mb-6">
-          <el-col :span="24">
-            <h2 class="title">
-              {{ $t('index.title.introduction') }}
-            </h2>
-            <h5 class="subtitle">
-              {{ $t('index.subtitle.introduction') }}
-            </h5>
-          </el-col>
-        </el-row>
-        <el-row :gutter="15">
-          <el-col
-            v-for="(capability, capabilityIndex) in capabilities"
-            :key="capabilityIndex"
-            :md="6"
-            :xs="24"
-            class="mb-4"
-          >
-            <el-card class="info text-center" shadow="hover" @click="onClickCapability(capability)">
-              <div class="icon-wrapper">
-                <font-awesome-icon :icon="capability.icon" class="icon" />
-              </div>
-              <h2 class="title">{{ capability.title }}</h2>
-              <p class="subtitle">{{ capability.subtitle }}</p>
-            </el-card>
-          </el-col>
-        </el-row>
+        <div class="comparison-card p-10 md:p-20 rounded-3xl relative overflow-hidden">
+          <div class="bg-blur"></div>
+          <div class="grid md:grid-cols-2 gap-16 relative z-10">
+            <div class="traditional">
+              <h4 class="text-white/50 uppercase tracking-widest text-sm mb-4 font-bold">{{ $t('index.pricing.traditionalLabel') }}</h4>
+              <h2 class="text-4xl md:text-5xl font-extrabold mb-8 text-white/80 line-through decoration-red-500 decoration-4">$2,500.00</h2>
+              <ul class="space-y-4">
+                <li class="flex items-center gap-3 text-white/40">
+                  <font-awesome-icon icon="fa-solid fa-circle-xmark" />
+                  {{ $t('index.pricing.traditionalItem1') }}
+                </li>
+                <li class="flex items-center gap-3 text-white/40">
+                  <font-awesome-icon icon="fa-solid fa-circle-xmark" />
+                  {{ $t('index.pricing.traditionalItem2') }}
+                </li>
+                <li class="flex items-center gap-3 text-white/40">
+                  <font-awesome-icon icon="fa-solid fa-circle-xmark" />
+                  {{ $t('index.pricing.traditionalItem3') }}
+                </li>
+              </ul>
+            </div>
+            <div class="voirax">
+              <h4 class="gradient-text uppercase tracking-widest text-sm mb-4 font-bold">{{ $t('index.pricing.voiraxLabel') }}</h4>
+              <h2 class="text-5xl md:text-7xl font-extrabold mb-8 text-white">$15.00</h2>
+              <ul class="space-y-4 mb-10">
+                <li class="flex items-center gap-3 text-white">
+                  <font-awesome-icon icon="fa-solid fa-circle-check" class="text-purple-400" />
+                  {{ $t('index.pricing.voiraxItem1') }}
+                </li>
+                <li class="flex items-center gap-3 text-white">
+                  <font-awesome-icon icon="fa-solid fa-circle-check" class="text-purple-400" />
+                  {{ $t('index.pricing.voiraxItem2') }}
+                </li>
+                <li class="flex items-center gap-3 text-white">
+                  <font-awesome-icon icon="fa-solid fa-circle-check" class="text-purple-400" />
+                  {{ $t('index.pricing.voiraxItem3') }}
+                </li>
+              </ul>
+              <el-button type="primary" size="large" round class="w-full h-16 text-xl shadow-glow" @click="$router.push('/studio')">
+                {{ $t('index.button.getStarted') }}
+              </el-button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div v-if="site?.features?.chatgpt?.enabled" id="chat" class="block">
-      <div class="container">
-        <el-row>
-          <el-col :md="16" :xs="24" class="preview">
-            <img src="https://cdn.acedata.cloud/axynds.png" class="image desktop" />
-            <img src="https://cdn.acedata.cloud/vds4i3.png" class="image mobile" />
-          </el-col>
-          <el-col :md="8" :xs="24" class="info">
-            <h2 class="title">{{ $t('index.title.chat') }}</h2>
-            <p class="subtitle">{{ $t('index.subtitle.chat') }}</p>
-            <el-button
-              type="primary"
-              round
-              class="btn-try"
-              @click="
-                $router.push({
-                  path: '/chat'
-                })
-              "
-            >
-              {{ $t('index.button.try') }}
-            </el-button>
-          </el-col>
-        </el-row>
+    </section>
+
+    <!-- Footer CTA -->
+    <footer class="footer py-20 bg-black">
+      <div class="container text-center">
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-10">{{ $t('index.footer.title') }}</h2>
+        <div class="flex justify-center gap-6 mb-20">
+          <el-button type="primary" size="large" round class="px-12 h-14 text-lg" @click="$router.push('/studio')">
+            {{ $t('index.button.launchNow') }}
+          </el-button>
+        </div>
+        <div class="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div class="logo-wrapper opacity-50">
+            <img :src="site.logo" class="h-8" />
+          </div>
+          <p class="text-white/30 text-sm">© {{ new Date().getFullYear() }} {{ site.title }}. All rights reserved.</p>
+          <div class="social-links flex gap-6">
+            <a href="#" class="text-white/30 hover:text-white"><font-awesome-icon icon="fa-brands fa-twitter" /></a>
+            <a href="#" class="text-white/30 hover:text-white"><font-awesome-icon icon="fa-brands fa-github" /></a>
+            <a href="#" class="text-white/30 hover:text-white"><font-awesome-icon icon="fa-brands fa-discord" /></a>
+          </div>
+        </div>
       </div>
-    </div>
-    <div v-if="site?.features?.midjourney?.enabled" id="midjourney" class="block">
-      <div class="container">
-        <el-row>
-          <el-col :md="8" :xs="24" class="info">
-            <h2 class="title">{{ $t('index.title.midjourney') }}</h2>
-            <p class="subtitle">{{ $t('index.subtitle.midjourney') }}</p>
-            <el-button
-              type="primary"
-              round
-              class="btn-try"
-              @click="
-                $router.push({
-                  path: '/midjourney'
-                })
-              "
-            >
-              {{ $t('index.button.try') }}
-            </el-button>
-          </el-col>
-          <el-col :md="16" :xs="24" class="preview">
-            <img src="https://cdn.acedata.cloud/uk86mz.png" class="image desktop" />
-            <img src="https://cdn.acedata.cloud/rvelwm.png" class="image mobile" />
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <div v-if="site?.features?.qrart?.enabled" id="qrart" class="block">
-      <div class="container">
-        <el-row>
-          <el-col :md="16" :xs="24" class="preview">
-            <img src="https://cdn.acedata.cloud/gyogar.png" class="image desktop" />
-            <img src="https://cdn.acedata.cloud/5kunm0.png" class="image mobile" />
-          </el-col>
-          <el-col :md="8" :xs="24" class="info">
-            <h2 class="title">{{ $t('index.title.qrart') }}</h2>
-            <p class="subtitle">{{ $t('index.subtitle.qrart') }}</p>
-            <el-button
-              type="primary"
-              round
-              class="btn-try"
-              @click="
-                $router.push({
-                  path: '/qrart'
-                })
-              "
-            >
-              {{ $t('index.button.try') }}
-            </el-button>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <div v-if="site?.features?.suno?.enabled" id="suno" class="block">
-      <div class="container">
-        <el-row>
-          <el-col :md="8" :xs="24" class="info">
-            <h2 class="title">{{ $t('index.title.suno') }}</h2>
-            <p class="subtitle">{{ $t('index.subtitle.suno') }}</p>
-            <el-button
-              type="primary"
-              round
-              class="btn-try"
-              @click="
-                $router.push({
-                  path: '/suno'
-                })
-              "
-            >
-              {{ $t('index.button.try') }}
-            </el-button>
-          </el-col>
-          <el-col :md="16" :xs="24" class="preview">
-            <img src="https://cdn.acedata.cloud/2m8fn.png" class="image desktop" />
-            <img src="https://cdn.acedata.cloud/23knvs.png" class="image mobile" />
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <div v-if="site?.features?.luma?.enabled" id="luma" class="block">
-      <div class="container">
-        <el-row>
-          <el-col :md="16" :xs="24" class="preview">
-            <img src="https://cdn.acedata.cloud/6kop1g.png" class="image desktop" />
-            <img src="https://cdn.acedata.cloud/3kcjny.png" class="image mobile" />
-          </el-col>
-          <el-col :md="8" :xs="24" class="info">
-            <h2 class="title">{{ $t('index.title.luma') }}</h2>
-            <p class="subtitle">{{ $t('index.subtitle.luma') }}</p>
-            <el-button
-              type="primary"
-              round
-              class="btn-try"
-              @click="
-                $router.push({
-                  path: '/luma'
-                })
-              "
-            >
-              {{ $t('index.button.try') }}
-            </el-button>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <div v-if="site?.features?.headshots?.enabled" id="headshots" class="block">
-      <div class="container">
-        <el-row>
-          <el-col :md="8" :xs="24" class="info">
-            <h2 class="title">{{ $t('index.title.headshots') }}</h2>
-            <p class="subtitle">{{ $t('index.subtitle.headshots') }}</p>
-            <el-button
-              type="primary"
-              round
-              class="btn-try"
-              @click="
-                $router.push({
-                  path: '/headshots'
-                })
-              "
-            >
-              {{ $t('index.button.try') }}
-            </el-button>
-          </el-col>
-          <el-col :md="16" :xs="24" class="preview">
-            <img src="https://cdn.acedata.cloud/zlyshj.png" class="image desktop" />
-            <img src="https://cdn.acedata.cloud/8as0cx.png" class="image mobile" />
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-    <div v-if="false" id="comments">
-      <div class="container">
-        <el-row class="mb-6">
-          <el-col :span="24">
-            <h2 class="title">
-              {{ $t('index.title.comments') }}
-            </h2>
-            <h5 class="subtitle">
-              {{ $t('index.subtitle.comments') }}
-            </h5>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20" class="main">
-          <el-col v-for="(comment, commentIndex) in comments" :key="commentIndex" :md="8" :xs="24">
-            <el-card shadow="hover" class="service" :body-style="{ padding: 0 }">
-              <p class="content">
-                {{ comment.content }}
-              </p>
-              <div class="info">
-                <div class="left">
-                  <el-image class="avatar" :src="comment.avatar" />
-                </div>
-                <div class="right">
-                  <div class="name">{{ comment.name }}</div>
-                  <div class="job">
-                    {{ comment.job }}
-                  </div>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -261,10 +144,6 @@
 import { defineComponent } from 'vue';
 import { ElButton, ElImage, ElRow, ElCol, ElCard } from 'element-plus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-
-interface IData {
-  comments: any[];
-}
 
 export default defineComponent({
   name: 'Index',
@@ -276,402 +155,243 @@ export default defineComponent({
     ElImage,
     FontAwesomeIcon
   },
-  data(): IData {
-    return {
-      comments: [
-        {
-          avatar: 'https://cdn.acedata.cloud/avatar1.png',
-          name: this.$t('index.customers.name1'),
-          job: this.$t('index.customers.job1'),
-          content: this.$t('index.customers.comment1')
-        },
-        {
-          avatar: 'https://cdn.acedata.cloud/avatar2.png',
-          name: this.$t('index.customers.name2'),
-          job: this.$t('index.customers.job2'),
-          content: this.$t('index.customers.comment2')
-        },
-        {
-          avatar: 'https://cdn.acedata.cloud/avatar3.png',
-          name: this.$t('index.customers.name3'),
-          job: this.$t('index.customers.job3'),
-          content: this.$t('index.customers.comment3')
-        }
-      ]
-    };
-  },
   computed: {
     site() {
       return this.$store.state.site;
     },
-    capabilities() {
+    steps() {
       return [
-        ...(this.site?.features?.chatgpt?.enabled
-          ? [
-              {
-                title: this.$t('index.title.chat'),
-                subtitle: this.$t('index.subtitle.chat'),
-                icon: 'fa-regular fa-comment',
-                path: '/chat'
-              }
-            ]
-          : []),
-        ...(this.site?.features?.midjourney?.enabled
-          ? [
-              {
-                title: this.$t('index.title.midjourney'),
-                subtitle: this.$t('index.subtitle.midjourney'),
-                icon: 'fa-solid fa-palette',
-                path: '/midjourney'
-              }
-            ]
-          : []),
-        ...(this.site?.features?.qrart?.enabled
-          ? [
-              {
-                title: this.$t('index.title.qrart'),
-                subtitle: this.$t('index.subtitle.qrart'),
-                icon: 'fa-solid fa-qrcode',
-                path: '/qrart'
-              }
-            ]
-          : []),
-        ...(this.site?.features?.suno?.enabled
-          ? [
-              {
-                title: this.$t('index.title.suno'),
-                subtitle: this.$t('index.subtitle.suno'),
-                icon: 'fa-solid fa-music',
-                path: '/suno'
-              }
-            ]
-          : []),
-        ...(this.site?.features?.luma?.enabled
-          ? [
-              {
-                title: this.$t('index.title.luma'),
-                subtitle: this.$t('index.subtitle.luma'),
-                icon: 'fa-solid fa-film',
-                path: '/luma'
-              }
-            ]
-          : []),
-        ...(this.site?.features?.headshots?.enabled
-          ? [
-              {
-                title: this.$t('index.title.headshots'),
-                subtitle: this.$t('index.subtitle.headshots'),
-                icon: 'fa-solid fa-id-card',
-                path: '/headshots'
-              }
-            ]
-          : [])
+        {
+          title: this.$t('index.pipeline.step1Title'),
+          description: this.$t('index.pipeline.step1Desc'),
+          icon: 'fa-solid fa-pen-nib'
+        },
+        {
+          title: this.$t('index.pipeline.step2Title'),
+          description: this.$t('index.pipeline.step2Desc'),
+          icon: 'fa-solid fa-microphone-lines'
+        },
+        {
+          title: this.$t('index.pipeline.step3Title'),
+          description: this.$t('index.pipeline.step3Desc'),
+          icon: 'fa-solid fa-film'
+        },
+        {
+          title: this.$t('index.pipeline.step4Title'),
+          description: this.$t('index.pipeline.step4Desc'),
+          icon: 'fa-solid fa-wand-magic-sparkles'
+        }
       ];
-    }
-  },
-  mounted() {},
-  methods: {
-    onClickCapability(capability: any) {
-      this.$router.push(capability.path);
     }
   }
 });
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
-  width: 100%;
-  background-color: var(--el-bg-color);
-
-  .title {
-    font-size: 40px;
-    text-align: center;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--el-text-color-primary);
-  }
-
-  .subtitle {
-    font-size: 18px;
-    line-height: 32px;
-    text-align: center;
-    color: var(--el-text-color-secondary);
-  }
+.landing-page {
+  background-color: #0b0d17;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 .container {
-  margin: auto;
   max-width: 1200px;
+  margin: 0 auto;
   padding: 0 24px;
 }
 
-.block {
-  padding: 100px 0;
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
 
-  .preview {
-    position: relative;
-
-    .image {
-      border-radius: 16px;
-      padding: 4px;
-      background-color: var(--app-bg-surface);
-      box-shadow: var(--app-shadow-md);
-      transition:
-        box-shadow 0.3s ease,
-        transform 0.3s ease;
-
-      &:hover {
-        box-shadow: var(--app-shadow-lg);
-        transform: translateY(-2px);
-      }
-
-      &.desktop {
-        max-width: 100%;
-        max-height: 100%;
-      }
-
-      &.mobile {
-        width: 30%;
-        position: absolute;
-        right: -5%;
-        top: 10%;
-      }
-    }
-  }
-
-  .info {
-    padding: 20px 40px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    .title {
-      font-size: 36px;
-      color: var(--el-text-color-primary);
-      letter-spacing: -0.02em;
-    }
-
-    .subtitle {
-      font-size: 17px;
-      padding: 0 16px;
-      color: var(--el-text-color-secondary);
-      margin-bottom: 24px;
-      line-height: 28px;
-    }
-
-    .btn-try {
-      padding: 20px 48px;
-      font-size: 16px;
-      line-height: 20px;
-      font-weight: 600;
-      border-radius: 9999px;
-    }
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+  &:hover {
+    color: #ffffff;
   }
 }
 
-#banner {
-  padding: 80px 0 60px;
-  background: var(--app-gradient-hero);
+.hero-section {
   position: relative;
   overflow: hidden;
-
-  /* Subtle grid pattern */
   &::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(124, 58, 237, 0.15) 1px, transparent 1px);
-    background-size: 32px 32px;
-    opacity: 0.5;
+    top: -10%;
+    right: -10%;
+    width: 60%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+    filter: blur(100px);
     pointer-events: none;
   }
-
-  .left {
-    position: relative;
-    z-index: 1;
-
-    .info {
-      @media (max-width: 767px) {
-        padding: 0 24px;
-      }
-
-      h1.title {
-        font-size: 56px;
-        font-weight: 800;
-        margin-bottom: 24px;
-        text-align: left;
-        letter-spacing: -0.03em;
-        color: #ffffff;
-        background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #a78bfa 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      h3.subtitle {
-        font-size: 22px;
-        line-height: 36px;
-        margin-bottom: 48px;
-        text-align: left;
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      .operations {
-        .btn-apply {
-          padding: 20px 48px;
-          font-size: 17px;
-          line-height: 20px;
-          font-weight: 600;
-          border-radius: 9999px;
-          box-shadow: var(--app-glow-primary-lg);
-          transition:
-            box-shadow 0.3s ease,
-            transform 0.2s ease;
-
-          &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 50px rgba(124, 58, 237, 0.4);
-          }
-        }
-      }
-    }
-  }
-
-  .right {
-    position: relative;
-    z-index: 1;
-
-    @media (max-width: 767px) {
-      padding: 40px 20px 0 20px;
-    }
-
-    .brand {
-      max-width: 100%;
-      height: auto;
-      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
-    }
-  }
 }
 
-#introduction {
-  padding: 80px 0;
-  background: var(--app-bg-section);
-
+.hero-title {
+  font-size: 4.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
   @media (max-width: 767px) {
-    padding: 60px 0;
+    font-size: 3rem;
   }
+}
 
-  .container {
-    cursor: pointer;
+.gradient-text {
+  background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 99px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #a78bfa;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+  &:hover {
+    box-shadow: 0 0 50px rgba(124, 58, 237, 0.5);
   }
+}
 
-  .info {
-    padding: 24px;
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease;
+.glass-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
 
+.hero-image-wrapper {
+  position: relative;
+  .image-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+    z-index: -1;
+  }
+  .dashboard-img {
+    width: 100%;
+    transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+    transition: transform 0.5s;
     &:hover {
-      transform: translateY(-4px);
-    }
-
-    .title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      line-height: 24px;
-      color: var(--el-text-color-secondary);
-    }
-
-    .icon-wrapper {
-      background: var(--el-color-primary-light-9);
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
-      padding: 10px;
-      text-align: center;
-      line-height: 42px;
-      margin: 10px auto 16px auto;
-      box-shadow: var(--app-glow-primary);
-      transition: box-shadow 0.25s ease;
-
-      .icon {
-        font-size: 24px;
-        color: var(--el-color-primary);
-      }
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
     }
   }
 }
 
-#introduction,
-#midjourney,
-#suno {
-  background: var(--app-bg-section);
+.section-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
-#comments {
-  padding: 80px 0;
-  background: var(--el-bg-color-page);
+.section-subtitle {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.5);
+}
 
-  .main {
-    @media (max-width: 767px) {
-      padding: 0 24px;
+.pipeline-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 24px;
+  position: relative;
+  transition: all 0.3s;
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(124, 58, 237, 0.3);
+    transform: translateY(-10px);
+    .icon-box {
+      background: #7c3aed;
+      color: #ffffff;
     }
   }
-
-  .el-card {
-    padding: 40px 32px;
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease;
-
-    &:hover {
-      transform: translateY(-4px);
-    }
-
-    @media (max-width: 767px) {
-      margin-bottom: 16px;
-    }
-
-    .content {
-      font-size: 15px;
-      line-height: 26px;
-      color: var(--el-text-color-secondary);
-      margin-bottom: 20px;
-    }
-
-    .info {
-      overflow: hidden;
-
-      .left,
-      .right {
-        float: left;
-      }
-
-      .avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        margin-right: 12px;
-        display: block;
-      }
-
-      .name {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 4px;
-        color: var(--el-text-color-regular);
-      }
-
-      .job {
-        font-size: 14px;
-        color: var(--el-text-color-secondary);
-      }
-    }
+  .step-number {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.05);
+    line-height: 1;
   }
+  .icon-box {
+    width: 60px;
+    height: 60px;
+    background: rgba(124, 58, 237, 0.1);
+    color: #a78bfa;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+  }
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .card-text {
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
+  }
+}
+
+.comparison-card {
+  background: #111427;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  .bg-blur {
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 60%;
+    height: 140%;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+    filter: blur(80px);
+  }
+}
+
+.voirax {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+:deep(.el-button--primary) {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  border: none;
 }
 </style>

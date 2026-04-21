@@ -1,8 +1,10 @@
 export const ROUTE_INDEX = 'index';
 export const ROUTE_DOWNLOAD = 'download';
+export const ROUTE_STUDIO = 'studio';
 
 export const ROUTE_AUTH_LOGIN = 'auth-login';
 export const ROUTE_AUTH_CALLBACK = 'auth-callback';
+export const ROUTE_AUTH_TOKENS = 'auth-tokens';
 
 export const ROUTE_SITE_INDEX = 'site-index';
 

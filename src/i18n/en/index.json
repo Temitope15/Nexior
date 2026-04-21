@@ -1,114 +1,125 @@
-{
-  "title.chat": {
-    "message": "AI Chat",
-    "description": "AI chat section title"
+  "nav.features": {
+    "message": "Features",
+    "description": "Navigation link"
   },
-  "title.midjourney": {
-    "message": "AI Drawing",
-    "description": "AI drawing section title"
+  "nav.pricing": {
+    "message": "Pricing",
+    "description": "Navigation link"
   },
-  "title.qrart": {
-    "message": "AI Art QR Code",
-    "description": "AI art QR code section title"
+  "nav.pipeline": {
+    "message": "Pipeline",
+    "description": "Navigation link"
   },
-  "title.suno": {
-    "message": "AI Music",
-    "description": "AI music section title"
+  "button.launchStudio": {
+    "message": "Launch Studio",
+    "description": "Button text"
   },
-  "title.luma": {
-    "message": "AI Video",
-    "description": "AI video section title"
+  "button.startCreating": {
+    "message": "Start Creating Now",
+    "description": "Button text"
   },
-  "title.headshots": {
-    "message": "AI Headshots",
-    "description": "AI headshots section title"
+  "button.deployStudio": {
+    "message": "Deploy Your Studio",
+    "description": "Button text"
   },
-  "title.comments": {
-    "message": "Customer Reviews",
-    "description": "Customer reviews section title"
+  "button.getStarted": {
+    "message": "Get Started Now",
+    "description": "Button text"
   },
-  "title.introduction": {
-    "message": "Our Services",
-    "description": "Site introduction"
+  "button.launchNow": {
+    "message": "Launch Your Studio Now",
+    "description": "Button text"
   },
-  "subtitle.banner": {
-    "message": "Empower with AI, enhance your productivity comprehensively.",
-    "description": "Site subtitle"
+  "hero.badge": {
+    "message": "The Future of Content Creation",
+    "description": "Hero badge text"
   },
-  "subtitle.chat": {
-    "message": "Supports multiple Q&A models, with internet connectivity, capable of recognizing images, files, and videos.",
-    "description": "AI chat section subtitle"
+  "hero.title": {
+    "message": "The World's Most Powerful",
+    "description": "Hero title"
   },
-  "subtitle.midjourney": {
-    "message": "Integrates the latest Midjourney model, generates various styles of images with one click and continuous fine-tuning.",
-    "description": "AI drawing section subtitle"
+  "hero.titleHighlight": {
+    "message": "AI Video Engine",
+    "description": "Hero title highlight"
   },
-  "subtitle.qrart": {
-    "message": "Supports various artistic QR code styles, allows uploading existing QR codes, easily artisticizes them for unique visual effects.",
-    "description": "AI art QR code section subtitle"
+  "hero.subtitle": {
+    "message": "Type anything. Get a professional video in minutes. An all-in-one dashboard built for creators and entrepreneurs to scale their vision.",
+    "description": "Hero subtitle"
   },
-  "subtitle.suno": {
-    "message": "Supports various music styles, easily generates the music you want, with flexible length extension options.",
-    "description": "AI music section subtitle"
+  "pipeline.title": {
+    "message": "The 4-Step Production Pipeline",
+    "description": "Pipeline section title"
   },
-  "subtitle.luma": {
-    "message": "Integrates the latest Luma model, generates custom videos with one click, with flexible video extension options.",
-    "description": "AI video section subtitle"
+  "pipeline.subtitle": {
+    "message": "From blank page to viral video in 60 seconds. Our structured workflow handles the complexity.",
+    "description": "Pipeline section subtitle"
   },
-  "subtitle.headshots": {
-    "message": "Integrates the latest AI model, generates custom template headshots with one click, supports various styles of headshots.",
-    "description": "AI headshots section subtitle"
+  "pipeline.step1Title": {
+    "message": "The Script",
+    "description": "Step 1 title"
   },
-  "subtitle.comments": {
-    "message": "We are delighted to help these customers, who have given high praise to our services.",
-    "description": "Customer reviews section subtitle"
+  "pipeline.step1Desc": {
+    "message": "AI-powered scriptwriting leveraging Claude and Gemini for high-retention narratives.",
+    "description": "Step 1 description"
   },
-  "subtitle.introduction": {
-    "message": "We offer one-stop AI services, including Q&A, drawing, QR codes, music, and more, to meet your diverse needs.",
-    "description": "Site introduction"
+  "pipeline.step2Title": {
+    "message": "Audio Synthesis",
+    "description": "Step 2 title"
   },
-  "button.try": {
-    "message": "Start Free",
-    "description": "Content inside the text"
+  "pipeline.step2Desc": {
+    "message": "Pro voiceovers and dynamic background music generation tailored to your tone.",
+    "description": "Step 2 description"
   },
-  "button.testEnv": {
-    "message": "Test Environment",
-    "description": "Test environment button"
+  "pipeline.step3Title": {
+    "message": "Visual Forge",
+    "description": "Step 3 title"
   },
-  "customers.name1": {
-    "message": "Frank",
-    "description": "Customer's name"
+  "pipeline.step3Desc": {
+    "message": "Hyper-realistic visuals and image generation that rivals studio production.",
+    "description": "Step 3 description"
   },
-  "customers.job1": {
-    "message": "Software Engineer",
-    "description": "Customer's job title"
+  "pipeline.step4Title": {
+    "message": "Instant Process",
+    "description": "Step 4 title"
   },
-  "customers.comment1": {
-    "message": "This integrated service is incredibly convenient, I can use various AI tools on one platform, fantastic!",
-    "description": "Customer's comment"
+  "pipeline.step4Desc": {
+    "message": "One-click assembly into a final masterpiece ready for deployment.",
+    "description": "Step 4 description"
   },
-  "customers.name2": {
-    "message": "Jacob",
-    "description": "Customer's name"
+  "pricing.traditionalLabel": {
+    "message": "Traditional Production",
+    "description": "Pricing label"
   },
-  "customers.job2": {
-    "message": "Product Manager",
-    "description": "Customer's job title"
+  "pricing.traditionalItem1": {
+    "message": "Weeks of back-and-forth",
+    "description": "Pricing item"
   },
-  "customers.comment2": {
-    "message": "The platform is very user-friendly, the service quality is excellent, and it greatly enhances my productivity.",
-    "description": "Customer's comment"
+  "pricing.traditionalItem2": {
+    "message": "Expensive camera gear",
+    "description": "Pricing item"
   },
-  "customers.name3": {
-    "message": "Larry",
-    "description": "Customer's name"
+  "pricing.traditionalItem3": {
+    "message": "Professional editing fees",
+    "description": "Pricing item"
   },
-  "customers.job3": {
-    "message": "Designer",
-    "description": "Customer's job title"
+  "pricing.voiraxLabel": {
+    "message": "Voirax Studio",
+    "description": "Pricing label"
   },
-  "customers.comment3": {
-    "message": "There are too many AI platforms, but this one is really easy to use and reasonably priced, hope it gets even better!",
-    "description": "Customer's comment"
+  "pricing.voiraxItem1": {
+    "message": "Instant 4-step workflow",
+    "description": "Pricing item"
+  },
+  "pricing.voiraxItem2": {
+    "message": "Professional AI actors",
+    "description": "Pricing item"
+  },
+  "pricing.voiraxItem3": {
+    "message": "Zero technical skills needed",
+    "description": "Pricing item"
+  },
+  "footer.title": {
+    "message": "Ready to reinvent your content strategy?",
+    "description": "Footer title"
   }
 }

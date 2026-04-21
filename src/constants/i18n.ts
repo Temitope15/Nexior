@@ -23,6 +23,7 @@ export const I18N_SUPPORTED_LOCALES = [
 
 export const I18N_SCOPES = [
   'index',
+  'auth',
   'api',
   'application',
   'qrart',
