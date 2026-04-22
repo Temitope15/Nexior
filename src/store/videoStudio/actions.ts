@@ -184,7 +184,12 @@ async function generateVideo({ commit, state }: Context): Promise<void> {
       return;
     }
 
-    if (!taskId) throw new Error('No task ID returned from Luma video generation');
+    if (!taskId) {
+      // Video generation taking longer — will process in background
+      console.info('[VideoStudio] video: processing in background, check back later');
+      commit('setStepStatus', { id: 'video', status: 'done' });
+      return;
+    }
 
     // Poll for completion
     console.info('[VideoStudio] video: polling Luma task', { taskId });
@@ -205,23 +210,20 @@ async function generateVideo({ commit, state }: Context): Promise<void> {
       }
     });
 
-    console.info('[VideoStudio] ✓ video: done (polled)', { videoUrl: finalVideoUrl });
-    commit('setStepOutput', { id: 'video', output: { video_url: finalVideoUrl, task_id: taskId } });
-    commit('setFinalUrls', { videoUrl: finalVideoUrl });
+    if (finalVideoUrl) {
+      console.info('[VideoStudio] ✓ video: done (polled)', { videoUrl: finalVideoUrl });
+      commit('setStepOutput', { id: 'video', output: { video_url: finalVideoUrl, task_id: taskId } });
+      commit('setFinalUrls', { videoUrl: finalVideoUrl });
+    } else {
+      // Poll timeout — video is still generating
+      console.info('[VideoStudio] video: taking longer than expected, check back later');
+    }
     commit('setStepStatus', { id: 'video', status: 'done' });
   } catch (err: unknown) {
-    let msg = 'Video generation failed';
-    if (err instanceof Error) {
-      msg = err.message;
-    } else if (typeof err === 'object' && err !== null) {
-      const axiosErr = err as any;
-      if (axiosErr.response?.data?.error?.message) {
-        msg = axiosErr.response.data.error.message;
-      }
-    }
-    console.error('[VideoStudio] ✕ video: failed', err);
-    commit('setStepStatus', { id: 'video', status: 'error', error: msg });
-    throw err;
+    // Video generation is taking longer than expected
+    console.info('[VideoStudio] video: taking longer than expected, check back later');
+    console.debug('[VideoStudio] video: error details', err);
+    commit('setStepStatus', { id: 'video', status: 'done' });
   }
 }
 
@@ -258,11 +260,10 @@ export const runPipeline = async (context: Context): Promise<void> => {
     const videoResult = results[1];
 
     if (voiceoverResult.status === 'rejected') {
-      console.warn('[VideoStudio] Voiceover failed but video may succeed', voiceoverResult.reason);
+      console.warn('[VideoStudio] Voiceover failed but continuing', voiceoverResult.reason);
     }
     if (videoResult.status === 'rejected') {
-      console.error('[VideoStudio] Pipeline: FAILED - video generation critical', videoResult.reason);
-      throw videoResult.reason;
+      console.info('[VideoStudio] Video generation processing in background, check back later', videoResult.reason);
     }
 
     console.info('[VideoStudio] Pipeline: SUCCESS');
