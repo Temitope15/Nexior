@@ -45,14 +45,6 @@ export default defineComponent({
     blurAmount: {
       type: Number,
       default: 0
-    },
-    stackPosition: {
-      type: String,
-      default: '20%'
-    },
-    scaleEndPosition: {
-      type: String,
-      default: '10%'
     }
   },
   data() {

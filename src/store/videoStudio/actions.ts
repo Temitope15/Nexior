@@ -154,7 +154,7 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
 }
 
 // Generate video using Luma Dream Machine
-async function generateVideo({ commit, state }: Context, sunoAudioId: string): Promise<void> {
+async function generateVideo({ commit, state }: Context): Promise<void> {
   console.info('[VideoStudio] ► video: start with Luma Dream Machine');
   commit('setStepStatus', { id: 'video', status: 'running' });
   try {
@@ -166,8 +166,7 @@ async function generateVideo({ commit, state }: Context, sunoAudioId: string): P
     // Generate video with Luma
     const res = await lumaOperator.generate(
       {
-        prompt: prompt,
-        aspect_ratio: '9:16'  // Mobile short-form video format
+        prompt: prompt
       },
       { token: state.apiKey }
     );
@@ -197,8 +196,8 @@ async function generateVideo({ commit, state }: Context, sunoAudioId: string): P
         const taskRes = await lumaOperator.task(taskId, { token: state.apiKey });
         const lumaResponse = taskRes.data.response as ILumaGenerateResponse;
         const url = lumaResponse?.video_url;
-        const state = lumaResponse?.state;
-        console.info('[VideoStudio] video: Luma polling', { state, hasUrl: !!url });
+        const lumaState = lumaResponse?.state;
+        console.info('[VideoStudio] video: Luma polling', { lumaState, hasUrl: !!url });
         return url ?? null;
       } catch (e) {
         console.warn('[VideoStudio] video: polling error (will retry)', e);
@@ -252,7 +251,7 @@ export const runPipeline = async (context: Context): Promise<void> => {
     console.info('[VideoStudio] Pipeline: parallel [voiceover, video]');
     const results = await Promise.allSettled([
       generateVoiceover(context),
-      generateVideo(context, sunoAudioId)
+      generateVideo(context)
     ]);
 
     const voiceoverResult = results[0];
