@@ -50,5 +50,11 @@ export interface IVideoStudioState {
   finalVideoUrl?: string;
   scriptOutput?: IScriptOutput;
   history: IGenerationRecord[];
+  service?: any;
+  application?: any;
+  applications?: any[];
+  status?: {
+    getApplications?: any;
+  };
 }
 
