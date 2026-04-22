@@ -245,7 +245,7 @@ export const runPipeline = async (context: Context): Promise<void> => {
 
   try {
     await generateScript(context);
-    const sunoAudioId = await generateMusic(context);
+    await generateMusic(context);
 
     // Voiceover and video are independent — run in parallel for speed
     console.info('[VideoStudio] Pipeline: parallel [voiceover, video]');
