@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { ActionContext } from 'vuex';
 import { IVideoStudioState } from './models';
 import { IRootState } from '../common/models';
@@ -112,8 +113,19 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
     commit('setStepTaskId', { id: 'voiceover', taskId });
     commit('setStepStatus', { id: 'voiceover', status: 'polling' });
 
+    // Producer /tasks has a CORS misconfiguration in the browser — route through our proxy.
     const { audioUrl, audioId } = await pollUntil(async () => {
-      const taskRes = await producerOperator.task(taskId, { token: state.apiKey });
+      const taskRes = await axios.post(
+        '/acedata/producer/tasks',
+        { action: 'retrieve', id: taskId },
+        {
+          headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${state.apiKey}`,
+            'x-record-exempt': 'true'
+          }
+        }
+      );
       const audioData = (taskRes.data.response as IProducerAudioResponse)?.data;
       const first = audioData?.[0];
       if (first?.audio_url && first?.id) {
@@ -187,8 +199,18 @@ export const runPipeline = async (context: Context): Promise<void> => {
 
   await generateScript(context);
   const sunoAudioId = await generateMusic(context);
-  await generateVoiceover(context);
-  await generateVideo(context, sunoAudioId);
+
+  // Voiceover and video are independent — run in parallel for speed
+  const results = await Promise.allSettled([
+    generateVoiceover(context),
+    generateVideo(context, sunoAudioId)
+  ]);
+
+  // Surface the video error if it failed (voiceover failure is shown on its own step)
+  const videoResult = results[1];
+  if (videoResult.status === 'rejected') {
+    throw videoResult.reason;
+  }
 };
 
 export default {

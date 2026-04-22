@@ -48,6 +48,11 @@ export default defineConfig((config: ConfigEnv) => {
       host: 'localhost',
       port: 8084,
       proxy: {
+        '/acedata': {
+          target: 'https://api.acedata.cloud',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/acedata/, '')
+        },
         '/api/v1/auth': {
           target: process.env.VITE_BASE_URL_AUTH,
           changeOrigin: true

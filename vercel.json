@@ -2,5 +2,11 @@
   "version": 2,
   "buildCommand": "npm run build",
   "installCommand": "yarn",
-  "routes": [{ "handle": "filesystem" }, { "src": "/(.*)", "dest": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/acedata/:path*",
+      "destination": "https://api.acedata.cloud/:path*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
