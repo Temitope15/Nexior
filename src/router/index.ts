@@ -203,6 +203,12 @@ const ROUTE_SEO: Record<string, { title: string; description: string; keywords: 
     description: 'Convert any idea into a ready-to-post short-form video with AI-generated script, music, voiceover, and video.',
     keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno', 'Voirax'],
     category: 'AI Video Generation'
+  },
+  landing: {
+    title: 'Nexior - AI Video Creation | Write. We Create.',
+    description: 'Turn your ideas into stunning short-form videos instantly. AI-powered script, music, voiceover, and video composition. Pay only $0.38 per video.',
+    keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno Music', 'Nexior', 'Ace Data Cloud'],
+    category: 'AI Video Generation'
   }
 };
 
@@ -210,7 +216,7 @@ const routes = [
   {
     path: '/',
     name: ROUTE_INDEX,
-    component: () => import('@/pages/index/Index.vue')
+    component: () => import('@/pages/landing/Index.vue')
   },
   {
     path: '/studio',

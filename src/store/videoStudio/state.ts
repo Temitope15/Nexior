@@ -43,6 +43,7 @@ export default (): IVideoStudioState => {
     totalCostUsd: 0,
     finalAudioUrl: undefined,
     finalVideoUrl: undefined,
-    scriptOutput: undefined
+    scriptOutput: undefined,
+    history: []
   };
 };

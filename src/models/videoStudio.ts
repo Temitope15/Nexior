@@ -28,6 +28,19 @@ export interface IVideoStudioConfig {
   instrumental: boolean;
 }
 
+export interface IGenerationRecord {
+  id: string;
+  idea: string;
+  createdAt: string;
+  status: 'done' | 'error';
+  scriptOutput?: IScriptOutput;
+  finalVideoUrl?: string;
+  finalAudioUrl?: string;
+  voiceoverAudioUrl?: string;
+  totalCostUsd: number;
+  error?: string;
+}
+
 export interface IVideoStudioState {
   apiKey: string;
   config: IVideoStudioConfig;
@@ -36,5 +49,6 @@ export interface IVideoStudioState {
   finalAudioUrl?: string;
   finalVideoUrl?: string;
   scriptOutput?: IScriptOutput;
+  history: IGenerationRecord[];
 }
 

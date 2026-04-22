@@ -1,1 +1,1 @@
-export default ['videoStudio.apiKey', 'videoStudio.config'];
+export default ['videoStudio.apiKey', 'videoStudio.config', 'videoStudio.history'];

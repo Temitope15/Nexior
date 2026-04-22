@@ -1,5 +1,5 @@
 import { IVideoStudioState } from './models';
-import { IPipelineStep, IPipelineStepId, IPipelineStepStatus, IScriptOutput, IVideoStudioConfig } from '@/models';
+import { IPipelineStep, IPipelineStepId, IPipelineStepStatus, IScriptOutput, IVideoStudioConfig, IGenerationRecord } from '@/models';
 import { PIPELINE_COST_TABLE } from '@/constants/videoStudio';
 
 export default {
@@ -60,5 +60,16 @@ export default {
     state.finalAudioUrl = undefined;
     state.finalVideoUrl = undefined;
     state.scriptOutput = undefined;
+  },
+
+  addHistoryEntry(state: IVideoStudioState, entry: IGenerationRecord): void {
+    state.history.unshift(entry);
+    if (state.history.length > 50) {
+      state.history.pop();
+    }
+  },
+
+  clearHistory(state: IVideoStudioState): void {
+    state.history = [];
   }
 };
