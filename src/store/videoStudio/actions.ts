@@ -34,15 +34,18 @@ async function pollUntil<T>(
 }
 
 async function generateScript({ commit, state }: Context): Promise<void> {
+  console.info('[VideoStudio] ► script: start', { idea: state.config.idea });
   commit('setStepStatus', { id: 'script', status: 'running' });
   try {
     const content = await scriptGeneratorOperator.generate(state.config.idea, { token: state.apiKey });
     const output = scriptGeneratorOperator.parseScriptOutput(content);
+    console.info('[VideoStudio] ✓ script: done', output);
     commit('setScriptOutput', output);
     commit('setStepOutput', { id: 'script', output: output as unknown as Record<string, unknown> });
     commit('setStepStatus', { id: 'script', status: 'done' });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Script generation failed';
+    console.error('[VideoStudio] ✕ script: failed', err);
     commit('setStepStatus', { id: 'script', status: 'error', error: msg });
     throw err;
   }
@@ -51,6 +54,7 @@ async function generateScript({ commit, state }: Context): Promise<void> {
 // Returns the Suno audio ID (needed for video generation via sunoOperator.mp4)
 async function generateMusic({ commit, state }: Context): Promise<string> {
   if (!state.scriptOutput) throw new Error('Script output missing');
+  console.info('[VideoStudio] ► music: start');
   commit('setStepStatus', { id: 'music', status: 'running' });
   try {
     const prompt = state.config.musicStyle
@@ -68,6 +72,7 @@ async function generateMusic({ commit, state }: Context): Promise<string> {
       { token: state.apiKey }
     );
     const taskId = res.data.task_id;
+    console.info('[VideoStudio] ► music: submitted', { taskId });
     commit('setStepTaskId', { id: 'music', taskId });
     commit('setStepStatus', { id: 'music', status: 'polling' });
 
@@ -81,12 +86,14 @@ async function generateMusic({ commit, state }: Context): Promise<string> {
       return null;
     });
 
+    console.info('[VideoStudio] ✓ music: done', { sunoAudioId, audioUrl });
     commit('setStepOutput', { id: 'music', output: { audio_url: audioUrl, audio_id: sunoAudioId } });
     commit('setFinalUrls', { audioUrl });
     commit('setStepStatus', { id: 'music', status: 'done' });
     return sunoAudioId;
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Music generation failed';
+    console.error('[VideoStudio] ✕ music: failed', err);
     commit('setStepStatus', { id: 'music', status: 'error', error: msg });
     throw err;
   }
@@ -94,6 +101,7 @@ async function generateMusic({ commit, state }: Context): Promise<string> {
 
 async function generateVoiceover({ commit, state }: Context): Promise<void> {
   if (!state.scriptOutput) throw new Error('Script output missing');
+  console.info('[VideoStudio] ► voiceover: start');
   commit('setStepStatus', { id: 'voiceover', status: 'running' });
   try {
     const res = await producerOperator.audio(
@@ -134,10 +142,12 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
       return null;
     });
 
+    console.info('[VideoStudio] ✓ voiceover: done', { audioId, audioUrl });
     commit('setStepOutput', { id: 'voiceover', output: { audio_url: audioUrl, audio_id: audioId } });
     commit('setStepStatus', { id: 'voiceover', status: 'done' });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Voiceover generation failed';
+    console.error('[VideoStudio] ✕ voiceover: failed', err);
     commit('setStepStatus', { id: 'voiceover', status: 'error', error: msg });
     throw err;
   }
@@ -145,14 +155,17 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
 
 // Uses Suno mp4 endpoint — takes a Suno audio_id, returns video_url synchronously
 async function generateVideo({ commit, state }: Context, sunoAudioId: string): Promise<void> {
+  console.info('[VideoStudio] ► video: start', { sunoAudioId });
   commit('setStepStatus', { id: 'video', status: 'running' });
   try {
     const res = await sunoOperator.mp4({ audio_id: sunoAudioId }, { token: state.apiKey });
+    console.info('[VideoStudio] video: response', res.data);
     const taskId = res.data?.task_id;
 
     // mp4 may return the video_url directly or via task polling
     const directUrl = res.data?.data?.video_url;
     if (directUrl) {
+      console.info('[VideoStudio] ✓ video: done (sync)', { videoUrl: directUrl });
       commit('setStepOutput', { id: 'video', output: { video_url: directUrl } });
       commit('setFinalUrls', { videoUrl: directUrl });
       commit('setStepStatus', { id: 'video', status: 'done' });
@@ -161,6 +174,7 @@ async function generateVideo({ commit, state }: Context, sunoAudioId: string): P
 
     if (!taskId) throw new Error('No task ID returned from video generation');
 
+    console.info('[VideoStudio] video: polling', { taskId });
     commit('setStepTaskId', { id: 'video', taskId });
     commit('setStepStatus', { id: 'video', status: 'polling' });
 
@@ -170,11 +184,13 @@ async function generateVideo({ commit, state }: Context, sunoAudioId: string): P
       return audioData?.[0]?.video_url ?? null;
     });
 
+    console.info('[VideoStudio] ✓ video: done (async)', { videoUrl });
     commit('setStepOutput', { id: 'video', output: { video_url: videoUrl } });
     commit('setFinalUrls', { videoUrl });
     commit('setStepStatus', { id: 'video', status: 'done' });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Video generation failed';
+    console.error('[VideoStudio] ✕ video: failed', err);
     commit('setStepStatus', { id: 'video', status: 'error', error: msg });
     throw err;
   }
@@ -194,22 +210,36 @@ export const resetPipeline = ({ commit }: Context): void => {
 
 export const runPipeline = async (context: Context): Promise<void> => {
   const { commit } = context;
+  console.info('[VideoStudio] Pipeline: START');
   commit('resetPipeline');
   commit('setTotalCost');
 
-  await generateScript(context);
-  const sunoAudioId = await generateMusic(context);
+  try {
+    await generateScript(context);
+    const sunoAudioId = await generateMusic(context);
 
-  // Voiceover and video are independent — run in parallel for speed
-  const results = await Promise.allSettled([
-    generateVoiceover(context),
-    generateVideo(context, sunoAudioId)
-  ]);
+    // Voiceover and video are independent — run in parallel for speed
+    console.info('[VideoStudio] Pipeline: parallel [voiceover, video]');
+    const results = await Promise.allSettled([
+      generateVoiceover(context),
+      generateVideo(context, sunoAudioId)
+    ]);
 
-  // Surface the video error if it failed (voiceover failure is shown on its own step)
-  const videoResult = results[1];
-  if (videoResult.status === 'rejected') {
-    throw videoResult.reason;
+    const voiceoverResult = results[0];
+    const videoResult = results[1];
+
+    if (voiceoverResult.status === 'rejected') {
+      console.warn('[VideoStudio] Voiceover failed but video may succeed', voiceoverResult.reason);
+    }
+    if (videoResult.status === 'rejected') {
+      console.error('[VideoStudio] Pipeline: FAILED - video generation critical', videoResult.reason);
+      throw videoResult.reason;
+    }
+
+    console.info('[VideoStudio] Pipeline: SUCCESS');
+  } catch (err) {
+    console.error('[VideoStudio] Pipeline: FAILED', err);
+    throw err;
   }
 };
 

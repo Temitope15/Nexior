@@ -7,6 +7,18 @@
       "source": "/acedata/:path*",
       "destination": "https://api.acedata.cloud/:path*"
     },
+    {
+      "source": "/suno-media/:path*",
+      "destination": "https://audiopipe.suno.ai/:path*"
+    },
+    {
+      "source": "/suno-cdn1/:path*",
+      "destination": "https://cdn1.suno.ai/:path*"
+    },
+    {
+      "source": "/suno-cdn2/:path*",
+      "destination": "https://cdn2.suno.ai/:path*"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

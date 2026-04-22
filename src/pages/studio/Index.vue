@@ -230,6 +230,7 @@ import { executeSolanaPayment } from '@/utils/x402/solana';
 import { ElMessage } from 'element-plus';
 import { IVideoStudioConfig } from '@/models';
 import { SUBSCRIPTION_MONTHLY_USD } from '@/constants/videoStudio';
+import { proxyMediaUrl } from '@/utils/videoStudioProxy';
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const ACEDATA_TREASURY = 'AcEDATAVAULT1111111111111111111111111111111';
@@ -281,12 +282,12 @@ export default defineComponent({
     },
     steps(): any[] { return this.vs.steps; },
     totalCostUsd(): number { return this.vs.totalCostUsd; },
-    finalAudioUrl(): string | undefined { return this.vs.finalAudioUrl; },
-    finalVideoUrl(): string | undefined { return this.vs.finalVideoUrl; },
+    finalAudioUrl(): string { return proxyMediaUrl(this.vs.finalAudioUrl); },
+    finalVideoUrl(): string { return proxyMediaUrl(this.vs.finalVideoUrl); },
     scriptOutput(): any { return this.vs.scriptOutput; },
-    voiceoverAudioUrl(): string | undefined {
+    voiceoverAudioUrl(): string {
       const step = this.steps.find((s: any) => s.id === 'voiceover');
-      return step?.output?.audio_url as string | undefined;
+      return proxyMediaUrl(step?.output?.audio_url as string | undefined);
     },
     scriptStep(): any { return this.steps.find((s: any) => s.id === 'script'); },
     isRunning(): boolean {

@@ -53,6 +53,21 @@ export default defineConfig((config: ConfigEnv) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/acedata/, '')
         },
+        '/suno-media': {
+          target: 'https://audiopipe.suno.ai',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/suno-media/, '')
+        },
+        '/suno-cdn1': {
+          target: 'https://cdn1.suno.ai',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/suno-cdn1/, '')
+        },
+        '/suno-cdn2': {
+          target: 'https://cdn2.suno.ai',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/suno-cdn2/, '')
+        },
         '/api/v1/auth': {
           target: process.env.VITE_BASE_URL_AUTH,
           changeOrigin: true
