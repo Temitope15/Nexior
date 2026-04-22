@@ -18,6 +18,7 @@ import { ISeedreamState } from '../seedream/models';
 import { ISeedanceState } from '../seedance/models';
 import { ISerpState } from '../serp/models';
 import { IWanState } from '../wan/models';
+import { IVideoStudioState } from '../videoStudio/models';
 
 export interface ISetting {}
 
@@ -66,6 +67,7 @@ export interface IAppState {
   seedance: ISeedanceState;
   serp: ISerpState;
   wan: IWanState;
+  videoStudio: IVideoStudioState;
 }
 
 export interface IRootState extends ICommonState, IAppState {}

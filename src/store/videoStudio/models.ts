@@ -1,4 +1,4 @@
-import { IVideoStudioConfig, IPipelineStep, IScriptOutput } from '@/models';
+import { IVideoStudioConfig, IPipelineStep, IScriptOutput, IGenerationRecord } from '@/models';
 
 export interface IVideoStudioState {
   apiKey: string;
@@ -8,4 +8,5 @@ export interface IVideoStudioState {
   finalAudioUrl?: string;
   finalVideoUrl?: string;
   scriptOutput?: IScriptOutput;
+  history: IGenerationRecord[];
 }
