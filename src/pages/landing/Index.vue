@@ -3,7 +3,7 @@
     <!-- Navigation -->
     <nav class="nav">
       <div class="nav-container">
-        <div class="nav-logo">🎬 Nexior</div>
+        <div class="nav-logo">🎬 Voirax</div>
         <div class="nav-links">
           <a href="#features" class="nav-link">How it works</a>
           <a href="#pricing" class="nav-link">Pricing</a>
@@ -14,76 +14,38 @@
 
     <!-- Hero Section -->
     <section class="hero">
+      <!-- Full-bleed ShapeGrid background -->
+      <ShapeGrid
+        class="hero-bg"
+        direction="diagonal"
+        :speed="0.4"
+        :squareSize="40"
+        borderColor="rgba(139,92,246,0.15)"
+        hoverFillColor="#8b5cf6"
+        shape="square"
+        :hoverTrailAmount="4"
+      />
+      <!-- Dark radial vignette overlay -->
+      <div class="hero-overlay" />
+      <!-- Centered content -->
       <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">
-            <span class="text-write">Write your idea.</span>
-            <span class="text-transform">We create your video.</span>
-          </h1>
-          <p class="hero-subtitle">
-            Convert your wildest thoughts into stunning short-form videos with music, voiceover, and professional editing—instantly and affordably.
-          </p>
-          <div class="hero-ctas">
-            <button class="btn btn-primary" @click="showApiKeyModal = true">
-              <span>Start Creating</span>
-              <span class="btn-icon">→</span>
-            </button>
-            <a href="https://hub.acedata.cloud" target="_blank" rel="noopener" class="btn btn-secondary">
-              <span>Learn about Ace Data Cloud</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Animated visualization -->
-        <div class="hero-visual">
-          <div class="visual-container">
-            <!-- Input field animation -->
-            <div class="input-box">
-              <div class="input-cursor" />
-              <div class="input-text">
-                <span class="text-line">The one habit that separates</span>
-                <span class="text-line">top 1% founders from everyone else</span>
-              </div>
-            </div>
-
-            <!-- Transformation pipes -->
-            <div class="pipe-container">
-              <div class="pipe pipe-1" />
-              <div class="pipe-label">Script</div>
-            </div>
-
-            <div class="pipe-container">
-              <div class="pipe pipe-2" />
-              <div class="pipe-label">Music</div>
-            </div>
-
-            <div class="pipe-container">
-              <div class="pipe pipe-3" />
-              <div class="pipe-label">Voiceover</div>
-            </div>
-
-            <!-- Output video frame -->
-            <div class="output-box">
-              <div class="video-frame">
-                <div class="frame-content">
-                  <div class="frame-gradient" />
-                  <div class="play-icon">▶</div>
-                </div>
-              </div>
-              <div class="output-label">Ready to Post</div>
-            </div>
-          </div>
-
-          <!-- Floating elements -->
-          <div class="float-element element-1">
-            <div class="float-badge">📝 Script</div>
-          </div>
-          <div class="float-element element-2">
-            <div class="float-badge">🎵 Suno Music</div>
-          </div>
-          <div class="float-element element-3">
-            <div class="float-badge">🎙️ Voiceover</div>
-          </div>
+        <div class="hero-pill">✨ AI Video Generator</div>
+        <h1 class="hero-title">
+          <span class="word-create">Write</span>
+          <span class="word-videos">Your Idea.</span>
+          <span class="word-rest">We Create Your Video.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Convert your wildest thoughts into stunning short-form videos with music, voiceover, and professional editing—instantly and affordably.
+        </p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" @click="showApiKeyModal = true">
+            <span>Start Creating</span>
+            <span class="btn-icon">→</span>
+          </button>
+          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="btn btn-secondary">
+            <span>Learn about Ace Data Cloud</span>
+          </a>
         </div>
       </div>
     </section>
@@ -173,7 +135,7 @@
 
         <div class="comparison-item nexior">
           <div class="badge-featured">🎯 Recommended</div>
-          <div class="comparison-title">Nexior</div>
+          <div class="comparison-title">Voirax</div>
           <div class="comparison-price"><span class="currency">$</span>0.38<span class="subtext">per video</span></div>
           <div class="comparison-list">
             <div class="comparison-point">
@@ -204,7 +166,7 @@
           <div class="comparison-list">
             <div class="comparison-point">
               <span class="check-mark">✓</span>
-              <span>Everything in Nexior</span>
+              <span>Everything in Voirax</span>
             </div>
             <div class="comparison-point">
               <span class="check-mark">✓</span>
@@ -234,43 +196,46 @@
     <section class="process">
       <h2>The process is simple</h2>
 
-      <div class="process-steps">
-        <div class="process-step">
-          <div class="step-number">1</div>
-          <div class="step-content">
+      <ScrollStack :itemDistance="100" :baseScale="0.9" class="process-stack">
+        <ScrollStackItem>
+          <div class="stack-step-content">
+            <div class="stack-step-number">1</div>
             <h3>Write your idea</h3>
             <p>Share your concept, no matter how rough. A paragraph is enough.</p>
           </div>
-        </div>
+        </ScrollStackItem>
 
-        <div class="process-arrow">→</div>
-
-        <div class="process-step">
-          <div class="step-number">2</div>
-          <div class="step-content">
+        <ScrollStackItem>
+          <div class="stack-step-content">
+            <div class="stack-step-number">2</div>
             <h3>Choose your style</h3>
             <p>Pick music style, voice type, and any special preferences.</p>
           </div>
-        </div>
+        </ScrollStackItem>
 
-        <div class="process-arrow">→</div>
-
-        <div class="process-step">
-          <div class="step-number">3</div>
-          <div class="step-content">
+        <ScrollStackItem>
+          <div class="stack-step-content">
+            <div class="stack-step-number">3</div>
             <h3>We do the rest</h3>
             <p>AI handles script, music, voiceover, and video—ready to post in minutes.</p>
           </div>
-        </div>
-      </div>
+        </ScrollStackItem>
+      </ScrollStack>
     </section>
 
     <!-- Hackathon Section -->
     <section class="hackathon">
       <div class="hackathon-content">
-        <h2>Built for the Ace Data Cloud hackathon</h2>
+        <h2>
+          Built for
+          <RotatingText
+            :texts="['Creators', 'Imaginators', 'Businesses', 'Content Creators', 'Storytellers', 'Marketers']"
+            :rotationInterval="2500"
+            mainClass="hackathon-rotating-text"
+          />
+        </h2>
         <p>
-          Nexior is a live demonstration of what's possible when you combine cutting-edge AI tools:
+          Voirax is a live demonstration of what's possible when you combine cutting-edge AI tools:
           Dify workflows, Suno music generation, Producer voiceovers, and transparent x402 payments.
           Built and submitted to the #BuildWithAce campaign.
         </p>
@@ -300,7 +265,7 @@
     <div v-if="showApiKeyModal" class="modal-overlay" @click.self="showApiKeyModal = false">
       <div class="modal-content">
         <button class="modal-close" @click="showApiKeyModal = false">✕</button>
-        <h2>Get Started with Nexior</h2>
+        <h2>Get Started with Voirax</h2>
         <p>Enter your Ace Data Cloud API key to start creating videos</p>
 
         <div class="form-group">
@@ -322,7 +287,7 @@
           </div>
           <p class="help-text">
             Don't have one? Get a free API key at
-            <a href="https://hub.acedata.cloud" target="_blank" rel="noopener">hub.acedata.cloud</a>
+            <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">platform.acedata.cloud</a>
           </p>
         </div>
 
@@ -341,13 +306,13 @@
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-section">
-          <div class="footer-title">Nexior</div>
+          <div class="footer-title">Voirax</div>
           <p>AI video creation platform built on Ace Data Cloud</p>
         </div>
         <div class="footer-section">
           <div class="footer-title">Links</div>
-          <a href="https://hub.acedata.cloud" target="_blank" rel="noopener">Ace Data Cloud Hub</a>
-          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">Ace Platform</a>
+          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">Ace Data Cloud Platform</a>
+          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">x402 Payments</a>
         </div>
         <div class="footer-section">
           <div class="footer-title">Follow</div>
@@ -356,7 +321,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 Nexior. Built with magic and AI.</p>
+        <p>© 2026 Voirax. Built with magic and AI.</p>
       </div>
     </footer>
   </div>
@@ -364,9 +329,19 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import ShapeGrid from '@/components/common/ShapeGrid.vue';
+import RotatingText from '@/components/common/RotatingText.vue';
+import ScrollStack from '@/components/common/ScrollStack.vue';
+import ScrollStackItem from '@/components/common/ScrollStackItem.vue';
 
 export default defineComponent({
   name: 'LandingIndex',
+  components: {
+    ShapeGrid,
+    RotatingText,
+    ScrollStack,
+    ScrollStackItem
+  },
   data() {
     return {
       showApiKeyModal: false,
@@ -506,82 +481,63 @@ $border-color: #252840;
 // ────────────────────────────────────────────────────────────────────────────
 
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 80px 20px;
-  position: relative;
+  justify-content: center;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba($brand-primary, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: float 20s ease-in-out infinite;
-  }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(40px) translateX(-20px); }
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(5, 6, 12, 0.85) 70%);
+  z-index: 1;
 }
 
 .hero-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
   position: relative;
-  z-index: 1;
-
-  @media (max-width: 960px) {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
+  z-index: 2;
+  text-align: center;
+  max-width: 820px;
+  padding: 0 20px;
+  animation: slideInCenter 0.8s ease-out;
 }
 
-.hero-text {
-  animation: slideIn 0.8s ease-out;
-}
-
-@keyframes slideIn {
+@keyframes slideInCenter {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
-.hero-title {
-  font-size: 56px;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  margin: 0 0 24px 0;
-}
-
-.text-write {
-  display: block;
+.hero-pill {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 8px 16px;
+  background: rgba($brand-primary, 0.1);
+  border: 1px solid rgba($brand-primary, 0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $brand-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(10px);
   animation: fadeInUp 0.8s ease-out;
-}
-
-.text-transform {
-  display: block;
-  background: linear-gradient(135deg, $brand-primary 0%, $brand-primary-light 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: fadeInUp 0.8s ease-out 0.1s both;
 }
 
 @keyframes fadeInUp {
@@ -595,6 +551,33 @@ $border-color: #252840;
   }
 }
 
+.hero-title {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 0 0 24px 0;
+  animation: fadeInUp 0.8s ease-out 0.1s both;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+.word-create {
+  color: $text-primary;
+}
+
+.word-videos {
+  display: inline;
+  background: linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.word-rest {
+  color: $text-primary;
+}
+
 .hero-subtitle {
   font-size: 18px;
   color: $text-secondary;
@@ -606,6 +589,7 @@ $border-color: #252840;
 .hero-ctas {
   display: flex;
   gap: 16px;
+  justify-content: center;
   animation: fadeInUp 0.8s ease-out 0.3s both;
 
   @media (max-width: 480px) {
@@ -668,247 +652,6 @@ $border-color: #252840;
     padding: 18px 40px;
     font-size: 18px;
   }
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// HERO VISUAL: Animated transformation
-// ────────────────────────────────────────────────────────────────────────────
-
-.hero-visual {
-  position: relative;
-  height: 500px;
-  animation: fadeIn 1s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.visual-container {
-  position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-.input-box {
-  background: rgba($surface, 0.6);
-  border: 1px solid rgba($brand-primary, 0.2);
-  border-radius: 12px;
-  padding: 20px;
-  animation: slideUp 0.8s ease-out;
-
-  .input-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 20px;
-    background: $brand-primary;
-    animation: blink 1s infinite;
-    margin-right: 4px;
-  }
-
-  @keyframes blink {
-    0%, 49%, 100% { opacity: 1; }
-    50%, 99% { opacity: 0; }
-  }
-
-  .input-text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    color: $text-secondary;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  .text-line {
-    animation: typewriter 0.5s ease-out forwards;
-
-    &:nth-child(1) { animation-delay: 0.2s; }
-    &:nth-child(2) { animation-delay: 0.6s; }
-  }
-
-  @keyframes typewriter {
-    from {
-      opacity: 0;
-      width: 0;
-    }
-    to {
-      opacity: 1;
-      width: 100%;
-    }
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.pipe-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  animation: slideUp 0.8s ease-out;
-
-  &:nth-child(2) { animation-delay: 0.1s; }
-  &:nth-child(3) { animation-delay: 0.2s; }
-  &:nth-child(4) { animation-delay: 0.3s; }
-}
-
-.pipe {
-  flex: 1;
-  height: 4px;
-  background: linear-gradient(90deg, rgba($brand-primary, 0) 0%, $brand-primary 50%, rgba($brand-primary, 0) 100%);
-  border-radius: 2px;
-  animation: flow 2s ease-in-out infinite;
-
-  &-1 { animation-delay: 0s; }
-  &-2 { animation-delay: 0.3s; }
-  &-3 { animation-delay: 0.6s; }
-}
-
-@keyframes flow {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
-
-.pipe-label {
-  font-size: 12px;
-  color: $brand-primary;
-  font-weight: 600;
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.output-box {
-  background: rgba($surface, 0.6);
-  border: 2px solid rgba($brand-primary, 0.4);
-  border-radius: 12px;
-  padding: 20px;
-  animation: slideUp 0.8s ease-out 0.4s both;
-
-  .video-frame {
-    aspect-ratio: 9 / 16;
-    background: rgba($brand-primary, 0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-    overflow: hidden;
-    position: relative;
-
-    .frame-content {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .frame-gradient {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba($brand-primary, 0.3) 0%, rgba($brand-primary, 0.05) 100%);
-      animation: shimmerGradient 3s ease-in-out infinite;
-    }
-
-    @keyframes shimmerGradient {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-
-    .play-icon {
-      position: relative;
-      z-index: 2;
-      font-size: 48px;
-      color: $brand-primary;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 0.8;
-      }
-      50% {
-        transform: scale(1.1);
-        opacity: 1;
-      }
-    }
-  }
-
-  .output-label {
-    text-align: center;
-    font-size: 12px;
-    color: $accent-success;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-}
-
-.float-element {
-  position: absolute;
-  animation: floatParticle 4s ease-in-out infinite;
-
-  &-1 {
-    top: 20%;
-    right: -80px;
-    animation-delay: 0s;
-  }
-
-  &-2 {
-    top: 50%;
-    right: -120px;
-    animation-delay: 0.5s;
-  }
-
-  &-3 {
-    bottom: 15%;
-    right: -100px;
-    animation-delay: 1s;
-  }
-
-  @keyframes floatParticle {
-    0% {
-      opacity: 0;
-      transform: translateX(0) translateY(0);
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-      transform: translateX(-200px) translateY(-30px);
-    }
-  }
-}
-
-.float-badge {
-  background: rgba($brand-primary, 0.15);
-  border: 1px solid rgba($brand-primary, 0.3);
-  color: $brand-primary;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  backdrop-filter: blur(10px);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -1153,43 +896,39 @@ $border-color: #252840;
 .process {
   padding: 120px 20px;
   background: linear-gradient(180deg, transparent 0%, rgba($brand-primary, 0.02) 100%);
-}
-
-.process > h2 {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 800;
-  margin: 0 0 80px 0;
-  letter-spacing: -0.02em;
-}
-
-.process-steps {
-  max-width: 1000px;
-  margin: 0 auto;
+  min-height: 100vh;
   display: flex;
-  align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 32px;
+  > h2 {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 800;
+    margin: 0 0 80px 0;
+    letter-spacing: -0.02em;
   }
 }
 
-.process-step {
+.process-stack {
   flex: 1;
-  min-width: 250px;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideUp 0.8s ease-out forwards;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
 
-  &:nth-child(1) { animation-delay: 0s; }
-  &:nth-child(3) { animation-delay: 0.1s; }
-  &:nth-child(5) { animation-delay: 0.2s; }
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 0;
+  }
+}
 
-  .step-number {
+.stack-step-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem 0;
+
+  .stack-step-number {
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -1204,26 +943,17 @@ $border-color: #252840;
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
-    margin: 0 0 8px 0;
+    margin: 0 0 12px 0;
+    color: $text-primary;
   }
 
   p {
-    font-size: 14px;
+    font-size: 16px;
     color: $text-secondary;
     margin: 0;
     line-height: 1.6;
-  }
-}
-
-.process-arrow {
-  font-size: 32px;
-  color: $brand-primary;
-  opacity: 0.4;
-
-  @media (max-width: 768px) {
-    transform: rotate(90deg);
   }
 }
 
@@ -1246,6 +976,7 @@ $border-color: #252840;
     font-weight: 800;
     margin: 0 0 24px 0;
     letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
   p {
@@ -1254,6 +985,16 @@ $border-color: #252840;
     line-height: 1.8;
     margin: 0 0 32px 0;
   }
+}
+
+.hackathon-rotating-text {
+  display: inline-block;
+  background: linear-gradient(135deg, #60a5fa 0%, $brand-primary 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+  min-width: 150px;
 }
 
 .hackathon-badges {
@@ -1524,6 +1265,11 @@ $border-color: #252840;
 
   .hero-title {
     font-size: 36px;
+  }
+
+  .hero-pill {
+    font-size: 11px;
+    padding: 6px 12px;
   }
 
   .features-header h2,

@@ -2,8 +2,8 @@ import axios from 'axios';
 import { ActionContext } from 'vuex';
 import { IVideoStudioState } from './models';
 import { IRootState } from '../common/models';
-import { ISunoAudioResponse, IProducerAudioResponse } from '@/models';
-import { sunoOperator, producerOperator } from '@/operators';
+import { ISunoAudioResponse, IProducerAudioResponse, ILumaGenerateResponse } from '@/models';
+import { sunoOperator, producerOperator, lumaOperator } from '@/operators';
 import { scriptGeneratorOperator } from '@/operators/scriptGenerator';
 import {
   VIDEO_STUDIO_SUNO_MODEL,
@@ -153,43 +153,73 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
   }
 }
 
-// Uses Suno mp4 endpoint — takes a Suno audio_id, returns video_url synchronously
+// Generate video using Luma Dream Machine
 async function generateVideo({ commit, state }: Context, sunoAudioId: string): Promise<void> {
-  console.info('[VideoStudio] ► video: start', { sunoAudioId });
+  console.info('[VideoStudio] ► video: start with Luma Dream Machine');
   commit('setStepStatus', { id: 'video', status: 'running' });
   try {
-    const res = await sunoOperator.mp4({ audio_id: sunoAudioId }, { token: state.apiKey });
-    console.info('[VideoStudio] video: response', res.data);
+    // Use the script hook as the prompt for Luma video generation
+    if (!state.scriptOutput) throw new Error('Script output required for video generation');
+
+    const prompt = state.scriptOutput.hook || 'Create an engaging short-form video';
+
+    // Generate video with Luma
+    const res = await lumaOperator.generate(
+      {
+        prompt: prompt,
+        aspect_ratio: '9:16'  // Mobile short-form video format
+      },
+      { token: state.apiKey }
+    );
+
+    console.info('[VideoStudio] video: Luma response', res.data);
+    const videoUrl = res.data?.video_url;
     const taskId = res.data?.task_id;
 
-    // mp4 may return the video_url directly or via task polling
-    const directUrl = res.data?.data?.video_url;
-    if (directUrl) {
-      console.info('[VideoStudio] ✓ video: done (sync)', { videoUrl: directUrl });
-      commit('setStepOutput', { id: 'video', output: { video_url: directUrl } });
-      commit('setFinalUrls', { videoUrl: directUrl });
+    if (videoUrl) {
+      // Immediate response with video URL
+      console.info('[VideoStudio] ✓ video: done (immediate)', { videoUrl });
+      commit('setStepOutput', { id: 'video', output: { video_url: videoUrl, task_id: taskId } });
+      commit('setFinalUrls', { videoUrl });
       commit('setStepStatus', { id: 'video', status: 'done' });
       return;
     }
 
-    if (!taskId) throw new Error('No task ID returned from video generation');
+    if (!taskId) throw new Error('No task ID returned from Luma video generation');
 
-    console.info('[VideoStudio] video: polling', { taskId });
+    // Poll for completion
+    console.info('[VideoStudio] video: polling Luma task', { taskId });
     commit('setStepTaskId', { id: 'video', taskId });
     commit('setStepStatus', { id: 'video', status: 'polling' });
 
-    const videoUrl = await pollUntil(async () => {
-      const taskRes = await sunoOperator.task(taskId, { token: state.apiKey });
-      const audioData = (taskRes.data.response as ISunoAudioResponse)?.data;
-      return audioData?.[0]?.video_url ?? null;
+    const finalVideoUrl = await pollUntil(async () => {
+      try {
+        const taskRes = await lumaOperator.task(taskId, { token: state.apiKey });
+        const lumaResponse = taskRes.data.response as ILumaGenerateResponse;
+        const url = lumaResponse?.video_url;
+        const state = lumaResponse?.state;
+        console.info('[VideoStudio] video: Luma polling', { state, hasUrl: !!url });
+        return url ?? null;
+      } catch (e) {
+        console.warn('[VideoStudio] video: polling error (will retry)', e);
+        return null;
+      }
     });
 
-    console.info('[VideoStudio] ✓ video: done (async)', { videoUrl });
-    commit('setStepOutput', { id: 'video', output: { video_url: videoUrl } });
-    commit('setFinalUrls', { videoUrl });
+    console.info('[VideoStudio] ✓ video: done (polled)', { videoUrl: finalVideoUrl });
+    commit('setStepOutput', { id: 'video', output: { video_url: finalVideoUrl, task_id: taskId } });
+    commit('setFinalUrls', { videoUrl: finalVideoUrl });
     commit('setStepStatus', { id: 'video', status: 'done' });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Video generation failed';
+    let msg = 'Video generation failed';
+    if (err instanceof Error) {
+      msg = err.message;
+    } else if (typeof err === 'object' && err !== null) {
+      const axiosErr = err as any;
+      if (axiosErr.response?.data?.error?.message) {
+        msg = axiosErr.response.data.error.message;
+      }
+    }
     console.error('[VideoStudio] ✕ video: failed', err);
     commit('setStepStatus', { id: 'video', status: 'error', error: msg });
     throw err;

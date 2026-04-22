@@ -205,9 +205,9 @@ const ROUTE_SEO: Record<string, { title: string; description: string; keywords: 
     category: 'AI Video Generation'
   },
   landing: {
-    title: 'Nexior - AI Video Creation | Write. We Create.',
+    title: 'Voirax - AI Video Creation | Write. We Create.',
     description: 'Turn your ideas into stunning short-form videos instantly. AI-powered script, music, voiceover, and video composition. Pay only $0.38 per video.',
-    keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno Music', 'Nexior', 'Ace Data Cloud'],
+    keywords: ['AI Video', 'Short-Form Video', 'Video Generator', 'AI Script', 'Suno Music', 'Voirax', 'Ace Data Cloud'],
     category: 'AI Video Generation'
   }
 };
