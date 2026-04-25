@@ -130,53 +130,62 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .api-key-panel {
-  background: #111;
-  border: 1px solid #222;
-  border-radius: 8px;
+  background: var(--vx-ink-soft);
+  border: 1px solid var(--vx-rule);
+  border-radius: 2px;
   overflow: hidden;
+  transition: border-color 220ms ease;
+  &:hover { border-color: var(--vx-rule-strong); }
 }
 
 .panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 14px 18px;
   cursor: pointer;
   user-select: none;
-
-  &:hover { background: #161616; }
+  transition: background 200ms ease;
+  &:hover { background: rgba(255, 122, 69, 0.04); }
 }
 
 .panel-title {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-family: var(--vx-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #888;
+  color: var(--vx-ash);
+  &::before {
+    content: '◇ ';
+    color: var(--vx-ember);
+    margin-right: 4px;
+  }
 }
 
 .panel-chevron {
-  color: #555;
-  transition: transform 0.2s;
+  color: var(--vx-ash-deep);
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1), color 220ms ease;
 
-  &--open { transform: rotate(180deg); }
+  &--open {
+    transform: rotate(180deg);
+    color: var(--vx-ember);
+  }
 }
 
 .panel-body {
-  padding: 0 16px 16px;
+  padding: 0 18px 18px;
 }
 
-.field-group {
-  margin-bottom: 10px;
-}
+.field-group { margin-bottom: 14px; }
 
 .field-label {
   display: block;
-  font-size: 11px;
-  font-weight: 500;
-  color: #666;
-  margin-bottom: 6px;
-  letter-spacing: 0.04em;
+  font-family: var(--vx-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vx-ash);
+  margin-bottom: 8px;
 }
 
 .input-row {
@@ -186,118 +195,135 @@ export default defineComponent({
 
 .key-input {
   flex: 1;
-  background: #0a0a0a;
-  border: 1px solid #2a2a2a;
-  border-radius: 6px;
-  padding: 8px 10px;
+  background: var(--vx-ink);
+  border: 1px solid var(--vx-rule-strong);
+  border-radius: 2px;
+  padding: 10px 12px;
   font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  color: #e5e5e5;
+  font-family: var(--vx-font-mono);
+  color: var(--vx-bone);
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 200ms ease;
+  letter-spacing: 0.02em;
 
-  &::placeholder { color: #444; }
-  &:focus { border-color: #0070f3; }
+  &::placeholder { color: var(--vx-ash-deep); }
+  &:focus { border-color: var(--vx-ember); }
 }
 
 .toggle-btn {
-  background: #0a0a0a;
-  border: 1px solid #2a2a2a;
-  border-radius: 6px;
-  padding: 8px;
-  color: #555;
+  background: var(--vx-ink);
+  border: 1px solid var(--vx-rule-strong);
+  border-radius: 2px;
+  padding: 10px;
+  color: var(--vx-ash);
   cursor: pointer;
   display: flex;
   align-items: center;
+  transition: color 200ms ease, border-color 200ms ease;
 
-  &:hover { color: #888; border-color: #444; }
+  &:hover { color: var(--vx-ember); border-color: var(--vx-ember); }
 }
 
 .field-hint {
+  font-family: var(--vx-font-sans);
   font-size: 11px;
-  color: #444;
-  margin-top: 6px;
-  line-height: 1.4;
+  color: var(--vx-ash);
+  margin-top: 8px;
+  line-height: 1.6;
 }
 
 .hint-link {
-  color: #0070f3;
+  color: var(--vx-ember);
   text-decoration: none;
-
-  &:hover { text-decoration: underline; }
+  border-bottom: 1px solid transparent;
+  transition: border-color 180ms ease;
+  &:hover { border-bottom-color: var(--vx-ember); }
 }
 
-.save-row {
-  margin-bottom: 12px;
-}
+.save-row { margin-bottom: 14px; }
 
 .save-label {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
-  color: #555;
+  font-family: var(--vx-font-sans);
+  font-size: 12px;
+  color: var(--vx-bone-soft);
   cursor: pointer;
 }
 
-.save-checkbox {
-  accent-color: #0070f3;
-}
+.save-checkbox { accent-color: var(--vx-ember); }
 
 .divider {
   height: 1px;
-  background: #1a1a1a;
-  margin-bottom: 14px;
+  background: var(--vx-rule);
+  margin-bottom: 16px;
 }
 
 .wallet-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .wallet-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-family: var(--vx-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #555;
+  color: var(--vx-ash);
+  &::before {
+    content: '◈ ';
+    color: var(--vx-ember);
+    margin-right: 4px;
+  }
 }
 
 .wallet-description {
+  font-family: var(--vx-font-sans);
   font-size: 11px;
-  color: #444;
-  line-height: 1.5;
+  color: var(--vx-ash);
+  line-height: 1.6;
 }
 
 .wallet-btn-row {
   :deep(.wallet-adapter-button) {
-    background: #0a0a0a !important;
-    border: 1px solid #333 !important;
-    border-radius: 6px !important;
+    background: var(--vx-ink) !important;
+    border: 1px solid var(--vx-rule-strong) !important;
+    border-radius: 2px !important;
+    font-family: var(--vx-font-sans) !important;
     font-size: 12px !important;
-    padding: 8px 12px !important;
-    color: #e5e5e5 !important;
+    padding: 10px 14px !important;
+    color: var(--vx-bone) !important;
     height: auto !important;
+    transition: border-color 200ms ease, color 200ms ease !important;
 
     &:hover {
-      background: #111 !important;
-      border-color: #444 !important;
+      border-color: var(--vx-ember) !important;
+      color: var(--vx-ember) !important;
+      background: var(--vx-ink) !important;
     }
   }
 }
 
 .wallet-address {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--vx-font-mono);
   font-size: 11px;
+  letter-spacing: 0.06em;
+  padding-top: 4px;
 }
 
-.wallet-address-label { color: #555; }
+.wallet-address-label {
+  color: var(--vx-ash);
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+}
 
 .wallet-address-value {
-  font-family: 'JetBrains Mono', monospace;
-  color: #00d084;
+  color: var(--vx-ok);
 }
 </style>

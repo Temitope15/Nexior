@@ -1,0 +1,55 @@
+/* ============================================================================
+ * VOIRAX · Editorial Cinema design tokens
+ * Apply globally so any page can inherit `var(--ink)`, `var(--font-display)`, etc.
+ * ========================================================================== */
+
+:root {
+  /* — Surface — */
+  --vx-ink: #0a0908;
+  --vx-ink-soft: #15110d;
+  --vx-ink-up: #1f1a14;
+  --vx-ink-elev: #221c15;
+
+  /* — Foreground — */
+  --vx-bone: #ede4d3;
+  --vx-bone-soft: #d6cab3;
+  --vx-ash: #8a8071;
+  --vx-ash-deep: #5d5648;
+
+  /* — Accent (single, decisive) — */
+  --vx-ember: #ff7a45;
+  --vx-ember-deep: #c64d18;
+  --vx-ember-soft: rgba(255, 122, 69, 0.12);
+
+  /* — Status — */
+  --vx-ok: #b8c97c;
+  --vx-warn: #e8a85c;
+  --vx-err: #d96a5b;
+
+  /* — Lines — */
+  --vx-rule: rgba(237, 228, 211, 0.14);
+  --vx-rule-strong: rgba(237, 228, 211, 0.28);
+
+  /* — Type — */
+  --vx-font-display: 'Fraunces', 'Times New Roman', serif;
+  --vx-font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --vx-font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+
+  /* — Aliases used inside the editorial pages —
+     Kept un-prefixed so older selectors written before tokens
+     existed (e.g. .landing { --ink … }) keep working. */
+  --ink: var(--vx-ink);
+  --ink-soft: var(--vx-ink-soft);
+  --ink-up: var(--vx-ink-up);
+  --bone: var(--vx-bone);
+  --bone-soft: var(--vx-bone-soft);
+  --ash: var(--vx-ash);
+  --ash-deep: var(--vx-ash-deep);
+  --ember: var(--vx-ember);
+  --ember-deep: var(--vx-ember-deep);
+  --rule: var(--vx-rule);
+  --rule-strong: var(--vx-rule-strong);
+  --font-display: var(--vx-font-display);
+  --font-sans: var(--vx-font-sans);
+  --font-mono: var(--vx-font-mono);
+}

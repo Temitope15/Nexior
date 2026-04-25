@@ -57,50 +57,54 @@ export default defineComponent({
 .pipeline-tracker {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .step-item {
   position: relative;
-  padding: 16px 0;
+  padding: 18px 0;
+
+  & + .step-item { border-top: 1px solid var(--vx-rule); }
 
   &--done .step-icon {
-    color: #00d084;
-    border-color: #00d084;
+    color: var(--vx-ember);
+    border-color: var(--vx-ember);
+    background: rgba(255, 122, 69, 0.06);
   }
   &--running .step-icon,
   &--polling .step-icon {
-    color: #0070f3;
-    border-color: #0070f3;
+    color: var(--vx-ember);
+    border-color: var(--vx-ember);
   }
   &--error .step-icon {
-    color: #ff4444;
-    border-color: #ff4444;
+    color: var(--vx-err);
+    border-color: var(--vx-err);
   }
   &--idle .step-icon {
-    color: #555;
-    border-color: #333;
+    color: var(--vx-ash-deep);
+    border-color: var(--vx-rule-strong);
   }
 }
 
 .step-connector {
   position: absolute;
   left: 15px;
-  top: -16px;
+  top: -18px;
   width: 1px;
-  height: 16px;
-  background: #333;
+  height: 18px;
+  background: var(--vx-rule-strong);
 
-  &.connector--done { background: #00d084; }
+  &.connector--done { background: var(--vx-ember); }
   &.connector--running,
-  &.connector--polling { background: #0070f3; }
-  &.connector--error { background: #ff4444; }
+  &.connector--polling {
+    background: linear-gradient(to bottom, var(--vx-ember), var(--vx-rule-strong));
+  }
+  &.connector--error { background: var(--vx-err); }
 }
 
 .step-row {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 16px;
 }
 
 .step-icon {
@@ -108,39 +112,32 @@ export default defineComponent({
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid #333;
+  border: 1px solid var(--vx-rule-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: #555;
-  transition: color 0.2s, border-color 0.2s;
+  color: var(--vx-ash-deep);
+  transition: color 220ms ease, border-color 220ms ease, background 220ms ease;
 
-  svg {
-    width: 16px;
-    height: 16px;
-  }
+  svg { width: 14px; height: 14px; }
 }
 
 .step-number {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--vx-font-mono);
   font-size: 11px;
+  letter-spacing: 0.06em;
 }
 
 .spinner {
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border: 1.5px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .step-content {
   flex: 1;
@@ -150,35 +147,67 @@ export default defineComponent({
 
 .step-header {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .step-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #e5e5e5;
+  font-family: var(--vx-font-display);
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--vx-bone);
+  font-variation-settings: 'opsz' 18;
 }
 
 .step-cost {
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  color: #555;
+  font-family: var(--vx-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--vx-ash);
 }
 
 .step-description {
+  font-family: var(--vx-font-sans);
   font-size: 12px;
-  color: #666;
-  line-height: 1.4;
+  color: var(--vx-bone-soft);
+  line-height: 1.5;
 }
 
 .step-status-text {
-  font-size: 11px;
-  margin-top: 4px;
+  font-family: var(--vx-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 
-  &--polling { color: #0070f3; }
-  &--error { color: #ff4444; }
+  &--polling {
+    color: var(--vx-ember);
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--vx-ember);
+      box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.2);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+  }
+  &--error {
+    color: var(--vx-err);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-family: var(--vx-font-sans);
+    font-size: 11px;
+  }
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.18); }
+  50% { box-shadow: 0 0 0 7px rgba(255, 122, 69, 0.04); }
 }
 </style>

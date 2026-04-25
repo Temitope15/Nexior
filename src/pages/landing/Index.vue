@@ -1,375 +1,421 @@
 <template>
   <div class="landing">
-    <!-- Navigation -->
+    <div class="grain" aria-hidden="true" />
+    <div class="vignette" aria-hidden="true" />
+
+    <!-- ─────────────── NAV ─────────────── -->
     <nav class="nav">
-      <div class="nav-container">
-        <div class="nav-logo">🎬 Voirax</div>
+      <div class="nav-inner">
+        <router-link to="/" class="brand">
+          <span class="brand-mark">VRX</span>
+          <span class="brand-rule" />
+          <span class="brand-name">Voirax</span>
+        </router-link>
         <div class="nav-links">
-          <a href="#features" class="nav-link">How it works</a>
-          <a href="#pricing" class="nav-link">Pricing</a>
-          <router-link to="/studio" class="nav-cta">Try it now</router-link>
+          <a href="#process" class="nav-link"><span class="nav-num">01</span> Process</a>
+          <a href="#pipeline" class="nav-link"><span class="nav-num">02</span> Pipeline</a>
+          <a href="#pricing" class="nav-link"><span class="nav-num">03</span> Pricing</a>
+          <router-link to="/studio" class="nav-cta">
+            Open the studio
+            <span class="cta-arrow" aria-hidden="true">↗</span>
+          </router-link>
         </div>
       </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- ─────────────── HERO ─────────────── -->
     <section class="hero">
-      <!-- Full-bleed ShapeGrid background -->
-      <ShapeGrid
-        class="hero-bg"
-        direction="diagonal"
-        :speed="0.4"
-        :squareSize="40"
-        borderColor="rgba(139,92,246,0.15)"
-        hoverFillColor="#8b5cf6"
-        shape="square"
-        :hoverTrailAmount="4"
-      />
-      <!-- Dark radial vignette overlay -->
-      <div class="hero-overlay" />
-      <!-- Centered content -->
-      <div class="hero-content">
-        <div class="hero-pill">✨ AI Video Generator</div>
-        <h1 class="hero-title">
-          <span class="word-create">Write</span>
-          <span class="word-videos">Your Idea.</span>
-          <span class="word-rest">We Create Your Video.</span>
-        </h1>
-        <p class="hero-subtitle">
-          Convert your wildest thoughts into stunning short-form videos with music, voiceover, and professional editing—instantly and affordably.
+      <div class="hero-grid">
+        <aside class="hero-margin">
+          <div class="margin-block">
+            <div class="margin-label">FILE</div>
+            <div class="margin-value">VRX&hairsp;–&hairsp;001</div>
+          </div>
+          <div class="margin-block">
+            <div class="margin-label">RUN&nbsp;TIME</div>
+            <div class="margin-value">~&hairsp;3&hairsp;min</div>
+          </div>
+          <div class="margin-block">
+            <div class="margin-label">FORMAT</div>
+            <div class="margin-value">9&thinsp;:&thinsp;16</div>
+          </div>
+        </aside>
+
+        <div class="hero-stage">
+          <div class="hero-eyebrow">
+            <span class="eyebrow-bullet" />
+            <span>A short-form film studio for one</span>
+          </div>
+
+          <h1 class="hero-headline">
+            <span class="line line--1">A film crew,</span>
+            <span class="line line--2">in a single</span>
+            <span class="line line--3"><em>composition box.</em></span>
+          </h1>
+
+          <p class="hero-lede">
+            Script. Score. Voice. Picture. Voirax pulls four AI specialists into one continuous
+            take — your idea in, a finished short out, in the time it takes to brew coffee.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn--solid" @click="showApiKeyModal = true">
+              <span class="btn-num">01</span>
+              <span>Begin a take</span>
+            </button>
+            <router-link class="btn btn--ghost" to="/studio">
+              <span>Enter the studio</span>
+              <span class="btn-arrow">→</span>
+            </router-link>
+          </div>
+
+          <ul class="hero-stats">
+            <li><strong>0.38<span>$</span></strong><span class="stat-label">per finished short</span></li>
+            <li><strong>4<span>×</span></strong><span class="stat-label">AI models, one pipeline</span></li>
+            <li><strong>x402<span>·</span></strong><span class="stat-label">Solana settlement</span></li>
+          </ul>
+        </div>
+
+        <aside class="hero-side">
+          <div class="reel">
+            <div class="reel-frame" v-for="n in 6" :key="n">
+              <span class="reel-num">{{ String(n).padStart(2, '0') }}</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="hero-marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span v-for="i in 4" :key="i" class="marquee-group">
+            <span>Idea</span><span class="dot">✦</span>
+            <span><em>Script</em></span><span class="dot">✦</span>
+            <span>Score</span><span class="dot">✦</span>
+            <span><em>Voice</em></span><span class="dot">✦</span>
+            <span>Picture</span><span class="dot">✦</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── 01 PROCESS ─────────────── -->
+    <section class="section section--process" id="process">
+      <header class="section-head">
+        <div class="section-meta">
+          <span class="section-num">01</span>
+          <span class="section-tag">The process</span>
+        </div>
+        <h2 class="section-title"><em>From a sentence</em><br />to a short.</h2>
+      </header>
+
+      <ol class="process-rail">
+        <li class="process-step">
+          <div class="step-num">i</div>
+          <div class="step-body">
+            <h3>Write the idea.</h3>
+            <p>One paragraph is enough. A rough hook, a thesis, a feeling — Voirax reads intent.</p>
+          </div>
+          <div class="step-rule" />
+        </li>
+        <li class="process-step">
+          <div class="step-num">ii</div>
+          <div class="step-body">
+            <h3>Choose the room tone.</h3>
+            <p>Music style, narrator gender, whether the score should sing or stay instrumental.</p>
+          </div>
+          <div class="step-rule" />
+        </li>
+        <li class="process-step">
+          <div class="step-num">iii</div>
+          <div class="step-body">
+            <h3>Watch the reel come back.</h3>
+            <p>Four specialists work in parallel. Script, music, voiceover, picture — assembled while you wait.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ─────────────── 02 PIPELINE ─────────────── -->
+    <section class="section section--specs" id="pipeline">
+      <header class="section-head section-head--double">
+        <div class="section-meta">
+          <span class="section-num">02</span>
+          <span class="section-tag">The pipeline</span>
+        </div>
+        <h2 class="section-title">Four specialists. <em>One take.</em></h2>
+        <p class="section-lede">
+          A pipeline written in 2026 should feel like a film crew, not a stack diagram. Each role
+          has a specialist. Each specialist has a name.
         </p>
-        <div class="hero-ctas">
-          <button class="btn btn-primary" @click="showApiKeyModal = true">
-            <span>Start Creating</span>
-            <span class="btn-icon">→</span>
-          </button>
-          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="btn btn-secondary">
-            <span>Learn about Ace Data Cloud</span>
+      </header>
+
+      <dl class="spec-sheet">
+        <div class="spec-row">
+          <dt class="spec-role"><span class="spec-num">A</span> The Writer</dt>
+          <dd class="spec-name">Gemini · 2.5 Flash</dd>
+          <dd class="spec-desc">Hook, body, call-to-action. A scriptwriter trained on what stops a thumb.</dd>
+          <dd class="spec-meta">$0.001</dd>
+        </div>
+        <div class="spec-row">
+          <dt class="spec-role"><span class="spec-num">B</span> The Composer</dt>
+          <dd class="spec-name">Suno · Chirp v5.5</dd>
+          <dd class="spec-desc">Original score, royalty-free, written to your scene's mood and tempo.</dd>
+          <dd class="spec-meta">$0.05</dd>
+        </div>
+        <div class="spec-row">
+          <dt class="spec-role"><span class="spec-num">C</span> The Voice</dt>
+          <dd class="spec-name">Producer · Fuzz 2.0 Pro</dd>
+          <dd class="spec-desc">A narrator with weight. Pick male or female; the read carries the room.</dd>
+          <dd class="spec-meta">$0.02</dd>
+        </div>
+        <div class="spec-row">
+          <dt class="spec-role"><span class="spec-num">D</span> The Cinematographer</dt>
+          <dd class="spec-name">Luma · Dream Machine</dd>
+          <dd class="spec-desc">Picture from prompt. Cuts that match the cadence of your hook.</dd>
+          <dd class="spec-meta">$0.10</dd>
+        </div>
+        <div class="spec-row spec-row--total">
+          <dt class="spec-role"><span class="spec-num">∑</span> Total per short</dt>
+          <dd class="spec-name">Voirax · 2026.4</dd>
+          <dd class="spec-desc">Four specialists. One continuous take. No subscription required.</dd>
+          <dd class="spec-meta">$0.38</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- ─────────────── 03 PRICING ─────────────── -->
+    <section class="section section--pricing" id="pricing">
+      <header class="section-head section-head--double">
+        <div class="section-meta">
+          <span class="section-num">03</span>
+          <span class="section-tag">The price of a take</span>
+        </div>
+        <h2 class="section-title">No subscriptions. <em>No drama.</em></h2>
+        <p class="section-lede">
+          Three ways to pay for the same finished short. Pick the one that fits how you keep books.
+        </p>
+      </header>
+
+      <div class="ledger">
+        <article class="ledger-col ledger-col--rejected">
+          <div class="ledger-tag">Status quo</div>
+          <div class="ledger-name">A monthly platform</div>
+          <div class="ledger-rate"><span class="rate-num">30</span><span class="rate-unit">$&hairsp;/&hairsp;mo</span></div>
+          <ul class="ledger-list">
+            <li><span class="mark mark--no">·</span> Subscription required</li>
+            <li><span class="mark mark--no">·</span> Capped generations</li>
+            <li><span class="mark mark--no">·</span> Locked into one editor</li>
+            <li><span class="mark mark--no">·</span> Manual finishing</li>
+          </ul>
+          <div class="ledger-foot">Strike-out budget</div>
+        </article>
+
+        <article class="ledger-col ledger-col--featured">
+          <div class="ledger-tag ledger-tag--accent">Recommended</div>
+          <div class="ledger-name"><em>Voirax</em>, on the meter</div>
+          <div class="ledger-rate"><span class="rate-num">0.38</span><span class="rate-unit">$&hairsp;/&hairsp;short</span></div>
+          <ul class="ledger-list">
+            <li><span class="mark mark--yes">✓</span> Pay only when you press record</li>
+            <li><span class="mark mark--yes">✓</span> Unlimited creative range</li>
+            <li><span class="mark mark--yes">✓</span> Script · score · voice · picture</li>
+            <li><span class="mark mark--yes">✓</span> Fully automated finish</li>
+          </ul>
+          <router-link to="/studio" class="ledger-cta">
+            Begin a take <span aria-hidden="true">→</span>
+          </router-link>
+        </article>
+
+        <article class="ledger-col">
+          <div class="ledger-tag">With x402</div>
+          <div class="ledger-name">On Solana</div>
+          <div class="ledger-rate"><span class="rate-num">0.36</span><span class="rate-unit">$&hairsp;/&hairsp;short</span></div>
+          <ul class="ledger-list">
+            <li><span class="mark mark--yes">✓</span> 5% off via x402 settlement</li>
+            <li><span class="mark mark--yes">✓</span> $ACE holders compound the discount</li>
+            <li><span class="mark mark--yes">✓</span> Public, on-chain receipts</li>
+            <li><span class="mark mark--yes">✓</span> Hold no platform balance</li>
+          </ul>
+          <a class="ledger-cta ledger-cta--ghost" href="https://platform.acedata.cloud" target="_blank" rel="noopener">
+            Pay with Solana <span aria-hidden="true">→</span>
           </a>
+        </article>
+      </div>
+
+      <p class="pricing-note">
+        New accounts open with five free credits. Top-ups via x402 on Solana or Base earn the 5% discount.
+      </p>
+    </section>
+
+    <!-- ─────────────── 04 AUDIENCE ─────────────── -->
+    <section class="section section--audience">
+      <header class="section-head">
+        <div class="section-meta">
+          <span class="section-num">04</span>
+          <span class="section-tag">Made for</span>
         </div>
+      </header>
+      <h2 class="audience-line">
+        For
+        <RotatingText
+          :texts="audienceWords"
+          :rotationInterval="2400"
+          mainClass="audience-rotator"
+        />
+        with stories worth seeing.
+      </h2>
+      <div class="badges">
+        <span class="chip">Dify Workflow</span>
+        <span class="chip">Suno · Producer</span>
+        <span class="chip">Luma Dream Machine</span>
+        <span class="chip">x402 · Solana</span>
+        <span class="chip">Ace Data Cloud</span>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-      <div class="features-header">
-        <h2>Powered by cutting-edge AI</h2>
-        <p>Every component of your video is intelligently generated and optimized</p>
+    <!-- ─────────────── 05 BEGIN ─────────────── -->
+    <section class="section section--final">
+      <div class="final-meta">
+        <span class="section-num">05</span>
+        <span class="section-tag">Begin</span>
       </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🤖</div>
-          <h3>AI-Generated Script</h3>
-          <p>Turn your raw idea into a compelling, hook-driven script optimized for engagement.</p>
-          <div class="feature-tech">Claude AI</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎵</div>
-          <h3>Original Music</h3>
-          <p>Suno creates unique, royalty-free background music that matches your vibe perfectly.</p>
-          <div class="feature-tech">Suno AI</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎙️</div>
-          <h3>Natural Voiceover</h3>
-          <p>Professional-quality narration with your choice of voice style and tone.</p>
-          <div class="feature-tech">Producer API</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎬</div>
-          <h3>Video Composition</h3>
-          <p>Visuals, effects, and transitions automatically choreographed to your audio.</p>
-          <div class="feature-tech">Sunooperator.mp4</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Blazing Fast</h3>
-          <p>Your complete video generated in minutes, not hours. No waiting, no hassle.</p>
-          <div class="feature-tech">Parallel Processing</div>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">💰</div>
-          <h3>Transparent Pricing</h3>
-          <p>Pay only for what you use. No subscriptions. Perfect for creators on any budget.</p>
-          <div class="feature-tech">x402 Solana Payments</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-      <div class="pricing-header">
-        <h2>Affordable video creation</h2>
-        <p>The most cost-effective way to create professional short-form videos</p>
-      </div>
-
-      <div class="pricing-comparison">
-        <div class="comparison-item traditional">
-          <div class="comparison-title">Traditional Approach</div>
-          <div class="comparison-price">$30/month</div>
-          <div class="comparison-list">
-            <div class="comparison-point">
-              <span class="x-mark">✕</span>
-              <span>Subscription requirement</span>
-            </div>
-            <div class="comparison-point">
-              <span class="x-mark">✕</span>
-              <span>Limited generations</span>
-            </div>
-            <div class="comparison-point">
-              <span class="x-mark">✕</span>
-              <span>No customization</span>
-            </div>
-            <div class="comparison-point">
-              <span class="x-mark">✕</span>
-              <span>Manual work required</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="comparison-item nexior">
-          <div class="badge-featured">🎯 Recommended</div>
-          <div class="comparison-title">Voirax</div>
-          <div class="comparison-price"><span class="currency">$</span>0.38<span class="subtext">per video</span></div>
-          <div class="comparison-list">
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>Pay per generation</span>
-            </div>
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>Unlimited creative freedom</span>
-            </div>
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>Music, voice, script included</span>
-            </div>
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>100% automated</span>
-            </div>
-          </div>
-          <div class="comparison-cta">
-            <router-link to="/studio" class="btn btn-primary btn-small">Start Free</router-link>
-          </div>
-        </div>
-
-        <div class="comparison-item solana">
-          <div class="comparison-title">With x402 Solana</div>
-          <div class="comparison-price"><span class="currency">$</span>0.36<span class="subtext">per video</span></div>
-          <div class="comparison-list">
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>Everything in Voirax</span>
-            </div>
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>5% discount with x402</span>
-            </div>
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>Hold $ACE for more savings</span>
-            </div>
-            <div class="comparison-point">
-              <span class="check-mark">✓</span>
-              <span>Blockchain transparent</span>
-            </div>
-          </div>
-          <div class="comparison-cta">
-            <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="btn btn-secondary btn-small">Use x402</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="pricing-note">
-        ✨ New accounts start with 5 free credits. Purchase more platform credits using x402 on Solana or Base for 5% off.
-      </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="process">
-      <h2>The process is simple</h2>
-
-      <ScrollStack :itemDistance="100" :baseScale="0.9" class="process-stack">
-        <ScrollStackItem>
-          <div class="stack-step-content">
-            <div class="stack-step-number">1</div>
-            <h3>Write your idea</h3>
-            <p>Share your concept, no matter how rough. A paragraph is enough.</p>
-          </div>
-        </ScrollStackItem>
-
-        <ScrollStackItem>
-          <div class="stack-step-content">
-            <div class="stack-step-number">2</div>
-            <h3>Choose your style</h3>
-            <p>Pick music style, voice type, and any special preferences.</p>
-          </div>
-        </ScrollStackItem>
-
-        <ScrollStackItem>
-          <div class="stack-step-content">
-            <div class="stack-step-number">3</div>
-            <h3>We do the rest</h3>
-            <p>AI handles script, music, voiceover, and video—ready to post in minutes.</p>
-          </div>
-        </ScrollStackItem>
-      </ScrollStack>
-    </section>
-
-    <!-- Hackathon Section -->
-    <section class="hackathon">
-      <div class="hackathon-content">
-        <h2>
-          Built for
-          <RotatingText
-            :texts="['Creators', 'Imaginators', 'Businesses', 'Content Creators', 'Storytellers', 'Marketers']"
-            :rotationInterval="2500"
-            mainClass="hackathon-rotating-text"
-          />
-        </h2>
-        <p>
-          Voirax is a live demonstration of what's possible when you combine cutting-edge AI tools:
-          Dify workflows, Suno music generation, Producer voiceovers, and transparent x402 payments.
-          Built and submitted to the #BuildWithAce campaign.
-        </p>
-        <div class="hackathon-badges">
-          <div class="badge">Dify Workflow</div>
-          <div class="badge">Suno Music</div>
-          <div class="badge">x402 Payments</div>
-          <div class="badge">Solana Integration</div>
-          <div class="badge">Ace Data Cloud</div>
-        </div>
-        <a href="https://x.com" target="_blank" rel="noopener" class="btn btn-secondary">
-          See submission on X
-        </a>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-final">
-      <h2>Ready to create?</h2>
-      <p>Turn your ideas into videos. No experience required.</p>
-      <router-link to="/studio" class="btn btn-primary btn-large">
-        Launch Video Studio
+      <h2 class="final-headline">
+        Roll
+        <em>camera.</em>
+      </h2>
+      <p class="final-lede">An idea is the only thing you have to bring.</p>
+      <router-link class="btn btn--solid btn--large" to="/studio">
+        <span class="btn-num">↻</span>
+        <span>Open the studio</span>
       </router-link>
     </section>
 
-    <!-- API Key Modal -->
-    <div v-if="showApiKeyModal" class="modal-overlay" @click.self="showApiKeyModal = false">
-      <div class="modal-content">
-        <button class="modal-close" @click="showApiKeyModal = false">✕</button>
-        <h2>Get Started with Voirax</h2>
-        <p>Enter your Ace Data Cloud API key to start creating videos</p>
-
-        <div class="form-group">
-          <label>Ace Data Cloud API Key</label>
-          <div class="input-wrapper">
-            <input
-              v-model="apiKeyInput"
-              :type="showApiKeyInputValue ? 'text' : 'password'"
-              placeholder="sk-…"
-              @keyup.enter="submitApiKey"
-              class="api-input"
-            />
-            <button
-              class="visibility-toggle"
-              @click="showApiKeyInputValue = !showApiKeyInputValue"
-            >
-              {{ showApiKeyInputValue ? '🙈' : '👁' }}
-            </button>
-          </div>
-          <p class="help-text">
-            Don't have one? Get a free API key at
-            <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">platform.acedata.cloud</a>
-          </p>
-        </div>
-
-        <button
-          class="btn btn-primary"
-          :disabled="!apiKeyInput.trim() || submitting"
-          @click="submitApiKey"
-        >
-          <span v-if="!submitting">Continue to Studio →</span>
-          <span v-else class="spinner">...</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Footer -->
+    <!-- ─────────────── FOOTER ─────────────── -->
     <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-section">
-          <div class="footer-title">Voirax</div>
-          <p>AI video creation platform built on Ace Data Cloud</p>
+      <div class="footer-inner">
+        <div class="footer-col footer-col--brand">
+          <div class="brand brand--footer">
+            <span class="brand-mark">VRX</span>
+            <span class="brand-rule" />
+            <span class="brand-name">Voirax</span>
+          </div>
+          <p class="footer-blurb">A short-form film studio. Built on Ace Data Cloud. Settled in x402.</p>
         </div>
-        <div class="footer-section">
-          <div class="footer-title">Links</div>
-          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">Ace Data Cloud Platform</a>
+        <div class="footer-col">
+          <div class="footer-title">Stack</div>
+          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">Ace Data Cloud</a>
           <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">x402 Payments</a>
         </div>
-        <div class="footer-section">
+        <div class="footer-col">
           <div class="footer-title">Follow</div>
-          <a href="https://twitter.com" target="_blank" rel="noopener">Twitter/X</a>
+          <a href="https://twitter.com" target="_blank" rel="noopener">X / Twitter</a>
           <a href="https://discord.gg" target="_blank" rel="noopener">Discord</a>
+        </div>
+        <div class="footer-col footer-col--colophon">
+          <div class="footer-title">Colophon</div>
+          <p>
+            Set in <em>Fraunces</em> &amp; Instrument Sans.<br />
+            Spec sheets in JetBrains Mono.<br />
+            Composed in 2026.
+          </p>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 Voirax. Built with magic and AI.</p>
+        <span>© 2026 Voirax</span>
+        <span class="footer-frame">VRX&hairsp;–&hairsp;001 · Take 1</span>
       </div>
     </footer>
+
+    <!-- ─────────────── API KEY MODAL ─────────────── -->
+    <transition name="modal-fade">
+      <div v-if="showApiKeyModal" class="modal-overlay" @click.self="showApiKeyModal = false">
+        <div class="modal-card">
+          <button class="modal-close" @click="showApiKeyModal = false" aria-label="Close">×</button>
+          <div class="modal-head">
+            <span class="modal-num">00</span>
+            <span class="modal-tag">First take</span>
+          </div>
+          <h2 class="modal-title">Bring your own <em>key.</em></h2>
+          <p class="modal-lede">Paste your Ace Data Cloud token. We don't store it on our servers.</p>
+
+          <label class="modal-label" for="apiKey">Ace Data Cloud · API key</label>
+          <div class="modal-input-row">
+            <input
+              id="apiKey"
+              v-model="apiKeyInput"
+              :type="showApiKeyInputValue ? 'text' : 'password'"
+              placeholder="sk-..."
+              class="modal-input"
+              @keyup.enter="submitApiKey"
+            />
+            <button
+              type="button"
+              class="modal-eye"
+              @click="showApiKeyInputValue = !showApiKeyInputValue"
+              :aria-label="showApiKeyInputValue ? 'Hide key' : 'Show key'"
+            >
+              {{ showApiKeyInputValue ? '◐' : '○' }}
+            </button>
+          </div>
+          <p class="modal-help">
+            No key yet? Request one at
+            <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">platform.acedata.cloud</a>.
+          </p>
+
+          <button
+            class="btn btn--solid btn--block"
+            :disabled="!apiKeyInput.trim() || submitting"
+            @click="submitApiKey"
+          >
+            <span v-if="!submitting">Continue to studio →</span>
+            <span v-else>Loading…</span>
+          </button>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ShapeGrid from '@/components/common/ShapeGrid.vue';
 import RotatingText from '@/components/common/RotatingText.vue';
-import ScrollStack from '@/components/common/ScrollStack.vue';
-import ScrollStackItem from '@/components/common/ScrollStackItem.vue';
 
 export default defineComponent({
   name: 'LandingIndex',
-  components: {
-    ShapeGrid,
-    RotatingText,
-    ScrollStack,
-    ScrollStackItem
-  },
+  components: { RotatingText },
   data() {
     return {
       showApiKeyModal: false,
       apiKeyInput: '',
       showApiKeyInputValue: false,
-      submitting: false
+      submitting: false,
+      audienceWords: [
+        'creators',
+        'storytellers',
+        'founders',
+        'editors',
+        'marketers',
+        'directors'
+      ]
     };
   },
   mounted() {
     this.observeElements();
     const existingKey = this.$store.state.videoStudio?.apiKey;
-    if (existingKey) {
-      this.apiKeyInput = existingKey;
-    }
+    if (existingKey) this.apiKeyInput = existingKey;
   },
   methods: {
     observeElements() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.feature-card, .process-step, .comparison-item').forEach((el) => {
-        observer.observe(el);
-      });
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add('in-view');
+          });
+        },
+        { threshold: 0.12 }
+      );
+      this.$el
+        .querySelectorAll('.section, .process-step, .spec-row, .ledger-col, .reel-frame')
+        .forEach((el: Element) => observer.observe(el));
     },
     async submitApiKey() {
       if (!this.apiKeyInput.trim()) return;
@@ -389,900 +435,1126 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-// ============================================================================
-// LANDING PAGE: Text → Video Transformation
-// ============================================================================
+/* ============================================================================
+ * VOIRAX · LANDING — Editorial Cinema
+ * Tokens are scoped to .landing for now; promote to :root in a global stylesheet
+ * to inherit them across the studio + other pages.
+ * ========================================================================== */
 
-$brand-primary: #8b5cf6;
-$brand-primary-dark: #7c3aed;
-$brand-primary-light: #a78bfa;
-$bg-dark: #0b0d17;
-$bg-darker: #05060c;
-$surface: #111427;
-$surface-light: #1a1d2e;
-$text-primary: #ffffff;
-$text-secondary: #a0a0a0;
-$accent-success: #00d084;
-$accent-warning: #f5a623;
-$border-color: #252840;
+.landing {
+  --ink: #0a0908;
+  --ink-soft: #15110d;
+  --ink-up: #1f1a14;
+  --bone: #ede4d3;
+  --bone-soft: #d6cab3;
+  --ash: #8a8071;
+  --ash-deep: #5d5648;
+  --ember: #ff7a45;
+  --ember-deep: #c64d18;
+  --rule: rgba(237, 228, 211, 0.14);
+  --rule-strong: rgba(237, 228, 211, 0.28);
+
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'ss02';
+  overflow-x: hidden;
+  isolation: isolate;
+}
 
 * { box-sizing: border-box; }
 
-.landing {
-  background: linear-gradient(135deg, $bg-darker 0%, $bg-dark 100%);
-  color: $text-primary;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  overflow-x: hidden;
+/* ── grain + vignette atmosphere ─────────────────────────────────── */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.93  0 0 0 0 0.89  0 0 0 0 0.83  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(0,0,0,0.55) 80%);
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// NAVIGATION
-// ────────────────────────────────────────────────────────────────────────────
-
+/* ── NAV ─────────────────────────────────────────────────────────── */
 .nav {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: rgba(11, 13, 23, 0.8);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba($brand-primary, 0.1);
-  padding: 14px 0;
+  z-index: 50;
+  backdrop-filter: blur(14px) saturate(120%);
+  background: linear-gradient(to bottom, rgba(10, 9, 8, 0.85), rgba(10, 9, 8, 0.6));
+  border-bottom: 1px solid var(--rule);
 }
-
-.nav-container {
-  max-width: 1200px;
+.nav-inner {
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 18px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 32px;
 }
-
-.nav-logo {
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--bone);
+}
+.brand-mark {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--ember);
+  padding: 3px 7px;
+  border: 1px solid var(--ember);
+  border-radius: 2px;
+  line-height: 1;
+}
+.brand-rule {
+  width: 18px;
+  height: 1px;
+  background: var(--rule-strong);
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
   font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 14;
 }
-
 .nav-links {
   display: flex;
   align-items: center;
   gap: 28px;
 }
-
 .nav-link {
-  font-size: 14px;
-  color: $text-secondary;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--bone-soft);
   text-decoration: none;
-  transition: color 0.2s;
-
-  &:hover {
-    color: $brand-primary;
-  }
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  position: relative;
+  padding: 4px 0;
+  transition: color 200ms ease;
+  &:hover { color: var(--bone); }
+  &:hover .nav-num { color: var(--ember); }
 }
-
+.nav-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ash);
+  letter-spacing: 0.1em;
+  transition: color 200ms ease;
+}
 .nav-cta {
-  @extend .nav-link;
-  color: $brand-primary;
-  font-weight: 600;
-  padding: 8px 16px;
-  border: 1px solid rgba($brand-primary, 0.3);
-  border-radius: 6px;
-  transition: all 0.2s;
-
-  &:hover {
-    background: rgba($brand-primary, 0.1);
-    border-color: $brand-primary;
-  }
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--bone);
+  padding: 10px 16px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 200ms ease, transform 200ms ease;
+  &:hover { background: var(--ember); transform: translateY(-1px); }
+  .cta-arrow { font-family: var(--font-mono); }
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// HERO SECTION
-// ────────────────────────────────────────────────────────────────────────────
+@media (max-width: 720px) {
+  .nav-inner { padding: 14px 18px; }
+  .nav-links a:not(.nav-cta) { display: none; }
+}
 
+/* ── HERO ────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(5, 6, 12, 0.85) 70%);
-  z-index: 1;
-}
-
-.hero-content {
-  position: relative;
   z-index: 2;
-  text-align: center;
-  max-width: 820px;
-  padding: 0 20px;
-  animation: slideInCenter 0.8s ease-out;
+  padding: 64px 32px 48px;
+  border-bottom: 1px solid var(--rule);
+}
+.hero-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 140px 1fr 200px;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 24px; }
 }
 
-@keyframes slideInCenter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-pill {
-  display: inline-block;
-  margin-bottom: 24px;
-  padding: 8px 16px;
-  background: rgba($brand-primary, 0.1);
-  border: 1px solid rgba($brand-primary, 0.3);
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: $brand-primary;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  backdrop-filter: blur(10px);
-  animation: fadeInUp 0.8s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-title {
-  font-size: 56px;
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  margin: 0 0 24px 0;
-  animation: fadeInUp 0.8s ease-out 0.1s both;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  text-rendering: optimizeLegibility;
-}
-
-.word-create {
-  color: $text-primary;
-}
-
-.word-videos {
-  display: inline;
-  background: linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.word-rest {
-  color: $text-primary;
-}
-
-.hero-subtitle {
-  font-size: 18px;
-  color: $text-secondary;
-  line-height: 1.6;
-  margin: 0 0 32px 0;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
-}
-
-.hero-ctas {
+.hero-margin {
   display: flex;
-  gap: 16px;
-  justify-content: center;
-  animation: fadeInUp 0.8s ease-out 0.3s both;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 8px;
+  border-right: 1px solid var(--rule);
+  padding-right: 24px;
 
-  @media (max-width: 480px) {
+  @media (max-width: 1024px) {
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 0 16px 0;
+    gap: 32px;
+  }
+}
+.margin-block { display: flex; flex-direction: column; gap: 4px; }
+.margin-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--ash);
+}
+.margin-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 24;
+}
+
+/* hero stage */
+.hero-stage { padding: 12px 0 0; min-width: 0; }
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--bone-soft);
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  animation: fade-up 800ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.eyebrow-bullet {
+  width: 6px;
+  height: 6px;
+  background: var(--ember);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.18);
+  animation: pulse-bullet 2.4s ease-in-out infinite;
+}
+@keyframes pulse-bullet {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.18); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 122, 69, 0.04); }
+}
+
+.hero-headline {
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: clamp(46px, 7vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  margin: 0 0 32px 0;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 144;
+  display: flex;
+  flex-direction: column;
+  gap: 0.04em;
+
+  .line {
+    display: block;
+    overflow: hidden;
+  }
+  .line em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--bone);
+    background: linear-gradient(180deg, var(--bone) 60%, var(--ember) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .line--1 { animation: hero-line 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 80ms both; }
+  .line--2 { animation: hero-line 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 220ms both; padding-left: 0.6em; }
+  .line--3 { animation: hero-line 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 360ms both; padding-left: 1.4em; }
+  @media (max-width: 720px) {
+    .line--2, .line--3 { padding-left: 0; }
+  }
+}
+@keyframes hero-line {
+  from { transform: translateY(105%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.hero-lede {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--bone-soft);
+  max-width: 580px;
+  margin: 0 0 36px 0;
+  animation: fade-up 800ms ease 520ms both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 56px;
+  animation: fade-up 800ms ease 640ms both;
+}
+
+.hero-stats {
+  list-style: none;
+  padding: 24px 0 0;
+  margin: 0;
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--rule);
+  animation: fade-up 800ms ease 760ms both;
+
+  li {
+    display: flex;
     flex-direction: column;
+    gap: 4px;
+  }
+  strong {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--bone);
+    letter-spacing: -0.02em;
+    font-variation-settings: 'opsz' 36;
+    span {
+      color: var(--ember);
+      font-style: italic;
+      margin-left: 2px;
+    }
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ash);
+    text-transform: uppercase;
   }
 }
 
+/* hero side reel */
+.hero-side {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  @media (max-width: 1024px) { display: none; }
+}
+.reel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 160px;
+  border-left: 1px solid var(--rule);
+  padding-left: 16px;
+}
+.reel-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--ink-soft);
+  border: 1px solid var(--rule-strong);
+  border-radius: 1px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 600ms ease, transform 600ms ease, border-color 200ms;
+  &.in-view { opacity: 1; transform: none; }
+  &:nth-child(1) { transition-delay: 200ms; }
+  &:nth-child(2) { transition-delay: 280ms; }
+  &:nth-child(3) { transition-delay: 360ms; }
+  &:nth-child(4) { transition-delay: 440ms; }
+  &:nth-child(5) { transition-delay: 520ms; }
+  &:nth-child(6) { transition-delay: 600ms; }
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 4px, rgba(237,228,211,0.04) 4px 5px),
+      linear-gradient(135deg, rgba(255,122,69,0.04), transparent 60%);
+    pointer-events: none;
+  }
+  &:hover {
+    border-color: var(--ember);
+  }
+}
+.reel-num {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ash);
+  letter-spacing: 0.12em;
+}
+
+/* hero marquee */
+.hero-marquee {
+  margin-top: 48px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0;
+  overflow: hidden;
+  position: relative;
+  animation: fade-up 800ms ease 880ms both;
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  &::before { left: 0; background: linear-gradient(to right, var(--ink), transparent); }
+  &::after { right: 0; background: linear-gradient(to left, var(--ink), transparent); }
+}
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  width: max-content;
+  animation: marquee 36s linear infinite;
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 48;
+  em { font-style: italic; color: var(--ember); }
+  .dot { color: var(--ash-deep); padding: 0 28px; font-style: normal; }
+  .marquee-group { display: inline-flex; align-items: center; padding-right: 40px; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: center;
-  justify-content: center;
-
-  &-primary {
-    background: linear-gradient(135deg, $brand-primary 0%, $brand-primary-dark 100%);
-    color: white;
-    box-shadow: 0 8px 24px rgba($brand-primary, 0.3);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba($brand-primary, 0.4);
-    }
-
-    .btn-icon {
-      transition: transform 0.3s;
-    }
-
-    &:hover .btn-icon {
-      transform: translateX(4px);
-    }
-  }
-
-  &-secondary {
-    background: transparent;
-    color: $text-secondary;
-    border: 1px solid rgba($brand-primary, 0.3);
-
-    &:hover {
-      color: $brand-primary;
-      border-color: $brand-primary;
-      background: rgba($brand-primary, 0.05);
-    }
-  }
-
-  &-small {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
-
-  &-large {
-    padding: 18px 40px;
-    font-size: 18px;
-  }
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// FEATURES SECTION
-// ────────────────────────────────────────────────────────────────────────────
-
-.features {
-  padding: 120px 20px;
-  background: linear-gradient(180deg, rgba($brand-primary, 0.02) 0%, transparent 100%);
-}
-
-.features-header {
-  text-align: center;
-  margin-bottom: 80px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-
-  h2 {
-    font-size: 42px;
-    font-weight: 800;
-    margin: 0 0 16px 0;
-    letter-spacing: -0.02em;
-  }
-
-  p {
-    font-size: 18px;
-    color: $text-secondary;
-    margin: 0;
-    line-height: 1.6;
-  }
-}
-
-.features-grid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-}
-
-.feature-card {
-  background: rgba($surface, 0.5);
-  border: 1px solid rgba($brand-primary, 0.1);
-  border-radius: 12px;
-  padding: 32px 24px;
-  transition: all 0.3s ease;
-  opacity: 0;
-  transform: translateY(30px);
-
-  &.in-view {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  &:hover {
-    background: rgba($surface, 0.8);
-    border-color: rgba($brand-primary, 0.3);
-    transform: translateY(-8px);
-  }
-
-  .feature-icon {
-    font-size: 40px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  h3 {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 0 0 12px 0;
-    color: $text-primary;
-  }
-
-  p {
-    font-size: 14px;
-    color: $text-secondary;
-    margin: 0 0 16px 0;
-    line-height: 1.6;
-  }
-
-  .feature-tech {
-    font-size: 12px;
-    color: $brand-primary;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// PRICING SECTION
-// ────────────────────────────────────────────────────────────────────────────
-
-.pricing {
-  padding: 120px 20px;
-}
-
-.pricing-header {
-  text-align: center;
-  margin-bottom: 80px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-
-  h2 {
-    font-size: 42px;
-    font-weight: 800;
-    margin: 0 0 16px 0;
-    letter-spacing: -0.02em;
-  }
-
-  p {
-    font-size: 18px;
-    color: $text-secondary;
-    margin: 0;
-    line-height: 1.6;
-  }
-}
-
-.pricing-comparison {
-  max-width: 1200px;
-  margin: 0 auto 60px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.comparison-item {
-  background: rgba($surface, 0.5);
-  border: 1px solid rgba($brand-primary, 0.1);
-  border-radius: 12px;
-  padding: 32px;
-  transition: all 0.3s ease;
-  opacity: 0;
-  transform: translateY(30px);
-  position: relative;
-
-  &.in-view {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  &.nexior {
-    border-color: rgba($brand-primary, 0.4);
-    background: linear-gradient(135deg, rgba($brand-primary, 0.1) 0%, rgba($brand-primary, 0.05) 100%);
-    transform: scale(1.02);
-
-    &.in-view {
-      transform: scale(1.02) translateY(0);
-    }
-  }
-
-  .badge-featured {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: $brand-primary;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .comparison-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin: 0 0 12px 0;
-    margin-top: 20px;
-  }
-
-  .comparison-price {
-    font-size: 36px;
-    font-weight: 800;
-    color: $brand-primary;
-    margin: 16px 0 32px 0;
-    letter-spacing: -0.01em;
-
-    .currency {
-      font-size: 20px;
-    }
-
-    .subtext {
-      font-size: 14px;
-      color: $text-secondary;
-      display: block;
-      margin-top: 4px;
-    }
-  }
-
-  .comparison-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-
-  .comparison-point {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 14px;
-    color: $text-secondary;
-    line-height: 1.5;
-
-    .check-mark {
-      color: $accent-success;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .x-mark {
-      color: #666;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-  }
-
-  .comparison-cta {
-    display: flex;
-    gap: 12px;
-  }
-}
-
-.pricing-note {
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
+  padding: 13px 22px;
+  border-radius: 2px;
+  font-family: var(--font-sans);
   font-size: 14px;
-  color: $text-secondary;
-  background: rgba($brand-primary, 0.05);
-  border: 1px solid rgba($brand-primary, 0.1);
-  border-radius: 8px;
-  padding: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.005em;
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+              background 220ms ease,
+              border-color 220ms ease,
+              color 220ms ease;
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+.btn--solid {
+  background: var(--bone);
+  color: var(--ink);
+  &:hover:not(:disabled) {
+    background: var(--ember);
+    color: var(--ink);
+    transform: translateY(-2px);
+  }
+  .btn-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ember-deep);
+    border-right: 1px solid rgba(0,0,0,0.18);
+    padding-right: 10px;
+    margin-right: -2px;
+  }
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--bone);
+  border: 1px solid var(--rule-strong);
+  &:hover {
+    color: var(--ember);
+    border-color: var(--ember);
+  }
+  .btn-arrow { font-family: var(--font-mono); transition: transform 220ms ease; }
+  &:hover .btn-arrow { transform: translateX(4px); }
+}
+.btn--large { padding: 18px 30px; font-size: 16px; }
+.btn--block { width: 100%; justify-content: center; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// PROCESS SECTION
-// ────────────────────────────────────────────────────────────────────────────
-
-.process {
-  padding: 120px 20px;
-  background: linear-gradient(180deg, transparent 0%, rgba($brand-primary, 0.02) 100%);
-  min-height: 100vh;
+/* ── SECTION SCAFFOLDING ─────────────────────────────────────────── */
+.section {
+  position: relative;
+  z-index: 2;
+  padding: 130px 32px;
+  border-bottom: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 900ms ease, transform 900ms ease;
+  &.in-view { opacity: 1; transform: none; }
+}
+.section-head {
+  max-width: 1280px;
+  margin: 0 auto 80px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.section-head--double { grid-template-columns: 140px 1fr; }
+.section-meta {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  border-right: 1px solid var(--rule);
+  padding-right: 24px;
+  font-family: var(--font-mono);
+}
+.section-num {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--ember);
+}
+.section-tag {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--ash);
+  text-transform: uppercase;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0;
+  font-variation-settings: 'opsz' 96;
+  em { font-style: italic; color: var(--ember); font-weight: 400; }
+}
+.section-lede {
+  margin: 24px 0 0 0;
+  grid-column: 2;
+  max-width: 560px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--bone-soft);
+}
+.section-head--double .section-lede { grid-column: 2; }
 
-  > h2 {
-    text-align: center;
-    font-size: 42px;
-    font-weight: 800;
-    margin: 0 0 80px 0;
-    letter-spacing: -0.02em;
-  }
+@media (max-width: 720px) {
+  .section { padding: 80px 20px; }
+  .section-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 48px; }
+  .section-meta { border-right: 0; padding-right: 0; flex-direction: row; gap: 16px; }
+  .section-lede { grid-column: 1; }
 }
 
-.process-stack {
-  flex: 1;
-  max-width: 900px;
+/* ── 01 PROCESS ──────────────────────────────────────────────────── */
+.process-rail {
+  max-width: 1280px;
   margin: 0 auto;
-  width: 100%;
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
 
-  @media (max-width: 768px) {
-    max-width: 100%;
-    padding: 0;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 }
+.process-step {
+  position: relative;
+  padding: 56px 32px;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: start;
+  border-right: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 700ms ease, transform 700ms ease;
+  &.in-view { opacity: 1; transform: none; }
+  &:last-child { border-right: 0; }
 
-.stack-step-content {
+  &:nth-child(2) { transition-delay: 120ms; }
+  &:nth-child(3) { transition-delay: 240ms; }
+
+  @media (max-width: 900px) {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    &:last-child { border-bottom: 0; }
+  }
+}
+.step-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 350;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--ember);
+  font-variation-settings: 'opsz' 72;
+}
+.step-body h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -0.015em;
+  margin: 0 0 12px 0;
+  color: var(--bone);
+}
+.step-body p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--bone-soft);
+  margin: 0;
+}
+
+/* ── 02 SPEC SHEET ───────────────────────────────────────────────── */
+.spec-sheet {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  padding: 2rem 0;
-
-  .stack-step-number {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, $brand-primary 0%, $brand-primary-dark 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 16px;
+  border-top: 1px solid var(--rule-strong);
+}
+.spec-row {
+  display: grid;
+  grid-template-columns: 280px 220px 1fr 100px;
+  gap: 24px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 700ms ease, transform 700ms ease, background 220ms ease, padding 220ms ease;
+  &.in-view { opacity: 1; transform: none; }
+  &:hover {
+    background: linear-gradient(90deg, rgba(255, 122, 69, 0.04), transparent 60%);
+    padding-left: 16px;
   }
-
-  h3 {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 12px 0;
-    color: $text-primary;
-  }
-
-  p {
-    font-size: 16px;
-    color: $text-secondary;
-    margin: 0;
-    line-height: 1.6;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 }
-
-// ────────────────────────────────────────────────────────────────────────────
-// HACKATHON SECTION
-// ────────────────────────────────────────────────────────────────────────────
-
-.hackathon {
-  padding: 120px 20px;
-  background: linear-gradient(135deg, rgba($brand-primary, 0.08) 0%, rgba($brand-primary, 0.04) 100%);
+.spec-row--total {
+  border-bottom: 0;
+  padding-top: 36px;
+  border-top: 1px double var(--rule-strong);
+  .spec-name, .spec-desc { color: var(--bone); }
+  .spec-meta { color: var(--ember); font-style: italic; }
+}
+.spec-role {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  font-variation-settings: 'opsz' 36;
+}
+.spec-num {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ember);
+  border: 1px solid var(--ember);
+  padding: 3px 6px;
+  border-radius: 2px;
+  line-height: 1;
+}
+.spec-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--bone-soft);
+}
+.spec-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--bone-soft);
+  margin: 0;
+}
+.spec-meta {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  text-align: right;
+  color: var(--bone);
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 24;
+  @media (max-width: 900px) { text-align: left; }
 }
 
-.hackathon-content {
-  max-width: 800px;
+/* ── 03 LEDGER ───────────────────────────────────────────────────── */
+.ledger {
+  max-width: 1280px;
   margin: 0 auto;
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
 
-  h2 {
-    font-size: 36px;
-    font-weight: 800;
-    margin: 0 0 24px 0;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
-
-  p {
-    font-size: 16px;
-    color: $text-secondary;
-    line-height: 1.8;
-    margin: 0 0 32px 0;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 }
+.ledger-col {
+  padding: 40px 32px 36px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 700ms ease, transform 700ms ease, background 220ms ease;
+  &.in-view { opacity: 1; transform: none; }
+  &:nth-child(2) { transition-delay: 100ms; }
+  &:nth-child(3) { transition-delay: 200ms; }
+  &:last-child { border-right: 0; }
 
-.hackathon-rotating-text {
+  @media (max-width: 900px) {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    &:last-child { border-bottom: 0; }
+  }
+}
+.ledger-col--rejected {
+  background: rgba(0, 0, 0, 0.2);
+  .ledger-name, .rate-num, .rate-unit, .ledger-list { color: var(--ash); }
+  .ledger-name { text-decoration: line-through; text-decoration-color: var(--ash-deep); }
+}
+.ledger-col--featured {
+  background: linear-gradient(180deg, rgba(255, 122, 69, 0.05), transparent 80%);
+  border-left: 1px solid var(--ember);
+  border-right: 1px solid var(--ember);
+}
+.ledger-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ash);
+  text-transform: uppercase;
+  margin-bottom: 28px;
   display: inline-block;
-  background: linear-gradient(135deg, #60a5fa 0%, $brand-primary 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  white-space: nowrap;
-  min-width: 150px;
+}
+.ledger-tag--accent {
+  color: var(--ember);
+  border-bottom: 1px solid var(--ember);
+  padding-bottom: 4px;
+  align-self: flex-start;
+}
+.ledger-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  margin: 0 0 24px 0;
+  font-variation-settings: 'opsz' 36;
+  em { font-style: italic; color: var(--ember); }
+}
+.ledger-rate {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 28px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+}
+.rate-num {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--bone);
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96;
+}
+.rate-unit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--bone-soft);
+}
+.ledger-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  li {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--bone-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+}
+.mark {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  flex-shrink: 0;
+  width: 14px;
+  display: inline-block;
+}
+.mark--yes { color: var(--ember); }
+.mark--no { color: var(--ash-deep); }
+.ledger-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  background: var(--ember);
+  color: var(--ink);
+  padding: 12px 18px;
+  border-radius: 2px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  align-self: flex-start;
+  transition: transform 200ms ease, background 200ms ease;
+  &:hover { transform: translateY(-2px); background: var(--bone); }
+}
+.ledger-cta--ghost {
+  background: transparent;
+  color: var(--bone);
+  border: 1px solid var(--rule-strong);
+  &:hover { color: var(--ember); border-color: var(--ember); background: transparent; }
+}
+.ledger-foot {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ash-deep);
+  text-transform: uppercase;
+  margin-top: auto;
+}
+.pricing-note {
+  max-width: 1280px;
+  margin: 32px auto 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ash);
 }
 
-.hackathon-badges {
+/* ── 04 AUDIENCE ─────────────────────────────────────────────────── */
+.section--audience {
+  text-align: center;
+  padding-top: 120px;
+  padding-bottom: 120px;
+  .section-head { display: flex; justify-content: center; margin-bottom: 56px; }
+  .section-meta { border-right: 0; padding-right: 0; flex-direction: row; gap: 16px; }
+}
+.audience-line {
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 auto 36px;
+  max-width: 880px;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 96;
+}
+:deep(.audience-rotator) {
+  display: inline-block;
+  font-style: italic;
+  color: var(--ember);
+  background: linear-gradient(180deg, var(--ember) 0%, var(--ember-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  min-width: 5ch;
+}
+.badges {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
   justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--bone-soft);
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  transition: color 200ms ease, border-color 200ms ease;
+  &:hover { color: var(--ember); border-color: var(--ember); }
+}
+
+/* ── 05 FINAL ────────────────────────────────────────────────────── */
+.section--final {
+  padding-top: 160px;
+  padding-bottom: 160px;
+  text-align: center;
+  border-bottom: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(255, 122, 69, 0.08) 0%, transparent 60%),
+    var(--ink);
+}
+.final-meta {
+  display: inline-flex;
+  gap: 16px;
+  font-family: var(--font-mono);
   margin-bottom: 32px;
 }
-
-.badge {
-  background: rgba($brand-primary, 0.15);
-  border: 1px solid rgba($brand-primary, 0.3);
-  color: $brand-primary;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-// ────────────────────────────────────────────────────────────────────────────
-// FINAL CTA SECTION
-// ────────────────────────────────────────────────────────────────────────────
-
-.cta-final {
-  padding: 120px 20px;
-  text-align: center;
-
-  h2 {
-    font-size: 48px;
-    font-weight: 800;
-    margin: 0 0 16px 0;
-    letter-spacing: -0.02em;
-  }
-
-  p {
-    font-size: 18px;
-    color: $text-secondary;
-    margin: 0 0 40px 0;
+.final-headline {
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: clamp(72px, 12vw, 180px);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  margin: 0 0 24px 0;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 144;
+  em {
+    font-style: italic;
+    color: var(--ember);
+    font-weight: 400;
   }
 }
-
-// ────────────────────────────────────────────────────────────────────────────
-// FOOTER
-// ────────────────────────────────────────────────────────────────────────────
-
-.footer {
-  background: rgba($surface, 0.5);
-  border-top: 1px solid rgba($brand-primary, 0.1);
-  padding: 60px 20px 20px;
-}
-
-.footer-content {
-  max-width: 1200px;
+.final-lede {
+  font-size: 16px;
+  color: var(--bone-soft);
   margin: 0 auto 40px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
+  max-width: 480px;
 }
 
-.footer-section {
-  .footer-title {
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: $brand-primary;
-    margin-bottom: 12px;
-  }
-
-  p {
-    font-size: 13px;
-    color: $text-secondary;
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  a {
-    display: block;
-    font-size: 13px;
-    color: $text-secondary;
-    text-decoration: none;
-    margin-bottom: 8px;
-    transition: color 0.2s;
-
-    &:hover {
-      color: $brand-primary;
-    }
-  }
+/* ── FOOTER ──────────────────────────────────────────────────────── */
+.footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid var(--rule);
+  padding: 64px 32px 28px;
+  background: var(--ink);
 }
-
-.footer-bottom {
-  max-width: 1200px;
+.footer-inner {
+  max-width: 1280px;
   margin: 0 auto;
-  border-top: 1px solid rgba($brand-primary, 0.1);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  @media (max-width: 900px) { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 540px) { grid-template-columns: 1fr; }
+}
+.footer-col p, .footer-col a {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--bone-soft);
+  text-decoration: none;
+  display: block;
+  transition: color 180ms ease;
+}
+.footer-col a:hover { color: var(--ember); }
+.footer-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ash);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.footer-blurb { margin: 16px 0 0 0; max-width: 320px; }
+.footer-col--colophon p em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--bone);
+}
+.footer-bottom {
+  max-width: 1280px;
+  margin: 48px auto 0;
   padding-top: 20px;
-  text-align: center;
-
-  p {
-    font-size: 12px;
-    color: $text-secondary;
-    margin: 0;
-  }
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ash);
+  text-transform: uppercase;
+}
+.footer-frame { color: var(--ember); }
+.brand--footer {
+  margin-bottom: 0;
 }
 
-// ────────────────────────────────────────────────────────────────────────────
-// RESPONSIVE
-// ────────────────────────────────────────────────────────────────────────────
-
-// ────────────────────────────────────────────────────────────────────────────
-// MODAL: API KEY ONBOARDING
-// ────────────────────────────────────────────────────────────────────────────
-
+/* ── MODAL ───────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 9, 8, 0.78);
+  backdrop-filter: blur(10px);
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  animation: fadeIn 0.2s ease-out;
+  padding: 24px;
 }
-
-.modal-content {
-  background: $bg-dark;
-  border: 1px solid rgba($brand-primary, 0.2);
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 420px;
-  width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  animation: slideUp 0.3s ease-out;
+.modal-card {
   position: relative;
-
-  h2 {
-    font-size: 24px;
-    font-weight: 800;
-    margin: 0 0 8px 0;
-    color: $text-primary;
-  }
-
-  p {
-    font-size: 14px;
-    color: $text-secondary;
-    margin: 0 0 28px 0;
-    line-height: 1.6;
+  background: var(--ink-soft);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  max-width: 460px;
+  width: 100%;
+  padding: 40px 36px 32px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px solid rgba(255, 122, 69, 0.18);
+    margin: 6px;
+    border-radius: 2px;
   }
 }
-
 .modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
   background: transparent;
   border: none;
-  font-size: 24px;
-  color: $text-secondary;
+  color: var(--ash);
+  width: 28px;
+  height: 28px;
+  font-size: 22px;
   cursor: pointer;
-  transition: color 0.2s;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  transition: color 180ms ease;
+  &:hover { color: var(--ember); }
+}
+.modal-head {
   display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    color: $brand-primary;
-  }
+  gap: 14px;
+  margin-bottom: 18px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
-
-.form-group {
-  margin-bottom: 28px;
-
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: $text-secondary;
-    margin-bottom: 8px;
-  }
+.modal-num { color: var(--ember); }
+.modal-tag { color: var(--ash); }
+.modal-title {
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px 0;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 48;
+  em { font-style: italic; color: var(--ember); }
 }
-
-.input-wrapper {
+.modal-lede {
+  font-size: 14px;
+  color: var(--bone-soft);
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+}
+.modal-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--ash);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+.modal-input-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
-
-.api-input {
+.modal-input {
   flex: 1;
-  background: rgba($surface, 0.8);
-  border: 1px solid rgba($brand-primary, 0.2);
-  border-radius: 8px;
+  background: var(--ink);
+  border: 1px solid var(--rule-strong);
+  color: var(--bone);
+  font-family: var(--font-mono);
+  font-size: 13px;
   padding: 12px 14px;
-  font-size: 14px;
-  color: $text-primary;
+  border-radius: 2px;
   outline: none;
-  transition: all 0.2s;
-  font-family: 'Courier New', monospace;
-
-  &::placeholder {
-    color: $text-secondary;
-  }
-
-  &:focus {
-    border-color: $brand-primary;
-    background: rgba($surface, 1);
-    box-shadow: 0 0 12px rgba($brand-primary, 0.15);
-  }
+  transition: border-color 180ms ease;
+  &:focus { border-color: var(--ember); }
+  &::placeholder { color: var(--ash-deep); }
 }
-
-.visibility-toggle {
-  background: rgba($surface, 0.8);
-  border: 1px solid rgba($brand-primary, 0.2);
-  border-radius: 8px;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.modal-eye {
+  background: var(--ink);
+  border: 1px solid var(--rule-strong);
+  color: var(--bone-soft);
+  width: 44px;
+  border-radius: 2px;
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s;
-  color: $text-secondary;
-
-  &:hover {
-    border-color: $brand-primary;
-    color: $brand-primary;
-  }
+  transition: color 180ms ease, border-color 180ms ease;
+  &:hover { color: var(--ember); border-color: var(--ember); }
+}
+.modal-help {
+  font-size: 12px;
+  color: var(--ash);
+  margin: 0 0 22px 0;
+  a { color: var(--ember); text-decoration: none; &:hover { text-decoration: underline; } }
 }
 
-.help-text {
-  font-size: 11px;
-  color: $text-secondary;
-  margin: 0;
-  line-height: 1.5;
-
-  a {
-    color: $brand-primary;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+.modal-fade-enter-active, .modal-fade-leave-active {
+  transition: opacity 240ms ease;
+  .modal-card { transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+}
+.modal-fade-enter-from, .modal-fade-leave-to {
+  opacity: 0;
+  .modal-card { transform: translateY(20px); }
 }
 
-.spinner {
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 768px) {
-  .modal-content {
-    padding: 32px 24px;
-  }
-
-  .hero-title {
-    font-size: 36px;
-  }
-
-  .hero-pill {
-    font-size: 11px;
-    padding: 6px 12px;
-  }
-
-  .features-header h2,
-  .pricing-header h2 {
-    font-size: 28px;
-  }
-
-  .process > h2 {
-    font-size: 28px;
-  }
-
-  .cta-final h2 {
-    font-size: 32px;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 </style>
