@@ -24,9 +24,11 @@ export const SUBSCRIPTION_MONTHLY_USD = 30;
 
 export const VIDEO_STUDIO_SUNO_CALLBACK = 'https://webhook.acedata.cloud/suno';
 export const VIDEO_STUDIO_PRODUCER_CALLBACK = 'https://webhook.acedata.cloud/producer';
+export const VIDEO_STUDIO_LUMA_CALLBACK = 'https://webhook.acedata.cloud/luma';
 
 export const VIDEO_STUDIO_POLL_INTERVAL_MS = 5000;
 export const VIDEO_STUDIO_POLL_MAX_ATTEMPTS = 36;
+export const VIDEO_STUDIO_VIDEO_POLL_MAX_ATTEMPTS = 60;
 
 export const VIDEO_STUDIO_SKILL_DEFINITION = {
   name: 'video_studio_pipeline',
@@ -54,8 +56,8 @@ export const VIDEO_STUDIO_SKILL_DEFINITION = {
       output: 'voiceover'
     },
     {
-      tool: 'producer_generate_video',
-      args: { audio_id: '{steps.voiceover.audio_id}' },
+      tool: 'luma_generate_video',
+      args: { prompt: '{steps.script.hook}' },
       output: 'video'
     }
   ]

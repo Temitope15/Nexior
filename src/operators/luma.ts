@@ -96,7 +96,7 @@ class LumaOperator {
       headers: {
         authorization: `Bearer ${options.token}`,
         'content-type': 'application/json',
-        accept: 'application/x-ndjson'
+        accept: 'application/json'
       },
       baseURL: BASE_URL_API
     });

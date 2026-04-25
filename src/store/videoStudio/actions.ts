@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ActionContext } from 'vuex';
 import { IVideoStudioState } from './models';
 import { IRootState } from '../common/models';
@@ -10,9 +10,20 @@ import {
   VIDEO_STUDIO_PRODUCER_MODEL,
   VIDEO_STUDIO_SUNO_CALLBACK,
   VIDEO_STUDIO_PRODUCER_CALLBACK,
+  VIDEO_STUDIO_LUMA_CALLBACK,
   VIDEO_STUDIO_POLL_INTERVAL_MS,
-  VIDEO_STUDIO_POLL_MAX_ATTEMPTS
+  VIDEO_STUDIO_POLL_MAX_ATTEMPTS,
+  VIDEO_STUDIO_VIDEO_POLL_MAX_ATTEMPTS
 } from '@/constants/videoStudio';
+
+function extractApiError(err: unknown, fallback: string): string {
+  const axErr = err as AxiosError<{ error?: { message?: string; code?: string }; trace_id?: string }>;
+  const data = axErr?.response?.data;
+  const msg = data?.error?.message || data?.error?.code;
+  const trace = data?.trace_id;
+  if (msg) return trace ? `${msg} (trace_id=${trace})` : msg;
+  return err instanceof Error ? err.message : fallback;
+}
 
 type Context = ActionContext<IVideoStudioState, IRootState>;
 
@@ -34,6 +45,11 @@ async function pollUntil<T>(
 }
 
 async function generateScript({ commit, state }: Context): Promise<void> {
+  const step = state.steps.find((s) => s.id === 'script');
+  if (step?.status === 'done' && state.scriptOutput) {
+    console.info('[VideoStudio] ✓ script: skip (already done — saves Gemini credits)');
+    return;
+  }
   console.info('[VideoStudio] ► script: start', { idea: state.config.idea });
   commit('setStepStatus', { id: 'script', status: 'running' });
   try {
@@ -54,6 +70,11 @@ async function generateScript({ commit, state }: Context): Promise<void> {
 // Returns the Suno audio ID (needed for video generation via sunoOperator.mp4)
 async function generateMusic({ commit, state }: Context): Promise<string> {
   if (!state.scriptOutput) throw new Error('Script output missing');
+  const step = state.steps.find((s) => s.id === 'music');
+  if (step?.status === 'done' && step.output?.audio_id) {
+    console.info('[VideoStudio] ✓ music: skip (already done — saves Suno credits)');
+    return step.output.audio_id as string;
+  }
   console.info('[VideoStudio] ► music: start');
   commit('setStepStatus', { id: 'music', status: 'running' });
   try {
@@ -101,6 +122,11 @@ async function generateMusic({ commit, state }: Context): Promise<string> {
 
 async function generateVoiceover({ commit, state }: Context): Promise<void> {
   if (!state.scriptOutput) throw new Error('Script output missing');
+  const step = state.steps.find((s) => s.id === 'voiceover');
+  if (step?.status === 'done') {
+    console.info('[VideoStudio] ✓ voiceover: skip (already done — saves Producer credits)');
+    return;
+  }
   console.info('[VideoStudio] ► voiceover: start');
   commit('setStepStatus', { id: 'voiceover', status: 'running' });
   try {
@@ -153,77 +179,95 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
   }
 }
 
-// Generate video using Luma Dream Machine
+// Generate video using Luma Dream Machine.
+// Async-submit → poll. callback_url makes the initial POST return a task_id immediately
+// instead of holding the connection 1–2 min (which was causing api_error on dropped connections).
 async function generateVideo({ commit, state }: Context): Promise<void> {
-  console.info('[VideoStudio] ► video: start with Luma Dream Machine');
-  commit('setStepStatus', { id: 'video', status: 'running' });
+  if (!state.scriptOutput) throw new Error('Script output required for video generation');
+
+  const videoStep = state.steps.find((s) => s.id === 'video');
+  if (videoStep?.status === 'done') {
+    console.info('[VideoStudio] ✓ video: skip (already done — saves Luma credits)');
+    return;
+  }
+  // Idempotency guard: if a Luma task is already in flight from a prior run, resume polling
+  // instead of submitting again — re-submitting double-charges the user for no reason.
+  let taskId = videoStep?.taskId;
+
+  if (!taskId) {
+    console.info('[VideoStudio] ► video: submit Luma');
+    commit('setStepStatus', { id: 'video', status: 'running' });
+    try {
+      const res = await lumaOperator.generate(
+        {
+          prompt: state.scriptOutput.hook || 'Create an engaging short-form video',
+          callback_url: VIDEO_STUDIO_LUMA_CALLBACK
+        },
+        { token: state.apiKey }
+      );
+      taskId = res.data?.task_id;
+      const immediateUrl = res.data?.video_url;
+      const apiError = res.data?.error?.message;
+
+      if (apiError) throw new Error(apiError);
+
+      // Sync mode can occasionally return the URL directly even with callback_url set.
+      if (immediateUrl) {
+        console.info('[VideoStudio] ✓ video: done (immediate)', { videoUrl: immediateUrl });
+        commit('setStepOutput', { id: 'video', output: { video_url: immediateUrl, task_id: taskId } });
+        commit('setFinalUrls', { videoUrl: immediateUrl });
+        commit('setStepStatus', { id: 'video', status: 'done' });
+        return;
+      }
+
+      if (!taskId) throw new Error('Luma returned no task_id and no video_url');
+
+      commit('setStepTaskId', { id: 'video', taskId });
+    } catch (err: unknown) {
+      const msg = extractApiError(err, 'Video generation failed');
+      console.error('[VideoStudio] ✕ video: submit failed', err);
+      commit('setStepStatus', { id: 'video', status: 'error', error: msg });
+      throw err;
+    }
+  } else {
+    console.info('[VideoStudio] ► video: resume polling existing task', { taskId });
+  }
+
+  commit('setStepStatus', { id: 'video', status: 'polling' });
+
   try {
-    // Use the script hook as the prompt for Luma video generation
-    if (!state.scriptOutput) throw new Error('Script output required for video generation');
-
-    const prompt = state.scriptOutput.hook || 'Create an engaging short-form video';
-
-    // Generate video with Luma
-    const res = await lumaOperator.generate(
-      {
-        prompt: prompt
-      },
-      { token: state.apiKey }
-    );
-
-    console.info('[VideoStudio] video: Luma response', res.data);
-    const videoUrl = res.data?.video_url;
-    const taskId = res.data?.task_id;
-
-    if (videoUrl) {
-      // Immediate response with video URL
-      console.info('[VideoStudio] ✓ video: done (immediate)', { videoUrl });
-      commit('setStepOutput', { id: 'video', output: { video_url: videoUrl, task_id: taskId } });
-      commit('setFinalUrls', { videoUrl });
-      commit('setStepStatus', { id: 'video', status: 'done' });
-      return;
-    }
-
-    if (!taskId) {
-      // Video generation taking longer — will process in background
-      console.info('[VideoStudio] video: processing in background, check back later');
-      commit('setStepStatus', { id: 'video', status: 'done' });
-      return;
-    }
-
-    // Poll for completion
-    console.info('[VideoStudio] video: polling Luma task', { taskId });
-    commit('setStepTaskId', { id: 'video', taskId });
-    commit('setStepStatus', { id: 'video', status: 'polling' });
-
     const finalVideoUrl = await pollUntil(async () => {
+      let lumaResponse: ILumaGenerateResponse | undefined;
       try {
-        const taskRes = await lumaOperator.task(taskId, { token: state.apiKey });
-        const lumaResponse = taskRes.data.response as ILumaGenerateResponse;
-        const url = lumaResponse?.video_url;
-        const lumaState = lumaResponse?.state;
-        console.info('[VideoStudio] video: Luma polling', { lumaState, hasUrl: !!url });
-        return url ?? null;
+        const taskRes = await lumaOperator.task(taskId as string, { token: state.apiKey });
+        lumaResponse = taskRes.data.response as ILumaGenerateResponse | undefined;
       } catch (e) {
-        console.warn('[VideoStudio] video: polling error (will retry)', e);
+        // Transient poll error (network blip / 5xx). Read calls are cheap — keep polling.
+        console.warn('[VideoStudio] video: poll error (continuing)', e);
         return null;
       }
-    });
+      const url = lumaResponse?.video_url;
+      const lumaState = lumaResponse?.state;
+      console.info('[VideoStudio] video: poll', { lumaState, hasUrl: !!url });
 
-    if (finalVideoUrl) {
-      console.info('[VideoStudio] ✓ video: done (polled)', { videoUrl: finalVideoUrl });
-      commit('setStepOutput', { id: 'video', output: { video_url: finalVideoUrl, task_id: taskId } });
-      commit('setFinalUrls', { videoUrl: finalVideoUrl });
-    } else {
-      // Poll timeout — video is still generating
-      console.info('[VideoStudio] video: taking longer than expected, check back later');
-    }
+      // Fail fast — no point polling for 5 more minutes if Luma already said it failed.
+      if (lumaState === 'failed') {
+        const errMsg = lumaResponse?.error?.message || 'Luma reported state=failed';
+        throw new Error(errMsg);
+      }
+      return url || null;
+    }, VIDEO_STUDIO_VIDEO_POLL_MAX_ATTEMPTS);
+
+    console.info('[VideoStudio] ✓ video: done (polled)', { videoUrl: finalVideoUrl });
+    commit('setStepOutput', { id: 'video', output: { video_url: finalVideoUrl, task_id: taskId } });
+    commit('setFinalUrls', { videoUrl: finalVideoUrl });
     commit('setStepStatus', { id: 'video', status: 'done' });
   } catch (err: unknown) {
-    // Video generation is taking longer than expected
-    console.info('[VideoStudio] video: taking longer than expected, check back later');
-    console.debug('[VideoStudio] video: error details', err);
-    commit('setStepStatus', { id: 'video', status: 'done' });
+    const msg = extractApiError(err, 'Video generation failed');
+    console.error('[VideoStudio] ✕ video: poll failed', err);
+    // Keep the task_id on the step so the user can retry without paying for a new submission.
+    commit('setStepStatus', { id: 'video', status: 'error', error: msg });
+    throw err;
   }
 }
 
@@ -240,9 +284,20 @@ export const resetPipeline = ({ commit }: Context): void => {
 };
 
 export const runPipeline = async (context: Context): Promise<void> => {
-  const { commit } = context;
+  const { commit, state } = context;
   console.info('[VideoStudio] Pipeline: START');
-  commit('resetPipeline');
+  // If the idea changed since the last run, do a full reset. Otherwise keep done steps so
+  // a retry after partial failure resumes from where it stopped instead of re-billing
+  // already-paid steps (script, music, voiceover can each cost real credits).
+  const ideaChanged = state.lastRunIdea !== state.config.idea;
+  if (ideaChanged) {
+    console.info('[VideoStudio] Pipeline: idea changed — full reset');
+    commit('resetPipeline');
+  } else {
+    console.info('[VideoStudio] Pipeline: same idea — resuming from last failure point');
+    commit('resetIncompleteSteps');
+  }
+  commit('setLastRunIdea', state.config.idea);
   commit('setTotalCost');
 
   try {

@@ -54,7 +54,15 @@
             @click="onGenerate"
           >
             <span v-if="isRunning" class="btn-spinner" />
-            <span>{{ isRunning ? 'Generating…' : 'Generate Video' }}</span>
+            <span>{{ isRunning ? 'Generating…' : generateButtonLabel }}</span>
+          </button>
+          <button
+            v-if="canResetPipeline"
+            class="btn-secondary"
+            :disabled="isRunning"
+            @click="onResetPipeline"
+          >
+            Start Over
           </button>
           <button
             v-if="walletAddress"
@@ -189,6 +197,16 @@ export default defineComponent({
     },
     canGenerate(): boolean {
       return !!this.idea.trim() && !!this.apiKey.trim();
+    },
+    canResetPipeline(): boolean {
+      return this.steps.some((s: any) => s.status === 'done' || s.status === 'error');
+    },
+    hasResumableProgress(): boolean {
+      return this.steps.some((s: any) => s.status === 'done')
+        && this.steps.some((s: any) => s.status !== 'done');
+    },
+    generateButtonLabel(): string {
+      return this.hasResumableProgress ? 'Resume Generation' : 'Generate Video';
     }
   },
   methods: {
@@ -209,6 +227,10 @@ export default defineComponent({
         this.pipelineError = msg;
         ElMessage.error(msg);
       }
+    },
+    onResetPipeline() {
+      this.$store.dispatch('videoStudio/resetPipeline');
+      this.pipelineError = null;
     },
     async onPayWithSolana() {
       if (!this.walletPublicKey) {

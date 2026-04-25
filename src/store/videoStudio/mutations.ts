@@ -60,6 +60,26 @@ export default {
     state.finalAudioUrl = undefined;
     state.finalVideoUrl = undefined;
     state.scriptOutput = undefined;
+    state.lastRunIdea = undefined;
+  },
+
+  // Clear only steps that aren't already 'done' so a retry resumes from the failure point
+  // instead of re-billing successful steps. Also clears any final URLs that depend on
+  // a non-done step (e.g. video URL if video step is being retried).
+  resetIncompleteSteps(state: IVideoStudioState): void {
+    state.steps = state.steps.map((step): IPipelineStep =>
+      step.status === 'done'
+        ? step
+        : { ...step, status: 'idle', taskId: undefined, output: undefined, error: undefined }
+    );
+    const videoStep = state.steps.find((s) => s.id === 'video');
+    if (videoStep?.status !== 'done') state.finalVideoUrl = undefined;
+    const musicStep = state.steps.find((s) => s.id === 'music');
+    if (musicStep?.status !== 'done') state.finalAudioUrl = undefined;
+  },
+
+  setLastRunIdea(state: IVideoStudioState, idea: string): void {
+    state.lastRunIdea = idea;
   },
 
   addHistoryEntry(state: IVideoStudioState, entry: IGenerationRecord): void {

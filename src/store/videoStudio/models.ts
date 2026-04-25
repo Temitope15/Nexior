@@ -9,6 +9,7 @@ export interface IVideoStudioState {
   finalVideoUrl?: string;
   scriptOutput?: IScriptOutput;
   history: IGenerationRecord[];
+  lastRunIdea?: string;
   service?: any;
   application?: any;
   applications?: any[];
