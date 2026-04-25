@@ -53,25 +53,15 @@
     </script>
     <style>
       :root {
-        --boot-bg: #ffffff;
-        --boot-fg: #0b0b0b;
-        --boot-muted: rgba(0, 0, 0, 0.55);
-        --boot-spinner-1: #7c3aed;
-        --boot-spinner-2: #818cf8;
-        --boot-spinner-3: #a78bfa;
-        color-scheme: light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --boot-bg: #000000;
-          --boot-fg: #ffffff;
-          --boot-muted: rgba(255, 255, 255, 0.65);
-          --boot-spinner-1: #7c3aed;
-          --boot-spinner-2: #818cf8;
-          --boot-spinner-3: #a78bfa;
-          color-scheme: dark;
-        }
+        /* Editorial cinema palette — matches src/assets/scss/_tokens.scss */
+        --boot-bg: #0a0908;
+        --boot-fg: #ede4d3;
+        --boot-muted: rgba(237, 228, 211, 0.55);
+        --boot-rule: rgba(237, 228, 211, 0.18);
+        --boot-spinner-1: #ff7a45;
+        --boot-spinner-2: rgba(255, 122, 69, 0.45);
+        --boot-spinner-3: rgba(255, 122, 69, 0.1);
+        color-scheme: dark;
       }
 
       html,
@@ -84,16 +74,7 @@
         margin: 0;
         background: var(--boot-bg);
         color: var(--boot-fg);
-        font-family:
-          'Inter',
-          ui-sans-serif,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Helvetica,
-          Arial,
-          sans-serif;
+        font-family: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
       }
 
       .boot {
@@ -102,20 +83,34 @@
         display: grid;
         place-items: center;
         background: var(--boot-bg);
+        /* faint vignette like the rest of the cinema-grade pages */
+        background-image: radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(0, 0, 0, 0.55) 80%);
       }
 
       .boot__content {
         position: relative;
         display: grid;
         justify-items: center;
-        gap: 14px;
+        gap: 18px;
         padding: 24px 18px;
         z-index: 1;
       }
 
+      .boot__mark {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 10px;
+        letter-spacing: 0.32em;
+        color: var(--boot-spinner-1);
+        border: 1px solid var(--boot-spinner-1);
+        padding: 4px 9px;
+        border-radius: 2px;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
       .boot__loader {
-        width: 72px;
-        height: 72px;
+        width: 56px;
+        height: 56px;
         position: relative;
         border-radius: 999px;
       }
@@ -132,21 +127,59 @@
           var(--boot-spinner-3),
           var(--boot-spinner-1)
         );
-        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
-        mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
-        animation: boot-spin 0.9s linear infinite;
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1px), #000 calc(100% - 0.5px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 1px), #000 calc(100% - 0.5px));
+        animation: boot-spin 1.4s linear infinite;
+      }
+
+      .boot__loader::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        margin: -2px 0 0 -2px;
+        border-radius: 50%;
+        background: var(--boot-spinner-1);
+        animation: boot-pulse 1.6s ease-in-out infinite;
       }
 
       @keyframes boot-spin {
-        to {
-          transform: rotate(360deg);
-        }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes boot-pulse {
+        0%, 100% { opacity: 0.4; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.6); }
+      }
+
+      .boot__title {
+        font-family: 'Fraunces', 'Times New Roman', serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 26px;
+        letter-spacing: -0.02em;
+        color: var(--boot-fg);
+        line-height: 1;
       }
 
       .boot__subtitle {
-        font-size: 12px;
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 9px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
         color: var(--boot-muted);
         user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .boot__subtitle::before,
+      .boot__subtitle::after {
+        content: '';
+        width: 16px;
+        height: 1px;
+        background: var(--boot-rule);
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -169,8 +202,10 @@
     <div id="app">
       <div class="boot" aria-label="Loading" role="status">
         <div class="boot__content">
+          <div class="boot__mark">VRX</div>
           <div class="boot__loader" aria-hidden="true"></div>
-          <div class="boot__subtitle">Loading…</div>
+          <div class="boot__title">Voirax</div>
+          <div class="boot__subtitle">rolling</div>
         </div>
       </div>
     </div>
