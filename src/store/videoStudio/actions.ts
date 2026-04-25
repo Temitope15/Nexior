@@ -16,13 +16,50 @@ import {
   VIDEO_STUDIO_VIDEO_POLL_MAX_ATTEMPTS
 } from '@/constants/videoStudio';
 
+// Always-prefix the error with a short, scannable hint about what likely went wrong.
+// AceData's 403 doesn't always include a specific code in the body, so we infer from status.
+export interface IClassifiedError {
+  message: string;
+  hint: 'balance' | 'auth' | 'rate_limit' | 'unknown';
+  status?: number;
+}
 function extractApiError(err: unknown, fallback: string): string {
-  const axErr = err as AxiosError<{ error?: { message?: string; code?: string }; trace_id?: string }>;
+  return classifyApiError(err, fallback).message;
+}
+function classifyApiError(err: unknown, fallback: string): IClassifiedError {
+  const axErr = err as AxiosError<{ error?: { message?: string; code?: string; type?: string }; trace_id?: string }>;
+  const status = axErr?.response?.status;
   const data = axErr?.response?.data;
-  const msg = data?.error?.message || data?.error?.code;
+  const apiMsg = data?.error?.message || data?.error?.code || data?.error?.type;
   const trace = data?.trace_id;
-  if (msg) return trace ? `${msg} (trace_id=${trace})` : msg;
-  return err instanceof Error ? err.message : fallback;
+
+  let hint: IClassifiedError['hint'] = 'unknown';
+  let prefix = '';
+  if (status === 403) {
+    hint = 'balance';
+    prefix = 'Forbidden — likely balance exhausted or model not enabled on this key.';
+  } else if (status === 401) {
+    hint = 'auth';
+    prefix = 'Unauthorized — your AceData key looks invalid or expired.';
+  } else if (status === 429) {
+    hint = 'rate_limit';
+    prefix = 'Rate limited — too many requests in a short window.';
+  }
+
+  let message: string;
+  if (apiMsg && prefix) {
+    message = `${prefix} ${apiMsg}`;
+  } else if (apiMsg) {
+    message = apiMsg;
+  } else if (prefix) {
+    message = prefix;
+  } else if (err instanceof Error) {
+    message = err.message;
+  } else {
+    message = fallback;
+  }
+  if (trace) message += ` (trace_id=${trace})`;
+  return { message, hint, status };
 }
 
 type Context = ActionContext<IVideoStudioState, IRootState>;
@@ -304,22 +341,11 @@ export const runPipeline = async (context: Context): Promise<void> => {
     await generateScript(context);
     await generateMusic(context);
 
-    // Voiceover and video are independent — run in parallel for speed
-    console.info('[VideoStudio] Pipeline: parallel [voiceover, video]');
-    const results = await Promise.allSettled([
-      generateVoiceover(context),
-      generateVideo(context)
-    ]);
-
-    const voiceoverResult = results[0];
-    const videoResult = results[1];
-
-    if (voiceoverResult.status === 'rejected') {
-      console.warn('[VideoStudio] Voiceover failed but continuing', voiceoverResult.reason);
-    }
-    if (videoResult.status === 'rejected') {
-      console.info('[VideoStudio] Video generation processing in background, check back later', videoResult.reason);
-    }
+    // Sequential — voiceover before video. Two reasons:
+    //  1) Clearer UX: users read the shot list top-to-bottom and expect that order.
+    //  2) Cost: if voiceover fails (cheap), we don't waste the $0.10 Luma submit.
+    await generateVoiceover(context);
+    await generateVideo(context);
 
     console.info('[VideoStudio] Pipeline: SUCCESS');
   } catch (err) {

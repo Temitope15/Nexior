@@ -36,8 +36,17 @@
         </div>
         <div class="field-hint">
           Your key is used only for API calls. It is never sent to our servers.
-          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="hint-link">
-            Get a key &rarr;
+        </div>
+        <div class="key-actions">
+          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="key-action">
+            <span class="key-action-icon">+</span>
+            <span class="key-action-label">Get a key</span>
+            <span class="key-action-arrow">↗</span>
+          </a>
+          <a href="https://platform.acedata.cloud" target="_blank" rel="noopener" class="key-action key-action--accent">
+            <span class="key-action-icon">$</span>
+            <span class="key-action-label">Top up credits</span>
+            <span class="key-action-arrow">↗</span>
           </a>
         </div>
       </div>
@@ -238,6 +247,65 @@ export default defineComponent({
   border-bottom: 1px solid transparent;
   transition: border-color 180ms ease;
   &:hover { border-bottom-color: var(--vx-ember); }
+}
+
+/* Key actions: row of two compact ledger-style links */
+.key-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 10px;
+}
+.key-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  text-decoration: none;
+  background: var(--vx-ink);
+  border: 1px solid var(--vx-rule-strong);
+  border-radius: 2px;
+  font-family: var(--vx-font-sans);
+  font-size: 12px;
+  color: var(--vx-bone-soft);
+  transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+  &:hover {
+    color: var(--vx-ember);
+    border-color: var(--vx-ember);
+  }
+}
+.key-action--accent {
+  background: rgba(255, 122, 69, 0.06);
+  border-color: rgba(255, 122, 69, 0.4);
+  color: var(--vx-ember);
+  &:hover {
+    background: var(--vx-ember);
+    color: var(--vx-ink);
+    border-color: var(--vx-ember);
+  }
+}
+.key-action-icon {
+  font-family: var(--vx-font-mono);
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  line-height: 14px;
+  text-align: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: currentColor;
+  flex-shrink: 0;
+}
+.key-action-label { flex: 1; letter-spacing: 0.005em; }
+.key-action-arrow {
+  font-family: var(--vx-font-mono);
+  font-size: 11px;
+  opacity: 0.7;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+.key-action:hover .key-action-arrow { transform: translateX(2px); opacity: 1; }
+@media (max-width: 540px) {
+  .key-actions { grid-template-columns: 1fr; }
 }
 
 .save-row { margin-bottom: 14px; }

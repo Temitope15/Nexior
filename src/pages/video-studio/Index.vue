@@ -134,8 +134,28 @@
 
         <transition name="fade-row">
           <div v-if="pipelineError" class="pipeline-error">
-            <span class="err-tag">Error</span>
-            <span>{{ pipelineError }}</span>
+            <div class="err-row">
+              <span class="err-tag">{{ errorKind === 'balance' ? 'Balance' : errorKind === 'auth' ? 'Auth' : 'Error' }}</span>
+              <span class="err-msg">{{ pipelineError }}</span>
+            </div>
+            <a
+              v-if="errorKind === 'balance'"
+              href="https://platform.acedata.cloud"
+              target="_blank"
+              rel="noopener"
+              class="err-cta"
+            >
+              Top up credits <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              v-else-if="errorKind === 'auth'"
+              href="https://platform.acedata.cloud"
+              target="_blank"
+              rel="noopener"
+              class="err-cta"
+            >
+              Get a new key <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </transition>
       </section>
@@ -273,6 +293,17 @@ export default defineComponent({
     },
     generateButtonLabel(): string {
       return this.hasResumableProgress ? 'Resume the take' : 'Begin a take';
+    },
+    // Classify the error message to pick the right CTA. Driven by string match because
+    // the underlying classifier in the Vuex action prefixes 403/401/429 errors with a
+    // human label, and we don't want to plumb a structured error through the store.
+    errorKind(): 'balance' | 'auth' | 'rate_limit' | 'unknown' {
+      const msg = (this.pipelineError || '').toLowerCase();
+      if (!msg) return 'unknown';
+      if (msg.includes('forbidden') || msg.includes('balance')) return 'balance';
+      if (msg.includes('unauthorized') || msg.includes('invalid') && msg.includes('key')) return 'auth';
+      if (msg.includes('rate limit')) return 'rate_limit';
+      return 'unknown';
     }
   },
   methods: {
@@ -799,17 +830,23 @@ export default defineComponent({
 }
 .pipeline-error {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 14px;
   background: rgba(217, 106, 91, 0.06);
   border: 1px solid rgba(217, 106, 91, 0.3);
   border-radius: 2px;
   font-family: var(--vx-font-sans);
   font-size: 12px;
   color: var(--vx-err);
-  line-height: 1.5;
+  line-height: 1.55;
 }
+.err-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.err-msg { color: var(--vx-bone); flex: 1; }
 .err-tag {
   font-family: var(--vx-font-mono);
   font-size: 10px;
@@ -820,6 +857,20 @@ export default defineComponent({
   padding: 2px 6px;
   border-radius: 2px;
   line-height: 1.2;
+  color: var(--vx-err);
+}
+.err-cta {
+  align-self: flex-start;
+  font-family: var(--vx-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vx-ember);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 122, 69, 0.4);
+  padding-bottom: 1px;
+  transition: color 200ms ease, border-color 200ms ease;
+  &:hover { color: var(--vx-bone); border-bottom-color: var(--vx-bone); }
 }
 
 .fade-row-enter-active, .fade-row-leave-active { transition: opacity 200ms ease, transform 200ms ease; }
