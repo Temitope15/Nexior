@@ -34,8 +34,8 @@ export default (): IVideoStudioState => {
       },
       {
         id: 'video',
-        label: 'Video Generation',
-        description: 'Luma Dream Machine creates your video',
+        label: 'Picture',
+        description: 'Cinematographer renders the take',
         status: 'idle',
         costUsd: PIPELINE_COST_TABLE.video
       }

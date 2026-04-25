@@ -146,7 +146,11 @@
                 </div>
                 <div class="step-info">
                   <h4>{{ step.label }}</h4>
-                  <p>{{ step.description }}</p>
+                  <p>
+                    {{ step.description }}<template v-if="step.output && step.output.provider_label">
+                      <span class="step-provider"> · via {{ step.output.provider_label }}</span>
+                    </template>
+                  </p>
                 </div>
                 <div class="step-cost">${{ step.costUsd.toFixed(3) }}</div>
               </div>
@@ -1081,6 +1085,13 @@ export default defineComponent({
       color: var(--vx-bone-soft);
       margin: 0;
       line-height: 1.5;
+    }
+    .step-provider {
+      font-family: var(--vx-font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--vx-ember);
     }
   }
 

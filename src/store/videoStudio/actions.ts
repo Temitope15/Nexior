@@ -2,9 +2,10 @@ import axios, { AxiosError } from 'axios';
 import { ActionContext } from 'vuex';
 import { IVideoStudioState } from './models';
 import { IRootState } from '../common/models';
-import { ISunoAudioResponse, IProducerAudioResponse, ILumaGenerateResponse } from '@/models';
-import { sunoOperator, producerOperator, lumaOperator } from '@/operators';
+import { ISunoAudioResponse, IProducerAudioResponse } from '@/models';
+import { sunoOperator, producerOperator } from '@/operators';
 import { scriptGeneratorOperator } from '@/operators/scriptGenerator';
+import { BASE_URL_API } from '@/constants';
 import {
   VIDEO_STUDIO_SUNO_MODEL,
   VIDEO_STUDIO_PRODUCER_MODEL,
@@ -15,6 +16,69 @@ import {
   VIDEO_STUDIO_POLL_MAX_ATTEMPTS,
   VIDEO_STUDIO_VIDEO_POLL_MAX_ATTEMPTS
 } from '@/constants/videoStudio';
+
+// ─────────────────────────────────────────────────────────────────────
+// Video provider fallback chain.
+// AceData exposes ~9 video models. Any single key may have only a subset
+// enabled — submitting to a disabled model returns 403. We iterate the
+// list, falling through ONLY on permission errors (401/403), so the
+// pipeline finishes on whichever model the user's key has access to.
+// ─────────────────────────────────────────────────────────────────────
+interface IVideoProvider {
+  name: string;
+  label: string;
+  submitPath: string;
+  taskPath: string;
+}
+const VIDEO_PROVIDERS: IVideoProvider[] = [
+  { name: 'luma', label: 'Luma Dream Machine', submitPath: '/luma/videos', taskPath: '/luma/tasks' },
+  { name: 'veo', label: 'Google Veo', submitPath: '/veo/videos', taskPath: '/veo/tasks' },
+  { name: 'kling', label: 'Kuaishou Kling', submitPath: '/kling/videos', taskPath: '/kling/tasks' },
+  { name: 'hailuo', label: 'MiniMax Hailuo', submitPath: '/hailuo/videos', taskPath: '/hailuo/tasks' },
+  { name: 'seedance', label: 'ByteDance Seedance', submitPath: '/seedance/videos', taskPath: '/seedance/tasks' },
+  { name: 'sora', label: 'OpenAI Sora', submitPath: '/sora/videos', taskPath: '/sora/tasks' },
+  { name: 'wan', label: 'Tongyi Wanxiang', submitPath: '/wan/videos', taskPath: '/wan/tasks' },
+  { name: 'pika', label: 'Pika', submitPath: '/pika/videos', taskPath: '/pika/tasks' },
+  { name: 'pixverse', label: 'PixVerse', submitPath: '/pixverse/videos', taskPath: '/pixverse/tasks' }
+];
+async function submitVideoProvider(
+  provider: IVideoProvider,
+  prompt: string,
+  callbackUrl: string,
+  token: string
+) {
+  return axios.post(
+    provider.submitPath,
+    { prompt, callback_url: callbackUrl },
+    {
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`
+      },
+      baseURL: BASE_URL_API
+    }
+  );
+}
+async function pollVideoProvider(
+  provider: IVideoProvider,
+  taskId: string,
+  token: string
+) {
+  return axios.post(
+    provider.taskPath,
+    { action: 'retrieve', id: taskId },
+    {
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`,
+        'x-record-exempt': 'true'
+      },
+      baseURL: BASE_URL_API
+    }
+  );
+}
 
 // Always-prefix the error with a short, scannable hint about what likely went wrong.
 // AceData's 403 doesn't always include a specific code in the body, so we infer from status.
@@ -216,93 +280,147 @@ async function generateVoiceover({ commit, state }: Context): Promise<void> {
   }
 }
 
-// Generate video using Luma Dream Machine.
-// Async-submit → poll. callback_url makes the initial POST return a task_id immediately
-// instead of holding the connection 1–2 min (which was causing api_error on dropped connections).
+// Generate video — tries each provider in VIDEO_PROVIDERS until one accepts the submit.
+// Falls through ONLY on 403/401 (key doesn't have that model enabled). Real errors bail.
 async function generateVideo({ commit, state }: Context): Promise<void> {
   if (!state.scriptOutput) throw new Error('Script output required for video generation');
 
   const videoStep = state.steps.find((s) => s.id === 'video');
   if (videoStep?.status === 'done') {
-    console.info('[VideoStudio] ✓ video: skip (already done — saves Luma credits)');
+    console.info('[VideoStudio] ✓ video: skip (already done — saves credits)');
     return;
   }
-  // Idempotency guard: if a Luma task is already in flight from a prior run, resume polling
-  // instead of submitting again — re-submitting double-charges the user for no reason.
-  let taskId = videoStep?.taskId;
 
-  if (!taskId) {
-    console.info('[VideoStudio] ► video: submit Luma');
-    commit('setStepStatus', { id: 'video', status: 'running' });
-    try {
-      const res = await lumaOperator.generate(
-        {
-          prompt: state.scriptOutput.hook || 'Create an engaging short-form video',
-          callback_url: VIDEO_STUDIO_LUMA_CALLBACK
-        },
-        { token: state.apiKey }
-      );
-      taskId = res.data?.task_id;
-      const immediateUrl = res.data?.video_url;
-      const apiError = res.data?.error?.message;
+  const prompt = state.scriptOutput.hook || 'Create an engaging short-form video';
 
-      if (apiError) throw new Error(apiError);
+  // Idempotency: if a previous run already chose a provider and got a task_id, resume polling.
+  const persistedProviderName = videoStep?.output?.provider as string | undefined;
+  const persistedTaskId = videoStep?.taskId;
 
-      // Sync mode can occasionally return the URL directly even with callback_url set.
-      if (immediateUrl) {
-        console.info('[VideoStudio] ✓ video: done (immediate)', { videoUrl: immediateUrl });
-        commit('setStepOutput', { id: 'video', output: { video_url: immediateUrl, task_id: taskId } });
-        commit('setFinalUrls', { videoUrl: immediateUrl });
-        commit('setStepStatus', { id: 'video', status: 'done' });
-        return;
-      }
+  let activeProvider: IVideoProvider | undefined;
+  let taskId: string | undefined;
 
-      if (!taskId) throw new Error('Luma returned no task_id and no video_url');
-
-      commit('setStepTaskId', { id: 'video', taskId });
-    } catch (err: unknown) {
-      const msg = extractApiError(err, 'Video generation failed');
-      console.error('[VideoStudio] ✕ video: submit failed', err);
-      commit('setStepStatus', { id: 'video', status: 'error', error: msg });
-      throw err;
-    }
-  } else {
-    console.info('[VideoStudio] ► video: resume polling existing task', { taskId });
+  if (persistedProviderName && persistedTaskId) {
+    activeProvider = VIDEO_PROVIDERS.find((p) => p.name === persistedProviderName);
+    taskId = persistedTaskId;
+    console.info('[VideoStudio] ► video: resume polling', { provider: persistedProviderName, taskId });
   }
 
+  // Fresh submit: walk the provider chain
+  if (!activeProvider || !taskId) {
+    commit('setStepStatus', { id: 'video', status: 'running' });
+    const tried: { name: string; reason: string }[] = [];
+
+    for (const provider of VIDEO_PROVIDERS) {
+      try {
+        console.info('[VideoStudio] ► video: trying', provider.name);
+        const res = await submitVideoProvider(provider, prompt, VIDEO_STUDIO_LUMA_CALLBACK, state.apiKey);
+
+        const apiErr = res.data?.error?.message;
+        if (apiErr) {
+          tried.push({ name: provider.name, reason: apiErr });
+          continue;
+        }
+
+        const immediateUrl = res.data?.video_url;
+        const newTaskId = res.data?.task_id;
+
+        // Some providers return the URL directly, no polling needed.
+        if (immediateUrl) {
+          console.info(`[VideoStudio] ✓ video: done immediate via ${provider.name}`);
+          commit('setStepOutput', {
+            id: 'video',
+            output: {
+              video_url: immediateUrl,
+              task_id: newTaskId,
+              provider: provider.name,
+              provider_label: provider.label
+            }
+          });
+          commit('setFinalUrls', { videoUrl: immediateUrl });
+          commit('setStepStatus', { id: 'video', status: 'done' });
+          return;
+        }
+
+        if (!newTaskId) {
+          tried.push({ name: provider.name, reason: 'no task_id returned' });
+          continue;
+        }
+
+        // Got a task_id — this is our provider. Persist + break.
+        activeProvider = provider;
+        taskId = newTaskId;
+        commit('setStepTaskId', { id: 'video', taskId });
+        commit('setStepOutput', {
+          id: 'video',
+          output: { provider: provider.name, provider_label: provider.label, task_id: taskId }
+        });
+        console.info(`[VideoStudio] ► video: submitted via ${provider.name}`, { taskId });
+        break;
+      } catch (err: unknown) {
+        const status = (err as AxiosError)?.response?.status;
+        const msg = extractApiError(err, 'Submit failed');
+        tried.push({ name: provider.name, reason: `${status ?? '?'}: ${msg.slice(0, 80)}` });
+
+        if (status === 403 || status === 401) {
+          console.warn(`[VideoStudio] ${provider.name} not enabled (${status}), trying next provider`);
+          continue;
+        }
+        // Real error (4xx invalid input, 5xx server) — surface it instead of masking.
+        commit('setStepStatus', { id: 'video', status: 'error', error: msg });
+        throw err;
+      }
+    }
+
+    if (!activeProvider || !taskId) {
+      const summary = tried.map((p) => `${p.name}(${p.reason})`).join(' · ');
+      const message =
+        `No video model accepted this key. Tried: ${summary}. ` +
+        `Top up balance or enable a video model at platform.acedata.cloud.`;
+      commit('setStepStatus', { id: 'video', status: 'error', error: message });
+      throw new Error(message);
+    }
+  }
+
+  // Poll the chosen provider until completion
   commit('setStepStatus', { id: 'video', status: 'polling' });
 
   try {
     const finalVideoUrl = await pollUntil(async () => {
-      let lumaResponse: ILumaGenerateResponse | undefined;
+      let response: { video_url?: string; state?: string; error?: { message?: string } } | undefined;
       try {
-        const taskRes = await lumaOperator.task(taskId as string, { token: state.apiKey });
-        lumaResponse = taskRes.data.response as ILumaGenerateResponse | undefined;
+        const taskRes = await pollVideoProvider(activeProvider as IVideoProvider, taskId as string, state.apiKey);
+        response = taskRes.data?.response as typeof response;
       } catch (e) {
-        // Transient poll error (network blip / 5xx). Read calls are cheap — keep polling.
-        console.warn('[VideoStudio] video: poll error (continuing)', e);
+        // Transient poll error — read calls are cheap, keep polling.
+        console.warn(`[VideoStudio] video: poll error on ${activeProvider!.name} (continuing)`, e);
         return null;
       }
-      const url = lumaResponse?.video_url;
-      const lumaState = lumaResponse?.state;
-      console.info('[VideoStudio] video: poll', { lumaState, hasUrl: !!url });
+      const url = response?.video_url;
+      const taskState = response?.state;
+      console.info(`[VideoStudio] video: poll ${activeProvider!.name}`, { state: taskState, hasUrl: !!url });
 
-      // Fail fast — no point polling for 5 more minutes if Luma already said it failed.
-      if (lumaState === 'failed') {
-        const errMsg = lumaResponse?.error?.message || 'Luma reported state=failed';
-        throw new Error(errMsg);
+      if (taskState === 'failed') {
+        throw new Error(response?.error?.message || `${activeProvider!.label} reported state=failed`);
       }
       return url || null;
     }, VIDEO_STUDIO_VIDEO_POLL_MAX_ATTEMPTS);
 
-    console.info('[VideoStudio] ✓ video: done (polled)', { videoUrl: finalVideoUrl });
-    commit('setStepOutput', { id: 'video', output: { video_url: finalVideoUrl, task_id: taskId } });
+    console.info(`[VideoStudio] ✓ video: done via ${activeProvider!.name}`);
+    commit('setStepOutput', {
+      id: 'video',
+      output: {
+        video_url: finalVideoUrl,
+        task_id: taskId,
+        provider: activeProvider!.name,
+        provider_label: activeProvider!.label
+      }
+    });
     commit('setFinalUrls', { videoUrl: finalVideoUrl });
     commit('setStepStatus', { id: 'video', status: 'done' });
   } catch (err: unknown) {
     const msg = extractApiError(err, 'Video generation failed');
     console.error('[VideoStudio] ✕ video: poll failed', err);
-    // Keep the task_id on the step so the user can retry without paying for a new submission.
     commit('setStepStatus', { id: 'video', status: 'error', error: msg });
     throw err;
   }
