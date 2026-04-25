@@ -94,17 +94,29 @@ function classifyApiError(err: unknown, fallback: string): IClassifiedError {
   const axErr = err as AxiosError<{ error?: { message?: string; code?: string; type?: string }; trace_id?: string }>;
   const status = axErr?.response?.status;
   const data = axErr?.response?.data;
-  const apiMsg = data?.error?.message || data?.error?.code || data?.error?.type;
+  const apiCode = data?.error?.code;
+  const rawApiMsg = data?.error?.message || data?.error?.code || data?.error?.type;
+  // AceData's own error message has a typo: "platfrom.acedata.cloud" instead of "platform".
+  // Strip it so user-facing messages don't lead the user to a 404 domain.
+  const apiMsg = rawApiMsg?.replace(/platfrom\.acedata\.cloud/gi, 'platform.acedata.cloud');
   const trace = data?.trace_id;
+
+  // Balance signals can come through several channels — code, message text, or 403.
+  const looksLikeBalance =
+    apiCode === 'used_up' ||
+    /\b(used.?up|balance|insufficient|out of credit)\b/i.test(apiMsg ?? '');
 
   let hint: IClassifiedError['hint'] = 'unknown';
   let prefix = '';
-  if (status === 403) {
+  if (looksLikeBalance) {
+    hint = 'balance';
+    prefix = 'Balance exhausted on Ace Data Cloud.';
+  } else if (status === 403) {
     hint = 'balance';
     prefix = 'Forbidden — likely balance exhausted or model not enabled on this key.';
   } else if (status === 401) {
     hint = 'auth';
-    prefix = 'Unauthorized — your AceData key looks invalid or expired.';
+    prefix = 'Unauthorized — your Ace Data Cloud key looks invalid or expired.';
   } else if (status === 429) {
     hint = 'rate_limit';
     prefix = 'Rate limited — too many requests in a short window.';
@@ -118,7 +130,7 @@ function classifyApiError(err: unknown, fallback: string): IClassifiedError {
   } else if (prefix) {
     message = prefix;
   } else if (err instanceof Error) {
-    message = err.message;
+    message = err.message.replace(/platfrom\.acedata\.cloud/gi, 'platform.acedata.cloud');
   } else {
     message = fallback;
   }

@@ -84,7 +84,7 @@
 
           <p class="gate-help">
             No key yet? Request one at
-            <a href="https://hub.acedata.cloud" target="_blank" rel="noopener">hub.acedata.cloud</a>.
+            <a href="https://platform.acedata.cloud" target="_blank" rel="noopener">platform.acedata.cloud</a>.
           </p>
         </div>
       </div>
@@ -301,9 +301,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, h } from 'vue';
+import { ElNotification, ElMessage } from 'element-plus';
 import { proxyMediaUrl } from '@/utils/videoStudioProxy';
 import { IGenerationRecord } from '@/models';
+
+// Sanitize the typo in AceData's own error messages.
+const cleanMessage = (msg: string) => msg.replace(/platfrom\.acedata\.cloud/gi, 'platform.acedata.cloud');
+
+const isBalanceError = (msg: string) =>
+  /\b(used.?up|balance|insufficient|out of credit|exhausted)\b/i.test(msg);
+const isAuthError = (msg: string) =>
+  /\b(unauthorized|invalid.*(key|token)|authentication failed)\b/i.test(msg);
 
 export default defineComponent({
   name: 'StudioChatIndex',
@@ -420,7 +429,61 @@ export default defineComponent({
         this.$store.commit('videoStudio/addHistoryEntry', record);
       } catch (err: unknown) {
         console.error('Generation error:', err);
+        const raw = err instanceof Error ? err.message : 'Generation failed.';
+        this.surfaceError(cleanMessage(raw));
       }
+    },
+
+    surfaceError(message: string) {
+      if (isBalanceError(message)) {
+        ElNotification({
+          title: 'Balance exhausted',
+          duration: 0,
+          customClass: 'vx-notify vx-notify--balance',
+          message: h('div', { class: 'vx-notify__body' }, [
+            h('p', { class: 'vx-notify__lede' },
+              'Your Ace Data Cloud credits ran out before the take could finish.'
+            ),
+            h('a', {
+              href: 'https://platform.acedata.cloud',
+              target: '_blank',
+              rel: 'noopener',
+              class: 'vx-notify__cta'
+            }, [
+              h('span', { class: 'vx-notify__cta-icon' }, '$'),
+              h('span', { class: 'vx-notify__cta-label' }, 'Top up on platform'),
+              h('span', { class: 'vx-notify__cta-arrow', 'aria-hidden': 'true' }, '↗')
+            ])
+          ])
+        });
+        return;
+      }
+      if (isAuthError(message)) {
+        ElNotification({
+          title: 'API key invalid',
+          duration: 6000,
+          customClass: 'vx-notify vx-notify--auth',
+          message: h('div', { class: 'vx-notify__body' }, [
+            h('p', { class: 'vx-notify__lede' }, 'Your Ace Data Cloud key looks invalid or expired.'),
+            h('a', {
+              href: 'https://platform.acedata.cloud',
+              target: '_blank',
+              rel: 'noopener',
+              class: 'vx-notify__cta vx-notify__cta--ghost'
+            }, [
+              h('span', { class: 'vx-notify__cta-label' }, 'Get a new key'),
+              h('span', { class: 'vx-notify__cta-arrow', 'aria-hidden': 'true' }, '↗')
+            ])
+          ])
+        });
+        return;
+      }
+      ElMessage({
+        type: 'error',
+        message,
+        duration: 6000,
+        customClass: 'vx-notify vx-notify--inline'
+      });
     },
 
     selectHistory(record: IGenerationRecord) {
@@ -1554,3 +1617,122 @@ export default defineComponent({
   }
 }
 </style>
+
+<!--
+  Non-scoped: Element Plus notifications/messages are teleported into <body>,
+  so scoped selectors can't reach them. Override the chrome to match the
+  editorial cinema theme defined in src/assets/scss/_tokens.scss.
+-->
+<style lang="scss">
+.el-notification.vx-notify {
+  background: var(--vx-ink-soft) !important;
+  border: 1px solid var(--vx-rule-strong) !important;
+  border-left: 2px solid var(--vx-ember) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+  padding: 18px 18px 16px !important;
+  width: 360px;
+  max-width: 92vw;
+
+  /* Inset double-frame, matches the API key gate */
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    pointer-events: none;
+    border: 1px solid rgba(255, 122, 69, 0.18);
+    border-radius: 2px;
+  }
+
+  .el-notification__icon {
+    color: var(--vx-ember) !important;
+    font-size: 16px !important;
+  }
+  .el-notification__title {
+    font-family: var(--vx-font-display) !important;
+    font-style: italic;
+    font-weight: 400 !important;
+    font-size: 22px !important;
+    letter-spacing: -0.015em !important;
+    color: var(--vx-bone) !important;
+    line-height: 1.15 !important;
+    margin-bottom: 6px !important;
+    font-variation-settings: 'opsz' 24;
+  }
+  .el-notification__content {
+    margin: 0 !important;
+    color: var(--vx-bone-soft) !important;
+  }
+  .el-notification__closeBtn {
+    color: var(--vx-ash) !important;
+    font-size: 16px !important;
+    transition: color 200ms ease;
+    &:hover { color: var(--vx-ember) !important; }
+  }
+
+  .vx-notify__body { display: flex; flex-direction: column; gap: 12px; }
+  .vx-notify__lede {
+    font-family: var(--vx-font-sans);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--vx-bone-soft);
+    margin: 0;
+  }
+  .vx-notify__cta {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 13px;
+    background: var(--vx-ember);
+    color: var(--vx-ink);
+    text-decoration: none;
+    border-radius: 2px;
+    font-family: var(--vx-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: background 200ms ease, transform 200ms ease;
+    &:hover { background: var(--vx-bone); transform: translateY(-1px); }
+
+    &--ghost {
+      background: transparent;
+      color: var(--vx-bone);
+      border: 1px solid var(--vx-rule-strong);
+      &:hover { color: var(--vx-ember); border-color: var(--vx-ember); background: transparent; transform: translateY(-1px); }
+    }
+  }
+  .vx-notify__cta-icon {
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    text-align: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: 10px;
+  }
+  .vx-notify__cta-arrow { font-size: 11px; opacity: 0.85; }
+}
+
+/* ElMessage (inline error toast) — match the editorial palette */
+.el-message.vx-notify--inline {
+  background: var(--vx-ink-soft) !important;
+  border: 1px solid rgba(217, 106, 91, 0.4) !important;
+  border-radius: 2px !important;
+  padding: 11px 14px !important;
+  min-width: 320px;
+  max-width: 480px;
+
+  .el-message__content {
+    font-family: var(--vx-font-sans) !important;
+    font-size: 13px !important;
+    color: var(--vx-bone) !important;
+    line-height: 1.5;
+  }
+  .el-message__icon { color: var(--vx-err) !important; }
+  .el-message__closeBtn { color: var(--vx-ash) !important; &:hover { color: var(--vx-bone) !important; } }
+}
+</style>
+
