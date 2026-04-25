@@ -3,6 +3,23 @@
     <div class="grain" aria-hidden="true" />
     <div class="vignette" aria-hidden="true" />
 
+    <!-- ─────────────── FILM SLATE STRIP ─────────────── -->
+    <div class="slate" aria-hidden="true">
+      <span class="slate-cell"><em>vrx</em>·001</span>
+      <span class="slate-sep">/</span>
+      <span class="slate-cell">take 01</span>
+      <span class="slate-sep">/</span>
+      <span class="slate-cell">9:16</span>
+      <span class="slate-sep">/</span>
+      <span class="slate-cell">35mm</span>
+      <span class="slate-sep">/</span>
+      <span class="slate-cell">issue 001</span>
+      <span class="slate-cell slate-cell--live">
+        <span class="slate-dot" />
+        <span>open for production</span>
+      </span>
+    </div>
+
     <!-- ─────────────── NAV ─────────────── -->
     <nav class="nav">
       <div class="nav-inner">
@@ -44,18 +61,17 @@
         <div class="hero-stage">
           <div class="hero-eyebrow">
             <span class="eyebrow-bullet" />
-            <span>A short-form film studio for one</span>
+            <span>A short-form film studio</span>
           </div>
 
           <h1 class="hero-headline">
-            <span class="line line--1">A film crew,</span>
-            <span class="line line--2">in a single</span>
-            <span class="line line--3"><em>composition box.</em></span>
+            <span class="line line--1">An idea,</span>
+            <span class="line line--2"><em>on screen.</em></span>
           </h1>
 
           <p class="hero-lede">
-            Script. Score. Voice. Picture. Voirax pulls four AI specialists into one continuous
-            take — your idea in, a finished short out, in the time it takes to brew coffee.
+            Four AI specialists, one continuous take.
+            Your idea in, a finished short out — in the time it takes to brew coffee.
           </p>
 
           <div class="hero-actions">
@@ -70,18 +86,42 @@
           </div>
 
           <ul class="hero-stats">
-            <li><strong>0.38<span>$</span></strong><span class="stat-label">per finished short</span></li>
-            <li><strong>4<span>×</span></strong><span class="stat-label">AI models, one pipeline</span></li>
-            <li><strong>x402<span>·</span></strong><span class="stat-label">Solana settlement</span></li>
+            <li>
+              <strong>0.38<span class="stat-unit">$</span></strong>
+              <span class="stat-label">per finished short</span>
+            </li>
+            <li>
+              <strong>4<span class="stat-unit">×</span></strong>
+              <span class="stat-label">specialists, one take</span>
+            </li>
+            <li>
+              <strong>x402<span class="stat-unit">·</span></strong>
+              <span class="stat-label">solana settlement</span>
+            </li>
           </ul>
         </div>
 
         <aside class="hero-side">
-          <div class="reel">
-            <div class="reel-frame" v-for="n in 6" :key="n">
-              <span class="reel-num">{{ String(n).padStart(2, '0') }}</span>
+          <article class="poster">
+            <header class="poster-top">
+              <span class="poster-id">VRX-001</span>
+              <span class="poster-take">Take&nbsp;01</span>
+            </header>
+
+            <div class="poster-center">
+              <div class="poster-mark">Voirax</div>
+              <div class="poster-rule" />
+              <div class="poster-tagline">
+                <span>An idea</span>
+                <span><em>is enough.</em></span>
+              </div>
             </div>
-          </div>
+
+            <footer class="poster-foot">
+              <span>2026 · 04</span>
+              <span>edn. 001</span>
+            </footer>
+          </article>
         </aside>
       </div>
 
@@ -112,24 +152,24 @@
         <li class="process-step">
           <div class="step-num">i</div>
           <div class="step-body">
-            <h3>Write the idea.</h3>
-            <p>One paragraph is enough. A rough hook, a thesis, a feeling — Voirax reads intent.</p>
+            <h3>Write.</h3>
+            <p>A line, a paragraph, a feeling. Voirax reads intent — not keywords.</p>
           </div>
           <div class="step-rule" />
         </li>
         <li class="process-step">
           <div class="step-num">ii</div>
           <div class="step-body">
-            <h3>Choose the room tone.</h3>
-            <p>Music style, narrator gender, whether the score should sing or stay instrumental.</p>
+            <h3>Tune.</h3>
+            <p>Pick the score. Pick the voice. Two settings, hundreds of takes.</p>
           </div>
           <div class="step-rule" />
         </li>
         <li class="process-step">
           <div class="step-num">iii</div>
           <div class="step-body">
-            <h3>Watch the reel come back.</h3>
-            <p>Four specialists work in parallel. Script, music, voiceover, picture — assembled while you wait.</p>
+            <h3>Watch.</h3>
+            <p>Four specialists assemble the short. Stay, or grab a coffee.</p>
           </div>
         </li>
       </ol>
@@ -144,8 +184,7 @@
         </div>
         <h2 class="section-title">Four specialists. <em>One take.</em></h2>
         <p class="section-lede">
-          A pipeline written in 2026 should feel like a film crew, not a stack diagram. Each role
-          has a specialist. Each specialist has a name.
+          A pipeline should feel like a film crew, not a stack diagram. Four roles. Four specialists.
         </p>
       </header>
 
@@ -192,7 +231,7 @@
         </div>
         <h2 class="section-title">No subscriptions. <em>No drama.</em></h2>
         <p class="section-lede">
-          Three ways to pay for the same finished short. Pick the one that fits how you keep books.
+          Three ways to pay for the same finished short. Pick the one that fits.
         </p>
       </header>
 
@@ -282,7 +321,7 @@
         Roll
         <em>camera.</em>
       </h2>
-      <p class="final-lede">An idea is the only thing you have to bring.</p>
+      <p class="final-lede">Bring the idea. We'll bring the crew.</p>
       <router-link class="btn btn--solid btn--large" to="/studio">
         <span class="btn-num">↻</span>
         <span>Open the studio</span>
@@ -487,6 +526,58 @@ export default defineComponent({
   z-index: 1;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(0,0,0,0.55) 80%);
+}
+
+/* ── FILM SLATE STRIP ────────────────────────────────────────────── */
+.slate {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 9px 32px;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(10, 9, 8, 0.6);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ash);
+  overflow: hidden;
+  white-space: nowrap;
+
+  em {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: lowercase;
+    color: var(--bone);
+    font-size: 12px;
+    margin-right: 2px;
+    letter-spacing: -0.02em;
+  }
+}
+.slate-cell { display: inline-flex; align-items: center; gap: 6px; }
+.slate-sep { color: var(--ash-deep); }
+.slate-cell--live {
+  margin-left: auto;
+  color: var(--ember);
+}
+.slate-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--ember);
+  border-radius: 50%;
+  animation: slate-pulse 2.4s ease-in-out infinite;
+}
+@keyframes slate-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 122, 69, 0.5); }
+  50% { box-shadow: 0 0 0 5px rgba(255, 122, 69, 0); }
+}
+
+@media (max-width: 720px) {
+  .slate { padding: 8px 18px; gap: 10px; font-size: 9px; }
+  .slate-cell:nth-of-type(4), .slate-cell:nth-of-type(5),
+  .slate-sep:nth-of-type(3), .slate-sep:nth-of-type(4) { display: none; }
 }
 
 /* ── NAV ─────────────────────────────────────────────────────────── */
@@ -719,10 +810,10 @@ export default defineComponent({
 
 .hero-stats {
   list-style: none;
-  padding: 24px 0 0;
+  padding: 28px 0 0;
   margin: 0;
   display: flex;
-  gap: 48px;
+  gap: 56px;
   flex-wrap: wrap;
   border-top: 1px solid var(--rule);
   animation: fade-up 800ms ease 760ms both;
@@ -730,84 +821,152 @@ export default defineComponent({
   li {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    position: relative;
+    /* hairline marker dot above each stat — credit-roll feel */
+    &::before {
+      content: '';
+      position: absolute;
+      top: -29px;
+      left: 0;
+      width: 18px;
+      height: 1px;
+      background: var(--ember);
+    }
   }
   strong {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: 32px;
+    font-size: 38px;
     line-height: 1;
     color: var(--bone);
-    letter-spacing: -0.02em;
-    font-variation-settings: 'opsz' 36;
-    span {
-      color: var(--ember);
-      font-style: italic;
-      margin-left: 2px;
-    }
+    letter-spacing: -0.025em;
+    font-variation-settings: 'opsz' 48;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1px;
+  }
+  .stat-unit {
+    font-style: italic;
+    color: var(--ember);
+    font-size: 22px;
+    margin-left: 3px;
   }
   .stat-label {
     font-family: var(--font-mono);
     font-size: 10px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
     color: var(--ash);
     text-transform: uppercase;
   }
 }
 
-/* hero side reel */
+/* hero side — film poster panel */
 .hero-side {
   display: flex;
   justify-content: flex-end;
   padding-top: 8px;
   @media (max-width: 1024px) { display: none; }
 }
-.reel {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 160px;
-  border-left: 1px solid var(--rule);
-  padding-left: 16px;
-}
-.reel-frame {
+.poster {
   position: relative;
-  aspect-ratio: 16 / 9;
-  background: var(--ink-soft);
+  width: 200px;
+  aspect-ratio: 2 / 3;
+  background:
+    linear-gradient(180deg, var(--ink-soft) 0%, var(--ink) 100%),
+    var(--ink-soft);
   border: 1px solid var(--rule-strong);
   border-radius: 1px;
+  padding: 18px 18px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 600ms ease, transform 600ms ease, border-color 200ms;
-  &.in-view { opacity: 1; transform: none; }
-  &:nth-child(1) { transition-delay: 200ms; }
-  &:nth-child(2) { transition-delay: 280ms; }
-  &:nth-child(3) { transition-delay: 360ms; }
-  &:nth-child(4) { transition-delay: 440ms; }
-  &:nth-child(5) { transition-delay: 520ms; }
-  &:nth-child(6) { transition-delay: 600ms; }
+  animation: poster-in 1100ms cubic-bezier(0.2, 0.7, 0.2, 1) 600ms both;
+
+  /* hairline inset frame, like a film mat */
   &::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(0deg, transparent 0 4px, rgba(237,228,211,0.04) 4px 5px),
-      linear-gradient(135deg, rgba(255,122,69,0.04), transparent 60%);
+    inset: 8px;
+    border: 1px solid var(--rule);
     pointer-events: none;
   }
-  &:hover {
-    border-color: var(--ember);
+  /* faint diagonal cinema light */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 122, 69, 0.06) 0%, transparent 45%);
+    pointer-events: none;
   }
 }
-.reel-num {
-  position: absolute;
-  bottom: 6px;
-  right: 8px;
+@keyframes poster-in {
+  from { opacity: 0; transform: translateY(20px) rotate(-1deg); }
+  to { opacity: 1; transform: none; }
+}
+.poster-top, .poster-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
   font-family: var(--font-mono);
   font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--ash);
-  letter-spacing: 0.12em;
+}
+.poster-id { color: var(--ember); }
+.poster-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+.poster-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 12px 4px;
+}
+.poster-mark {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 350;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--bone);
+  font-variation-settings: 'opsz' 48;
+}
+.poster-rule {
+  width: 28px;
+  height: 1px;
+  background: var(--ember);
+}
+.poster-tagline {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bone-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.4;
+  em {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: -0.005em;
+    color: var(--ember);
+    font-variation-settings: 'opsz' 14;
+  }
 }
 
 /* hero marquee */
